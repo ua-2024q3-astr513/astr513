@@ -99,8 +99,9 @@ While the notation is trivial for us, this was a major breakthrough in number re
 ## Another Moment of ZEN
 
 We all learned in high school that the solutions (roots) to the qudratic equation $a x^2 + b x + c = 0$ is
+
 $$
-x = \frac{-b \pm \sqrt{b^2 - 4 a c}}{2a}
+x = \frac{-b \pm \sqrt{b^2 - 4 a c}}{2a}.
 $$
 
 Q: Why one of the roots become zero when solving the qudratic equation with $b = 1$ and $a = c = 10^{-9}$?
@@ -117,15 +118,18 @@ print(f'{x1:.16f}, {x2:.16f}')
 ```
 
 It is straightforward to show in the limit $a, c \ll b$, the roots are
+
 $$
 x \approx -\frac{b}{a} \mbox{ or } -\frac{c}{b}
 $$
+
 Is it possible to recover the small root $-c/b$?
 
 +++
 
 When $b > 0$, a catastropic cancellation (see below) happens only in the "+" equation.
 We may replace the first qudratic equation by its "conjugate" form
+
 $$
 x = \frac{2c}{-b \mp \sqrt{b^2 - 4 a c}}
 $$
@@ -138,10 +142,15 @@ print(f'{x1:.16f}, {x2:.16f}')
 ```
 
 Equivalently, we may use the "numerically stable form",
-\begin{align}
-x_1 &= \frac{-b - \mathrm{sign}(b)\sqrt{b^2 - 4 a c}}{2a} \\
-x_2 &= \frac{c}{a x_1}
-\end{align}
+
+$$
+x_1 = \frac{-b - \mathrm{sign}(b)\sqrt{b^2 - 4 a c}}{2a} 
+$$
+
+$$
+x_2 = \frac{c}{a x_1}
+$$
+
 as used by
 [GSL](https://git.savannah.gnu.org/cgit/gsl.git/tree/poly/solve_quadratic.c#n57) and 
 [fadge](https://github.com/adxsrc/fadge/blob/main/mod/fadge/utils.py#L25).
