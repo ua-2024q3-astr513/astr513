@@ -282,6 +282,26 @@ Then, we can combine "full" adders to make multi-digit adders.
 
 +++
 
+## Moore's Law
+
+![Moore's Law](figures/Moores_Law.png)
+
++++
+
+## UA HPC
+
+![elgato](figures/elgato.jpg) ![ocelote](figures/ocelote.jpg)
+
++++
+
+## What Determines Computational Performance?
+
+![trend](figures/42-years-processor-trend.png)
+
+Origin data up to year 2010 collected and plotted by Horowitz et al.; new data collected and plotted by [Rupp](https://www.karlrupp.net/2018/02/42-years-of-microprocessor-trend-data/).
+
++++
+
 ## Another Moment of ZEN
 
 We all learned in high school that the solutions (roots) to the qudratic equation $a x^2 + b x + c = 0$ is
