@@ -24,7 +24,7 @@ covers the "comoputation" part of the course, including:
 
 | Week | Monday | Wednesday |
 | --- | --- | --- |
-| Oct 21--Oct 25 | Data representation and errors          | Fourier transform and spectral analyses    |
+| Oct 21--Oct 25 | [](data.md)                             | Fourier transform and spectral analyses    |
 | Oct 28--Nov  1 | Numerical and automatic derivatives     | Interpolation and extrapolation            |
 | Nov  4--Nov  8 | Root finding and optimization           | Integration of functions                   |
 | Nov 11--Nov 15 | *Veterans Day (no class)*               | ODE integration I: introduction            |
@@ -32,7 +32,3 @@ covers the "comoputation" part of the course, including:
 | Nov 25--Nov 29 | Numerical PDE I: introduction           | Numerical PDE II: finite difference        |
 | Dec  2--Dec  6 | Numerical PDE III: finite volume        | Numerical PDE IV: spectral methods         |
 | Dec  9--Dec 11 | Project presentations                   | Project presentations                      |
-
-
-```{tableofcontents}
-```

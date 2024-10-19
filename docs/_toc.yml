@@ -4,4 +4,4 @@
 format: jb-book
 root: intro
 chapters:
-- file: notebook
+- file: data
