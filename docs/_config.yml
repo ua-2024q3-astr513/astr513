@@ -30,3 +30,8 @@ repository:
 html:
   use_issues_button: true
   use_repository_button: true
+
+# Add launch buttons to run executable cells
+# See https://jupyterbook.org/en/stable/interactive/thebe.html#activate-thebe
+launch_buttons:
+  thebe: true
