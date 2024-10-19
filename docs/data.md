@@ -96,6 +96,31 @@ While the notation is trivial for us, this was a major breakthrough in number re
 
 +++
 
+## Positional Notation Systems
+
+The Arabic numeral system is an example of a positional notation system, in which the value of a digit is determined by both the digit itself and its position within the number.
+This is different from systems like Roman numerals or unary numbers, where the position of a symbol doesn’t change its value.
+In positional notation, the place of a digit corresponds to a specific power of the base of the system.
+
+In any positional system, to represent a number:
+* we first decide on the base (or radix) $b$.
+* then identify the notation for the digits
+* inally write $\pm (\dots d_3 d_2 d_1 d_0 . d_{-1} d_{-2} d_{-3} \dots)$ to represent $\pm (\dots + d_3 b^3 + d_2 b^2 + d_1 b^1 + d_0 b^0 + d_{-1} b^{-1} + d_{-2} b^{-2} + d_{-3} b^{-3} + \dots)$.
+
+To convert from a numeral system of base $b$ to the decimal one, we simply use the definition 
+
+$$
+\pm (\dots + d_3 b^3 + d_2 b^2 + d_1 b^1 + d_0 b^0 + d_{-1} b^{-1} + d_{-2} b^{-2} + d_{-3} b^{-3} + \dots).
+$$
+
+Example:
+
+$$
+(256.4)_8 = 2\times8^2 + 5\times8^1 + 6 + 4\times8^{-1} = (174.5)_{10}
+$$
+
++++
+
 ## Another Moment of ZEN
 
 We all learned in high school that the solutions (roots) to the qudratic equation $a x^2 + b x + c = 0$ is
