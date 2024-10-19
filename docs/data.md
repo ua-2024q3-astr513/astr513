@@ -145,7 +145,6 @@ This gives the decimal value: $1 \times 8 + 0 \times 4 + 1 \times 2 + 1 \times 1
 
 ![binary-shirt](figures/binary-shirt.jpg)
 
-
 +++
 
 ## Another Moment of ZEN
@@ -210,3 +209,10 @@ as used by
 +++
 
 ## Catastropic Cancellation
+
++++
+
+## References
+
+* [Preliminary discussion of the logical design of an electronic computing instrument](https://www.ias.edu/sites/default/files/library/Prelim_Disc_Logical_Design.pdf) by Burks, Goldstine, and von Neumann (1964)
+* [What Every Computer Scientist Should Know About Floating-Point Arithmetic](https://docs.oracle.com/cd/E19957-01/800-7895/800-7895.pdf) by D. Goldberg, in the March 1991 of Computing Surveys
