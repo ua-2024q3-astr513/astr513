@@ -121,6 +121,33 @@ $$
 
 +++
 
+## Binary Numbers
+
+* Base: $b = 2$
+* Digits: $0$, $1$
+
+The binary system has been used in various forms long before the age of computers.
+Invented by merchants in medieval England, the units of liquid measure were based on the binary system. For example:
+* 1 gallon = 2 pottles;
+* 1 pottle = 2 quarts;
+* 1 quart = 2 pints;
+* 1 pint = 2 cups; etc.
+
+![measure](figures/measure.png)
+
+Similarly, the binary system is used in music to define note durations, i.e., whole note, half note, quarter note, eighth note, sixteenth note, etc.
+These everyday examples reflect the fundamental nature of the binary system, which underpins much of modern computing.
+
+In the binary system, only two digits are used: 0 and 1.
+The position of each digit in a binary number corresponds to a power of 2, just as the position of a digit in the decimal system corresponds to a power of 10. 
+For example, the binary number $1011_2$ represents: $1 \times 2^3 + 0 \times 2^2 + 1 \times 2^1 + 1 \times 2^0$.
+This gives the decimal value: $1 \times 8 + 0 \times 4 + 1 \times 2 + 1 \times 1 = 11$.
+
+![binary-shirt](figures/binary-shirt.jpg)
+
+
++++
+
 ## Another Moment of ZEN
 
 We all learned in high school that the solutions (roots) to the qudratic equation $a x^2 + b x + c = 0$ is
