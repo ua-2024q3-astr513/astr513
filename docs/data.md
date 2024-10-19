@@ -147,6 +147,29 @@ This gives the decimal value: $1 \times 8 + 0 \times 4 + 1 \times 2 + 1 \times 1
 
 +++
 
+```{note}
+
+### Quantum Computing: A New Level of Number Representation
+
+Quantum computing takes number representation to a whole new level.
+In quantum mechanics, data is represented using quantum bits, or qubits.
+Unlike classical bits, a single qubit can exist in a superposition of two states, $|0\rangle$ and $|1\rangle$, simultaneously.
+This means that (ignoring normalization for now) one qubit can represent two numbers $C_0$ and $C_1$ as in $C_0 |0\rangle + C_1 |1\rangle$.
+
+With two qubits, the system can represent four possible states: $|00\rangle$, $|01\rangle$, $|10\rangle$, and $|11\rangle$, again, in superposition.
+The number of possible states grows exponentially as more qubits are added:
+* Three qubits can represent eight states: $|000\rangle$, $|001\rangle$, $|010\rangle$, ..., $|111\rangle$.
+* Four qubits represent 16 states, and so on.
+
+In general, $n$ qubits can represent $2^n$ states at once.
+This exponential scaling is what gives quantum computers their enormous potential to perform certain types of calculations far more efficiently than classical computers.
+
+For example, IBM's 53-qubit quantum computer can represent $2^{53}$ states simultaneously.
+In terms of classical information, this is equivalent to storing approximately 1 petabyte (PB) of data, which is comparable to the amount of memory available in some of the world's largest supercomputers today.
+```
+
++++
+
 ## Another Moment of ZEN
 
 We all learned in high school that the solutions (roots) to the qudratic equation $a x^2 + b x + c = 0$ is
