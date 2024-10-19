@@ -124,7 +124,7 @@ $$
 ## Binary Numbers
 
 * Base: $b = 2$
-* Digits: $0$, $1$
+* Digits: 0, 1
 
 The binary system has been used in various forms long before the age of computers.
 Invented by merchants in medieval England, the units of liquid measure were based on the binary system. For example:
@@ -144,6 +144,17 @@ For example, the binary number $1011_2$ represents: $1 \times 2^3 + 0 \times 2^2
 This gives the decimal value: $1 \times 8 + 0 \times 4 + 1 \times 2 + 1 \times 1 = 11$.
 
 ![binary-shirt](figures/binary-shirt.jpg)
+
++++
+
+## The Hexadecimal System
+
+* Base: $b = 16$
+* Digits: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, A, B, C, D, E, F
+
+The hexadecimal system allows for writing a binary number in a very compact notation.
+
+![color](figures/color.png)
 
 +++
 
