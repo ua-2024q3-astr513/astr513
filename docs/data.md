@@ -170,6 +170,26 @@ In terms of classical information, this is equivalent to storing approximately 1
 
 +++
 
+```{note}
+
+### Superposition Hypothesis in Large Language Models
+
+In large language models (LLMs), the
+[Superposition Hypothesis](https://transformer-circuits.pub/2022/toy_model/index.html) suggests that individual neurons or parameters can store multiple overlapping features.
+This is similar to how, in quantum computing, qubits exist in superposition.
+Instead of each neuron being dedicated to a single concept, neurons in LLMs can represent different features depending on the context.
+For example, a neuron might activate for both "dog" and "pet", depending on the input, allowing the model to efficiently reuse its parameters for different purposes.
+
+This efficiency is further enhanced by the use of high-dimensional embeddings, where words and phrases are mapped to vectors in a space with many dimensions.
+The [Johnson–Lindenstrauss Lemma](https://en.wikipedia.org/wiki/Johnson%E2%80%93Lindenstrauss_lemma) shows that in such high-dimensional spaces, exponentially many almost orthogonal directions can exist.
+This means that as the dimensionality of the space increases, the model can represent and distinguish between a vast number of concepts without interference, as these nearly orthogonal vectors can encode distinct meanings.
+
+The Superposition Hypothesis may help explain the remarkable power of LLMs, particularly in how they manage to store and process such vast amounts of information efficiently.
+However, while this hypothesis offers promising insights, it is not yet conclusive, and ongoing research is required to fully understand the underlying mechanisms that drive the success of these models.
+```
+
++++
+
 ## Another Moment of ZEN
 
 We all learned in high school that the solutions (roots) to the qudratic equation $a x^2 + b x + c = 0$ is
