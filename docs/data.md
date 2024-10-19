@@ -201,6 +201,87 @@ However, while this hypothesis offers promising insights, it is not yet conclusi
 
 +++
 
+## Addition in the Binary System
+
+```{code}
+0 + 0 = 0
+0 + 1 = 1
+1 + 0 = 1
+1 + 1 = 0 + 1 carryover
+```
+
+### Example:
+
+```{code}
+    C = 111
+    A = 0101 (  A = 5)
+    B = 0011 (  B = 3)
+-------------
+A + B = 1000 (A+B = 8)
+```
+
++++
+
+## Multiplication in the Bindary System
+
+A binary multiplication is simply shift + add
+
+```{code}
+       11001010
+     x 01001001
+     ----------
+       11001010
+      00000000
+     00000000
+    11001010
+   00000000
+  00000000
+ 11001010
+00000000
+---------------
+011100110011010
+```
+
++++
+
+## CMOS: Complementary Metal-Oxide Semiconductor
+
+![cmos](figures/cmos.png)
+
+| PMOS | NMOS |
+| --- | --- |
+| $g=0 \Rightarrow s=0$ | $g=0 \Rightarrow s=1$ |
+| $g=1 \Rightarrow s=1$ | $g=1 \Rightarrow s=0$ |
+
+We may combine PMOS and NMOS gates to create more complex logic gates, e.g., an XOR gate.
+
+![XOR](figures/xor.png)
+
+```{code}
+0 XOR 0 = 0
+0 XOR 1 = 1
+1 XOR 0 = 1
+1 XOR 1 = 0
+```
+
+We can combine complex logic gates to make "half" adders.
+"Sum" is implemented by XOR, "carry" is implemented by AND.
+
+```{code}
+A + B = S , C
+-------------
+0 + 0 = 0 , 0
+0 + 1 = 1 , 0
+1 + 0 = 1 , 0
+1 + 1 = 0 , 1
+```
+
+We can combine two "half" adders into a "full" adder.
+
+Then, we can combine "full" adders to make multi-digit adders.
+
++++
+
 ## Another Moment of ZEN
 
 We all learned in high school that the solutions (roots) to the qudratic equation $a x^2 + b x + c = 0$ is
