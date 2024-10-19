@@ -17,7 +17,7 @@ kernelspec:
 ```{epigraph}
 The decimal system has been established, somewhat foolishly to be
 sure, according to man's custom, not from a natural necessity as most
-people think
+people think.
 
 -- Blaise Pascal (1623--1662)
 ```
@@ -58,6 +58,23 @@ Then, change the increment to `0.125`.
 
 +++
 
+# Rounding Errors Can Have Fatal Consequences
+
+On February 25, 1991, during Operation Desert Storm, a Scud missile fired by the Iraqi army struck a U.S. army barracks at Dhahran Air Base in Saudi Arabia, killing 28 soldiers.
+Although the base was protected by a Patriot Air Defense System, it failed to track and intercept the incoming missile.
+A subsequent investigation by the U.S. Army revealed that the failure was caused by an accumulation of rounding errors in the Patriot's tracking software.
+
+Each Patriot battery consists of a ground-based radar and eight missile launchers.
+The radar detects airborne objects and tracks their movement, while the system's weapons control computer calculates the expected trajectory of any detected missile.
+If an object follows the predicted ballistic trajectory, the system launches a Patriot missile to intercept it.
+To perform these calculations, the computer relies on an internal clock, which tracks time in increments of 0.1 seconds, stored in 24-bit registers.
+
+However, in binary form, 0.1 seconds is represented as an infinite repeating decimal, $(0.1)_{10} = (0.0001100011…)_2$, and must be rounded during computations.
+After approximately 300 hours of continuous operation, the accumulated rounding errors became significant enough that the system failed to accurately predict the Scud missile's trajectory.
+As a result, the Patriot system did not identify the missile as a threat, and no interception occurred.
+
++++
+
 ## Another Moment of ZEN
 
 We all learned in high school that the solutions (roots) to the qudratic equation $a x^2 + b x + c = 0$ is
@@ -86,7 +103,7 @@ Is it possible to recover the small root $-c/b$?
 
 +++
 
-When $b > 0$, a catastropic cancellation happens only in the "+" equation.
+When $b > 0$, a catastropic cancellation (see below) happens only in the "+" equation.
 We may replace the first qudratic equation by its "conjugate" form
 $$
 x = \frac{2c}{-b \mp \sqrt{b^2 - 4 a c}}
@@ -107,3 +124,7 @@ x_2 &= \frac{c}{a x_1}
 as used by
 [GSL](https://git.savannah.gnu.org/cgit/gsl.git/tree/poly/solve_quadratic.c#n57) and 
 [fadge](https://github.com/adxsrc/fadge/blob/main/mod/fadge/utils.py#L25).
+
++++
+
+## Catastropic Cancellation
