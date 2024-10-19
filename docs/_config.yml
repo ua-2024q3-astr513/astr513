@@ -1,7 +1,7 @@
 # Book settings
 # Learn more at https://jupyterbook.org/customize/config.html
 
-title: ASTR 513: Computational and Statistical Methods for Astrophysics
+title: "ASTR 513: Computational and Statistical Methods for Astrophysics"
 author: Chi-kwan Chan & Shuo Kong
 logo: logo.png
 
@@ -13,7 +13,7 @@ execute:
 # Define the name of the latex output file for PDF builds
 latex:
   latex_documents:
-    targetname: book.tex
+    targetname: astr513.tex
 
 # Add a bibtex file so that we can create citations
 bibtex_bibfiles:
@@ -28,8 +28,10 @@ repository:
 # Add GitHub buttons to your book
 # See https://jupyterbook.org/customize/config.html#add-a-link-to-your-repository
 html:
-  use_issues_button: true
   use_repository_button: true
+  use_issues_button: true
+  use_edit_page_button: true
+  home_page_in_navbar: true
 
 # Add launch buttons to run executable cells
 # See https://jupyterbook.org/en/stable/interactive/thebe.html#activate-thebe
