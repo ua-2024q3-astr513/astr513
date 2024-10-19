@@ -58,7 +58,7 @@ Then, change the increment to `0.125`.
 
 +++
 
-# Rounding Errors Can Have Fatal Consequences
+## Rounding Errors Can Have Fatal Consequences
 
 On February 25, 1991, during Operation Desert Storm, a Scud missile fired by the Iraqi army struck a U.S. army barracks at Dhahran Air Base in Saudi Arabia, killing 28 soldiers.
 Although the base was protected by a Patriot Air Defense System, it failed to track and intercept the incoming missile.
@@ -72,6 +72,27 @@ To perform these calculations, the computer relies on an internal clock, which t
 However, in binary form, 0.1 seconds is represented as an infinite repeating decimal, $(0.1)_{10} = (0.0001100011…)_2$, and must be rounded during computations.
 After approximately 300 hours of continuous operation, the accumulated rounding errors became significant enough that the system failed to accurately predict the Scud missile's trajectory.
 As a result, the Patriot system did not identify the missile as a threat, and no interception occurred.
+
++++
+
+## The Challenge of Representing Numbers
+
+As we saw with the missile story, even small errors in representing numbers can accumulate with devastating consequences.
+The issue of how to efficiently and accurately represent numbers is not trivial.
+In fact, the introduction of the Arabic numeral system was a major advancement over earlier methods like Roman numerals---and even more primitive systems like unary numbers.
+
+The **unary number system** is the most basic of all, where each number is represented by a corresponding number of identical marks.
+For example, the number 5 is written as "|||||".
+While simple, unary numbers are extremely inefficient for large quantities.
+Representing the number 888, for instance, would require writing 888 marks!
+Unary numbers are rarely used in practice because they require a lot of space to represent even moderately sized numbers.
+
+Next, consider **Roman numerals***, which advanced by using specific symbols (I, V, X, L, C, D, M) to represent numbers like 1, 5, 10, 50, 100, 500, and 1000.
+To represent a number like 888 in Roman numerals, you'd need 12 symbols: DCCCLXXXVIII.
+While more efficient than unary, it's still cumbersome for large numbers.
+
+In contrast, the **Arabic number system** allows any number from 1 to 999 to be represented using at most 3 digits.
+While the notation is trivial for us, this was a major breakthrough in number representation, as it reduced the complexity of writing numbers while greatly increasing the efficiency and clarity.
 
 +++
 
