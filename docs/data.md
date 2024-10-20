@@ -310,6 +310,38 @@ Origin data up to year 2010 collected and plotted by Horowitz et al.; new data c
 
 ### Double-Precision Floating Point
 
+### Other Floating Point
+
+* half-percision 16-bit float
+* bfloat16
+* NVIDIA's TensorFloat-32 (19 bits)
+* AMD's fp24
+* Pixar's PXR24
+* IEEE 754 single-precision 32-bit float
+* Double precision
+* `long double`
+
+### Encoding of Special Values
+
+```{code}
+val    s_exponent_signcnd
++inf = 0_11111111_0000000
+-inf = 1_11111111_0000000
+```
+
+```{code}
+val    s_exponent_signcnd
++NaN = 0_11111111_klmnopq
+-NaN = 1_11111111_klmnopq
+```
+where at least one of `k`, `l`, `m`, `n`, `o`, `p`, or `q` is 1.
+
+### NaN Comparison Rules
+
+In C, `NaN` (Not a Number) has some special comparison rules:
+* Comparing `NaN` with anything always returns false: this means that `x == NaN`, `x != NaN`, `x < NaN`, `x > NaN`, `x <= NaN`, and `x >= NaN` are all false, regardless of the value of `x` (even if `x` is also `NaN`).
+* Use `isnan()` to check for `NaN`: the standard C library provides the `isnan()` function in `math.h` to check if a floating-point value is `NaN`.
+
 +++
 
 ## Another Moment of ZEN
@@ -384,8 +416,6 @@ as used by
 ...
 
 +++
-
-## `long double`
 
 ## `Arepo`
 
