@@ -58,7 +58,8 @@ Then, change the increment to `0.125`.
 
 +++
 
-## Rounding Errors Can Have Fatal Consequences
+```{note}
+### Rounding Errors Can Have Fatal Consequences
 
 On February 25, 1991, during Operation Desert Storm, a Scud missile fired by the Iraqi army struck a U.S. army barracks at Dhahran Air Base in Saudi Arabia, killing 28 soldiers.
 Although the base was protected by a Patriot Air Defense System, it failed to track and intercept the incoming missile.
@@ -72,10 +73,11 @@ To perform these calculations, the computer relies on an internal clock, which t
 However, in binary form, 0.1 seconds is represented as an infinite repeating decimal, $(0.1)_{10} = (0.0001100011…)_2$, and must be rounded during computations.
 After approximately 300 hours of continuous operation, the accumulated rounding errors became significant enough that the system failed to accurately predict the Scud missile's trajectory.
 As a result, the Patriot system did not identify the missile as a threat, and no interception occurred.
+```
 
 +++
 
-## The Challenge of Representing Numbers
+## Representing Numbers
 
 As we saw with the missile story, even small errors in representing numbers can accumulate with devastating consequences.
 The issue of how to efficiently and accurately represent numbers is not trivial.
@@ -96,7 +98,7 @@ While the notation is trivial for us, this was a major breakthrough in number re
 
 +++
 
-## Positional Notation Systems
+### Positional Notation Systems
 
 The Arabic numeral system is an example of a positional notation system, in which the value of a digit is determined by both the digit itself and its position within the number.
 This is different from systems like Roman numerals or unary numbers, where the position of a symbol doesn’t change its value.
@@ -108,20 +110,17 @@ In any positional system, to represent a number:
 * inally write $\pm (\dots d_3 d_2 d_1 d_0 . d_{-1} d_{-2} d_{-3} \dots)$ to represent $\pm (\dots + d_3 b^3 + d_2 b^2 + d_1 b^1 + d_0 b^0 + d_{-1} b^{-1} + d_{-2} b^{-2} + d_{-3} b^{-3} + \dots)$.
 
 To convert from a numeral system of base $b$ to the decimal one, we simply use the definition 
-
-$$
+\begin{align}
 \pm (\dots + d_3 b^3 + d_2 b^2 + d_1 b^1 + d_0 b^0 + d_{-1} b^{-1} + d_{-2} b^{-2} + d_{-3} b^{-3} + \dots).
-$$
-
+\end{align}
 Example:
-
-$$
+\begin{align}
 (256.4)_8 = 2\times8^2 + 5\times8^1 + 6 + 4\times8^{-1} = (174.5)_{10}
-$$
+\end{align}
 
 +++
 
-## Binary Numbers
+### Binary Numbers
 
 * Base: $b = 2$
 * Digits: 0, 1
@@ -158,7 +157,7 @@ This gives the decimal value: $1 \times 8 + 0 \times 4 + 1 \times 2 + 1 \times 1
 
 +++
 
-## The Hexadecimal System
+### The Hexadecimal System
 
 * Base: $b = 16$
 * Digits: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, A, B, C, D, E, F
@@ -217,8 +216,10 @@ However, while this hypothesis offers promising insights, it is not yet conclusi
 
 +++
 
-## Addition in the Binary System
+### Addition in the Binary System
 
+In the binary system, addition follows similar rules to decimal addition, but with only two digits: 0 and 1.
+The key rules are:
 ```{code}
 0 + 0 = 0
 0 + 1 = 1
@@ -226,8 +227,7 @@ However, while this hypothesis offers promising insights, it is not yet conclusi
 1 + 1 = 0 + 1 carryover
 ```
 
-### Example:
-
+We start from the rightmost bit, adding the bits with carry when needed:
 ```{code}
     C = 111
     A = 0101 (  A = 5)
@@ -238,10 +238,9 @@ A + B = 1000 (A+B = 8)
 
 +++
 
-## Multiplication in the Bindary System
+### Multiplication in the Bindary System
 
-A binary multiplication is simply shift + add
-
+A binary multiplication is simply shift and add:
 ```{code}
        11001010
      x 01001001
@@ -260,7 +259,9 @@ A binary multiplication is simply shift + add
 
 +++
 
-## CMOS: Complementary Metal-Oxide Semiconductor
+## Hardware Implementations
+
+### CMOS: Complementary Metal-Oxide Semiconductor
 
 ```{figure} figures/cmos.png
 ---
@@ -329,7 +330,7 @@ Multi-digit adder.
 
 +++
 
-## Moore's Law
+### Moore's Law
 
 ```{figure} figures/Moores_Law.png
 ---
@@ -340,7 +341,7 @@ Moore's Law.
 
 +++
 
-## UA HPC
+### UA HPC
 
 ```{figure} figures/elgato.jpg
 ---
@@ -358,7 +359,7 @@ Ocelote
 
 +++
 
-## What Determines Computational Performance?
+### What Determines Computational Performance?
 
 ```{figure} figures/42-years-processor-trend.png
 ---
@@ -414,10 +415,9 @@ In C, `NaN` (Not a Number) has some special comparison rules:
 ## Another Moment of ZEN
 
 We all learned in high school that the solutions (roots) to the qudratic equation $a x^2 + b x + c = 0$ is
-
-$$
+\begin{align}
 x = \frac{-b \pm \sqrt{b^2 - 4 a c}}{2a}.
-$$
+\end{align}
 
 Q: Why one of the roots become zero when solving the qudratic equation with $b = 1$ and $a = c = 10^{-9}$?
 
@@ -433,21 +433,18 @@ print(f'{x1:.16f}, {x2:.16f}')
 ```
 
 It is straightforward to show in the limit $a, c \ll b$, the roots are
-
-$$
+\begin{align}
 x \approx -\frac{b}{a} \mbox{ or } -\frac{c}{b}
-$$
-
+\end{align}
 Is it possible to recover the small root $-c/b$?
 
 +++
 
 When $b > 0$, a catastropic cancellation (see below) happens only in the "+" equation.
 We may replace the first qudratic equation by its "conjugate" form
-
-$$
+\begin{align}
 x = \frac{2c}{-b \mp \sqrt{b^2 - 4 a c}}
-$$
+\end{align}
 
 ```{code-cell} ipython3
 x1 = (2*c) / (-b - (b*b - 4*a*c)**(1/2))
@@ -457,15 +454,10 @@ print(f'{x1:.16f}, {x2:.16f}')
 ```
 
 Equivalently, we may use the "numerically stable form",
-
-$$
-x_1 = \frac{-b - \mathrm{sign}(b)\sqrt{b^2 - 4 a c}}{2a} 
-$$
-
-$$
-x_2 = \frac{c}{a x_1}
-$$
-
+\begin{align}
+x_1 &= \frac{-b - \mathrm{sign}(b)\sqrt{b^2 - 4 a c}}{2a} \\
+x_2 &= \frac{c}{a x_1}
+\end{align}
 as used by
 [GSL](https://git.savannah.gnu.org/cgit/gsl.git/tree/poly/solve_quadratic.c#n57) and 
 [fadge](https://github.com/adxsrc/fadge/blob/main/mod/fadge/utils.py#L25).
