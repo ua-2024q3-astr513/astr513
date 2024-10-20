@@ -374,9 +374,52 @@ Origin data up to year 2010 collected and plotted by Horowitz et al.; new data c
 
 ### Floating Point Representation
 
+The easiest way to describe floating-point representation is through an example.
+Consider the result of the mathematical expression $e^6 \approx 403.42879$.
+To express this in normalized floating-point notation, we first write the number in scientific notation:
+\begin{align}
+e^6 = 4.0342879 \times 10^2
+\end{align}
+In scientific notation, the number is written such that the significand (or mantissa) is always smaller than the base (in this case, 10).
+To represent the number in floating-point format, we store the following components:
+* The sign of the number,
+* The exponent (the power of 10),
+* The significand (the string of significant digits).
+
+For example, the floating-point representation of $e^6$ with 4 significant digits is:
+\begin{align}
+e^6 = (+, 2, 4034).
+\end{align}
+And with 8 significant digits:
+\begin{align}
+e^6 = (+, 2, 40342879).
+\end{align}
+
++++
+
 ### Single-Precision Floating Point
 
+In the IEEE 754 standard for floating-point arithmetic, used by most modern computers, special rules are applied to store numbers.
+In single precision (32-bit), the significand is stored with an implicit leading bit to the left of the binary point, which is always assumed to be 1 in normalized numbers.
+This means that, instead of storing the full significand, only the fractional part (digits to the right of the binary point) is stored.
+For example, the number `1.101` in binary would be stored as just `101` in the significand, with the leading 1 implied.
+This optimization increases precision, as it effectively adds an extra bit without needing more storage.
+
+In addition, the exponent is stored with a "bias" of 127 in single precision.
+The actual exponent is offset by this bias, allowing both positive and negative exponents to be represented.
+The smallest exponent that can be stored is 0 (representing an actual exponent of -127), and the largest is 255 (representing an actual exponent of +128).
+Thus, single-precision floating-point numbers can represent values ranging from approximately $2^{-127} \approx 6 \times 10^{-39}$  to $2^{128} \approx 3 \times 10^{38}$.
+These correspond to the `float` type in C or `np.single` in Python’s NumPy library.
+
++++
+
 ### Double-Precision Floating Point
+
+For double precision (64-bit), the exponent is stored with a bias of 1023 and the significand with an implicit leading 1 is stored in 52 bits.
+The exponent can represent values from -1023 to +1024.
+Double-precision numbers can represent values ranging from approximately $10^{-308}$ to  $10^{308}$, corresponding to the `double` type in C or `np.double` in Python/NumPy.
+
++++
 
 ### Other Floating Point
 
