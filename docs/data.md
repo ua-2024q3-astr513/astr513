@@ -500,6 +500,23 @@ The cost of the failed launch was upwards of 100 million dollars!
 
 +++
 
+## Machine Accuracy
+
+In order to quantify truncation errors, we define:
+\begin{align}
+\mbox{(relative error)} \equiv \frac{x - \bar{x}}{x}.
+\end{align}
+
+If we use a numeral system of base b and keep p significant digits, the machine accuracy is
+\begin{align}
+\epsilon = \left(\frac{b}{2}\right) b^{-p}.
+\end{align}
+
+A single-precision floating-point number, which stores 23 significant digits in binary (the mantissa), provides a machine accuracy of approximately $\epsilon_\mathrm{single} = 2^{-23} \approx 10^{-7}$ in decimal.
+In contrast, a double-precision floating-point number, with 52 significant binary digits, corresponds to a much finer machine accuracy of about $\epsilon_\mathrm{double} = 2^{-52} \approx 2\times10^{-16}$ in decimal. 
+
++++
+
 ## Another Moment of ZEN
 
 We all learned in high school that the solutions (roots) to the qudratic equation $a x^2 + b x + c = 0$ is
