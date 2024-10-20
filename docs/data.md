@@ -528,7 +528,7 @@ Is it possible to recover the small root $-c/b$?
 
 +++
 
-When $b > 0$, a catastropic cancellation (see below) happens only in the "+" equation.
+When $b > 0$, a catastrophic cancellation (see below) happens only in the "+" equation.
 We may replace the first qudratic equation by its "conjugate" form
 \begin{align}
 x = \frac{2c}{-b \mp \sqrt{b^2 - 4 a c}}
@@ -552,9 +552,18 @@ as used by
 
 +++
 
-## Catastropic Cancellation
+## Catastrophic Cancellation
 
-...
+Catastrophic cancellation occurs in numerical computing when subtracting two nearly equal numbers, leading to significant loss of precision.
+This issue arises because when two close numbers are subtracted, the leading digits cancel out, and the result retains only the less significant digits.
+In floating-point arithmetic, these less significant digits may already have been affected by rounding errors, leading to a final result with much lower accuracy than expected.
+
+For example, consider subtracting $x = 1.00000001$ and $y = 1.00000000$ in floating-point arithmetic.
+Although the true result is $0.00000001$, if both numbers are rounded to eighth significant digits during storage (e.g., in single precision float), they might both be stored as $1.000000$.
+Subtracting these will result in $0$, entirely losing the small difference.
+
+This effect is particularly problematic in computations involving functions where nearly equal terms naturally occur (such as in the calculation of certain derivatives or in algorithms for solving linear systems).
+Techniques like reformulating equations to avoid such subtractions or using higher precision arithmetic can help mitigate catastrophic cancellation, as we seen in the qudratic equation solver example above.
 
 +++
 
