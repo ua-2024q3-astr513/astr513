@@ -293,6 +293,13 @@ PMOS and NMOS can be combined to create, e.g., XOR gate.
 We can combine complex logic gates to make "half" adders.
 "Sum" is implemented by XOR, "carry" is implemented by AND.
 
+```{figure} figures/half.png
+---
+height: 160px
+---
+"Half" adder.
+```
+
 ```{code}
 A + B = S , C
 -------------
@@ -304,7 +311,21 @@ A + B = S , C
 
 We can combine two "half" adders into a "full" adder.
 
+```{figure} figures/full.png
+---
+height: 160px
+---
+"Full" adder.
+```
+
 Then, we can combine "full" adders to make multi-digit adders.
+
+```{figure} figures/multi.png
+---
+height: 160px
+---
+Multi-digit adder.
+```
 
 +++
 
