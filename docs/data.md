@@ -437,14 +437,9 @@ Double-precision numbers can represent values ranging from approximately $10^{-3
 
 ### Other Floating Point
 
-* half-percision 16-bit float
-* bfloat16
-* NVIDIA's TensorFloat-32 (19 bits)
-* AMD's fp24
-* Pixar's PXR24
-* IEEE 754 single-precision 32-bit float
-* Double precision
-* `long double`
+* "half percision" `float16`
+* `bfloat16`, used for neural network
+* `long double`, could be 80-bit or 128-bit, dependent on the system.
 
 ### Encoding of Special Values
 
@@ -462,6 +457,25 @@ val    s_exponent_signcnd
 where at least one of `k`, `l`, `m`, `n`, `o`, `p`, or `q` is 1.
 
 ### NaN Comparison Rules
+
+```c
+/* To run me, save into "demo.c" and then compile with `gcc demo.c -lm -o demo` */
+
+#include <stdio.h>
+
+int
+main(int argc, char *argv[])
+{
+	float x = 0.0 / 0.0;
+
+	if (x == 0.0 / 0.0)
+		printf("NaN\n");
+	else
+		printf("Total confused...\n");
+
+    return 0;
+}
+```
 
 In C, `NaN` (Not a Number) has some special comparison rules:
 * Comparing `NaN` with anything always returns false: this means that `x == NaN`, `x != NaN`, `x < NaN`, `x > NaN`, `x <= NaN`, and `x >= NaN` are all false, regardless of the value of `x` (even if `x` is also `NaN`).
