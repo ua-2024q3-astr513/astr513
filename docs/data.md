@@ -399,6 +399,13 @@ e^6 = (+, 2, 40342879).
 
 ### Single-Precision Floating Point
 
+```{figure} figures/float.svg
+---
+height: 80px
+---
+The value $+0.15625 = (-1)^{(0)_2} \times 2^{(01111100)_2-127} \times (1.01...0)_2$ stored as single precision float.
+```
+
 In the IEEE 754 standard for floating-point arithmetic, used by most modern computers, special rules are applied to store numbers.
 In single precision (32-bit), the significand is stored with an implicit leading bit to the left of the binary point, which is always assumed to be 1 in normalized numbers.
 This means that, instead of storing the full significand, only the fractional part (digits to the right of the binary point) is stored.
@@ -414,6 +421,13 @@ These correspond to the `float` type in C or `np.single` in Python’s NumPy lib
 +++
 
 ### Double-Precision Floating Point
+
+```{figure} figures/double.svg
+---
+height: 120px
+---
+Memeory layout of a double precision float.
+```
 
 For double precision (64-bit), the exponent is stored with a bias of 1023 and the significand with an implicit leading 1 is stored in 52 bits.
 The exponent can represent values from -1023 to +1024.
