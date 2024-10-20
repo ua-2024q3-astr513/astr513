@@ -22,3 +22,10 @@ jupytext --sync [chapter].md
 ```
 All changed made the notebook will be automatically synced to the MyST
 markdown file.
+
+To build the Jupyter Book locally, run
+```
+git clone git@github.com:ua-2024q3-astr513/astr513.git
+cd astr513
+jupyter-book build docs
+```
