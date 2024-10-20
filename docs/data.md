@@ -598,6 +598,27 @@ float Q_rsqrt( float number )
 
 ## `Arepo`
 
+```{figure} figures/arepo1.png
+---
+height: 240px
+---
+The moving mesh code Arepo.
+```
+
+```{figure} figures/arepo2.png
+---
+height: 480px
+align: right
+---
+The fast maping between 53-bit integer and double precision float.
+```
+
+The Arepo cosmology code, widely used in astrophysical simulations, employs a moving mesh method to solve fluid dynamics problems with high accuracy and efficiency.
+To avoid numerical issues commonly encountered in floating-point arithmetic, Arepo implements an innovative approach to ensure robustness in geometric computations.
+Specifically, it maps the significant digits of double-precision floating-point numbers to a 53-bit integer, which allows for exact arithmetic when evaluating geometric predicates.
+By doing this, Arepo avoids round-off errors that could otherwise compromise the accuracy of simulations.
+This precise handling of numerical data is critical for the accurate modeling of complex cosmological structures.
+
 +++
 
 ## References
