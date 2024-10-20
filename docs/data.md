@@ -302,6 +302,16 @@ Origin data up to year 2010 collected and plotted by Horowitz et al.; new data c
 
 +++
 
+## How Do Computers Handle Non-Integer Numbers?
+
+### Floating Point Representation
+
+### Single-Precision Floating Point
+
+### Double-Precision Floating Point
+
++++
+
 ## Another Moment of ZEN
 
 We all learned in high school that the solutions (roots) to the qudratic equation $a x^2 + b x + c = 0$ is
@@ -364,6 +374,20 @@ as used by
 +++
 
 ## Catastropic Cancellation
+
+...
+
++++
+
+## Fast Inverse Square Root
+
+...
+
++++
+
+## `long double`
+
+## `Arepo`
 
 +++
 
