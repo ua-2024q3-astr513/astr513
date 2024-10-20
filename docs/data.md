@@ -569,7 +569,30 @@ Techniques like reformulating equations to avoid such subtractions or using high
 
 ## Fast Inverse Square Root
 
-...
+One fascinating example of taking advantage of floating-point representation is the fast inverse square root algorithm, famously used in computer graphics, particularly in the development of 3D engines like those in video games.
+This algorithm provides an efficient way to compute $1/\sqrt{x}$, a common operation in tasks like normalizing vectors.
+Instead of relying on the standard floating-point math libraries, the algorithm "hacks" the floating-point representation by manipulating the bits directly to achieve a remarkably fast approximation of the result.
+This method takes advantage of how floating-point numbers are stored, using a clever combination of bitwise operations and mathematical magic to drastically speed up computation.
+
+The following code is the fast inverse square root implementation from Quake III Arena, stripped of C preprocessor directives, but including [modified comment text](https://web.archive.org/web/20170729072505/https://github.com/id-Software/Quake-III-Arena/blob/master/code/game/q_math.c#L552):
+```c
+float Q_rsqrt( float number )
+{
+	long i;
+	float x2, y;
+	const float threehalfs = 1.5F;
+
+	x2 = number * 0.5F;
+	y  = number;
+	i  = * ( long * ) &y;                     // evil floating point bit level hacking
+	i  = 0x5f3759df - ( i >> 1 );             // what the f**k?
+	y  = * ( float * ) &i;
+	y  = y * ( threehalfs - ( x2 * y * y ) ); // 1st iteration
+//	y  = y * ( threehalfs - ( x2 * y * y ) ); // 2nd iteration, this can be removed
+
+	return y;
+}
+```
 
 +++
 
