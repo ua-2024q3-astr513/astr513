@@ -126,6 +126,14 @@ $$
 * Base: $b = 2$
 * Digits: 0, 1
 
+```{figure} figures/measure.png
+---
+height: 320px
+align: right
+---
+Binary system was invented by merchants in medieval England.
+```
+
 The binary system has been used in various forms long before the age of computers.
 Invented by merchants in medieval England, the units of liquid measure were based on the binary system. For example:
 * 1 gallon = 2 pottles;
@@ -133,17 +141,20 @@ Invented by merchants in medieval England, the units of liquid measure were base
 * 1 quart = 2 pints;
 * 1 pint = 2 cups; etc.
 
-![measure](figures/measure.png)
-
 Similarly, the binary system is used in music to define note durations, i.e., whole note, half note, quarter note, eighth note, sixteenth note, etc.
 These everyday examples reflect the fundamental nature of the binary system, which underpins much of modern computing.
+
+```{figure} figures/binary-shirt.jpg
+---
+height: 320px
+---
+There are 10 types of people in the world...
+```
 
 In the binary system, only two digits are used: 0 and 1.
 The position of each digit in a binary number corresponds to a power of 2, just as the position of a digit in the decimal system corresponds to a power of 10. 
 For example, the binary number $1011_2$ represents: $1 \times 2^3 + 0 \times 2^2 + 1 \times 2^1 + 1 \times 2^0$.
 This gives the decimal value: $1 \times 8 + 0 \times 4 + 1 \times 2 + 1 \times 1 = 11$.
-
-![binary-shirt](figures/binary-shirt.jpg)
 
 +++
 
@@ -154,7 +165,12 @@ This gives the decimal value: $1 \times 8 + 0 \times 4 + 1 \times 2 + 1 \times 1
 
 The hexadecimal system allows for writing a binary number in a very compact notation.
 
-![color](figures/color.png)
+```{figure} figures/color.png
+---
+height: 320px
+---
+Hex numbers are used to select colors.
+```
 
 +++
 
@@ -246,7 +262,12 @@ A binary multiplication is simply shift + add
 
 ## CMOS: Complementary Metal-Oxide Semiconductor
 
-![cmos](figures/cmos.png)
+```{figure} figures/cmos.png
+---
+height: 160px
+---
+N-type and P-type MOS have different properties.
+```
 
 | PMOS | NMOS |
 | --- | --- |
@@ -255,7 +276,12 @@ A binary multiplication is simply shift + add
 
 We may combine PMOS and NMOS gates to create more complex logic gates, e.g., an XOR gate.
 
-![XOR](figures/xor.png)
+```{figure} figures/xor.png
+---
+height: 160px
+---
+PMOS and NMOS can be combined to create, e.g., XOR gate.
+```
 
 ```{code}
 0 XOR 0 = 0
@@ -284,21 +310,41 @@ Then, we can combine "full" adders to make multi-digit adders.
 
 ## Moore's Law
 
-![Moore's Law](figures/Moores_Law.png)
+```{figure} figures/Moores_Law.png
+---
+height: 640px
+---
+Moore's Law.
+```
 
 +++
 
 ## UA HPC
 
-![elgato](figures/elgato.jpg) ![ocelote](figures/ocelote.jpg)
+```{figure} figures/elgato.jpg
+---
+height: 240px
+---
+Elgato
+```
+
+```{figure} figures/ocelote.jpg
+---
+height: 240px
+---
+Ocelote
+```
 
 +++
 
 ## What Determines Computational Performance?
 
-![trend](figures/42-years-processor-trend.png)
-
+```{figure} figures/42-years-processor-trend.png
+---
+height: 640px
+---
 Origin data up to year 2010 collected and plotted by Horowitz et al.; new data collected and plotted by [Rupp](https://www.karlrupp.net/2018/02/42-years-of-microprocessor-trend-data/).
+```
 
 +++
 
