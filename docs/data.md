@@ -473,13 +473,30 @@ main(int argc, char *argv[])
 	else
 		printf("Total confused...\n");
 
-    return 0;
+	return 0;
 }
 ```
 
 In C, `NaN` (Not a Number) has some special comparison rules:
 * Comparing `NaN` with anything always returns false: this means that `x == NaN`, `x != NaN`, `x < NaN`, `x > NaN`, `x <= NaN`, and `x >= NaN` are all false, regardless of the value of `x` (even if `x` is also `NaN`).
 * Use `isnan()` to check for `NaN`: the standard C library provides the `isnan()` function in `math.h` to check if a floating-point value is `NaN`.
+
++++
+
+```{note}
+
+### Data type conversion errors can be very costly
+
+Ariane 5 is the primary launch vehicle of the European Space Agency (ESA) that operates from the Guiana Space Center near Kourou in the French Guiana.
+Its first successful operational flight took place in December 1999, when it carried to space the European X-ray Multi Mirror (XMM) satellite.
+Its first test launch, however, on June 4, 1996 resulted in failure, with the rocket exploding 40 seconds into the flight.
+
+A study of the accident by an inquiry board found that the failure was caused by a software problem in the Inertial Reference System that was guiding the rocket.
+In particular, the computer program, which was written in the Ada programming language and was inherited from the previous launch vehicle Ariane 4, required at some point in the calculation a conversion of a 64-bit floating point number to a 16-bit integer.
+The initial trajectory of the Ariane 5 launch vehicle, however, is significantly different than that of Ariane 4 and the 16 bits are not enough to store some of the required information.
+The result was an error in the calculation, which the inertial system misinterpreted and caused the rocket to veer off its flight path and explode.
+The cost of the failed launch was upwards of 100 million dollars!
+```
 
 +++
 
