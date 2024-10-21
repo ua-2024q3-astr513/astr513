@@ -513,7 +513,7 @@ If we use a numeral system of base b and keep p significant digits, the machine 
 \end{align}
 
 A single-precision floating-point number, which stores 23 significant digits in binary (the mantissa), provides a machine accuracy of approximately $\epsilon_\mathrm{single} = 2^{-23} \approx 10^{-7}$ in decimal.
-In contrast, a double-precision floating-point number, with 52 significant binary digits, corresponds to a much finer machine accuracy of about $\epsilon_\mathrm{double} = 2^{-52} \approx 2\times10^{-16}$ in decimal. 
+In contrast, a double-precision floating-point number, with 52 significant binary digits, corresponds to a much finer machine accuracy of about $\epsilon_\mathrm{double} = 2^{-52} \approx 2\times10^{-16}$ in decimal.
 
 +++
 
