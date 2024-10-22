@@ -139,6 +139,34 @@ This represents the Fourier sine series expansion of $f(x)$.
 
 ## Fourier Series: Foundation and Interpretation
 
+### Definition and Motivation
+
+In many physical systems, including those encountered in astrophysics, functions describing phenomena are often periodic or can be approximated as such over certain intervals.
+The Fourier Series provides a powerful method to represent these periodic functions as infinite sums of simpler sinusoidal functions---sines and cosines.
+This enables us to break down complex periodic functions and simplifies analysis and computation.
+Since nany physical systems can be described by harmonic components, making Fourier Series naturally enables some physical interpretation.
+In astrophysics, signals received from observations can be decomposed to analyze their frequency content.
+
+A function $f(x)$ is said to be periodic with period $L$ if:
+\begin{align}
+    f(x + L) = f(x) \quad \text{for all } x.
+\end{align}
+Common examples include trigonometric functions like $\sin(x)$ and $\cos(x)$, which have a period of $2\pi$.
+
+Any reasonably well-behaved, periodic function $f(x)$ with period $L$ can be expressed as a Fourier Series:
+\begin{align}
+f(x) = \frac{A_0}{2} + \sum_{n=1}^\infty \left[ A_n \cos\left( \frac{2n\pi x}{L} \right) + B_n \sin\left( \frac{2n\pi x}{L} \right) \right].
+\end{align}
+$A_n$ and $B_n$ are the Fourier coefficients, which quantify the contribution of each harmonic component.
+
+The coefficients are calculated using the orthogonality properties of sine and cosine functions:
+\begin{align}
+A_n &= \frac{2}{L} \int_{-L/2}^{L/2} f(x) \cos\left( \frac{2n\pi x}{L} \right) dx, \quad n = 0,1,2,\dots \\
+B_n &= \frac{2}{L} \int_{-L/2}^{L/2} f(x) \sin\left( \frac{2n\pi x}{L} \right) dx, \quad n = 1,2,3,\dots
+\end{align}
+
++++
+
 ## Implementing Fourier Series in Python
 
 ## Transition to Fourier Transform
