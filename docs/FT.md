@@ -274,7 +274,7 @@ def f(x): # closure on L
     a = -L/2
     b =  L/2
     x = (x - a) % (b - a) + a
-    return x
+    return np.exp(-x*x*32)
 
 xi = np.linspace(-L/2, L/2, 10_000)
 A, B = Fourier_coefficients(f, xi, L, 100)
@@ -307,15 +307,20 @@ We can quantify how the approximation improves with $N$ by calculating the Mean 
 ```{code-cell} ipython3
 def mse(f, f_N):
     df = (f - f_N)
-    return np.mean(df * df)
+    return np.sqrt(np.mean(df * df))
 
 errs = []
 for fi_n in fi_N:
     errs.append(mse(fi, fi_n))
 
-plt.loglog(N, errs)
-plt.loglog(N, 1/np.array(N))
+plt.loglog(N, errs, label='Error')
+plt.loglog(N, 1/np.array(N), label=r'$N^{-1}$')
+plt.legend()
 ```
+
+Try adjust different functions and observe how the errors behave.
+
++++
 
 ## Transition to Fourier Transform
 
