@@ -212,12 +212,13 @@ plt.figure(figsize=(10, 6))
 
 # Original function
 fi = f(xi, L)
-plt.plot(x, fi, label='Square Wave', color='k')
+plt.plot(xi, fi, label='Square Wave', color='k')
 
 # Fourier series approximation
-for N in range(5,25,5):
-    fN = f_approx(x, L, N)
-    plt.plot(x, fN, label=f'Fourier Series Approximation (N={N})')
+N = list(range(5,100,5))
+for n in N[:5]:
+    fi_n = f_approx(xi, L, n)
+    plt.plot(xi, fi_n, label=f'Fourier Series Approximation (N={n})')
 
 plt.xlabel('x')
 plt.ylabel('f(x)')
@@ -275,26 +276,45 @@ def f(x): # closure on L
     x = (x - a) % (b - a) + a
     return x
 
-x = np.linspace(-L/2, L/2, 10_000)
-A, B = Fourier_coefficients(f, x, L, 25)
+xi = np.linspace(-L/2, L/2, 10_000)
+A, B = Fourier_coefficients(f, xi, L, 100)
 ```
 
 ```{code-cell} ipython3
 plt.figure(figsize=(10, 6))
 
 # Original function
-x = np.linspace(-L, L, 2_000)
-plt.plot(x, f(x), color='k', label='Original function')
+xi = np.linspace(-L, L, 20_000)
+fi = f(xi)
+plt.plot(xi, fi, color='k', label='Original function')
 
 # Fourier series approximation
-for N in range(5,25,5):
-    y = Fourier_series(A[:N], B[:N], L, x)
-    plt.plot(x, y, label=f'Fourier Series Approximation (N={N})')
+N    = list(range(5,100,5))
+fi_N = [Fourier_series(A[:n], B[:n], L, xi) for n in N]
+for n, fi_n in list(zip(N, fi_N))[:5]:
+    plt.plot(xi, fi_n, label=f'Fourier Series Approximation (N={n})')
 
 plt.xlabel('x')
 plt.ylabel('f(x)')
 plt.legend()
 plt.grid(True)
+```
+
+### Error Analysis
+
+We can quantify how the approximation improves with $N$ by calculating the Mean Squared Error (MSE) between the original function and its Fourier series approximation.
+
+```{code-cell} ipython3
+def mse(f, f_N):
+    df = (f - f_N)
+    return np.mean(df * df)
+
+errs = []
+for fi_n in fi_N:
+    errs.append(mse(fi, fi_n))
+
+plt.loglog(N, errs)
+plt.loglog(N, 1/np.array(N))
 ```
 
 ## Transition to Fourier Transform
