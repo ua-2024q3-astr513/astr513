@@ -322,6 +322,31 @@ Try adjust different functions and observe how the errors behave.
 
 +++
 
+## Complex Fourier Series
+
+It is often convenient to combine the sine and cosine in the Fourier series.
+Recalling Euler's formula is:
+\begin{align}
+e^{i\theta} = \cos(\theta) + i\sin(\theta).
+\end{align}
+Therefore,
+\begin{align}
+\cos(\theta) &= \frac{e^{i\theta} + e^{-i\theta}}{2}, \\
+\sin(\theta) &= \frac{e^{i\theta} - e^{-i\theta}}{2i}.
+\end{align}
+Substituting these into the definition of Fourier series, we obtain the Complex Fourier Series:
+\begin{align}
+f(x) = \sum_{n=-\infty}^{\infty} C_n e^{i n \omega_1 x},
+\end{align}
+where $\omega_1 = 2\pi/L$ is the fundamental angular frequency.
+
+The complex coefficients $C_n$ are given by:
+\begin{align}
+C_n = \frac{1}{L} \int_{-L/2}^{L/2} f(x) e^{-i n \omega_1 x} dx.
+\end{align}
+
++++
+
 ## Transition to Fourier Transform
 
 ## Sampling Theory and DFT
