@@ -527,6 +527,47 @@ plt.ylabel('Amplitude')
 plt.grid(True)
 ```
 
+### The DFT Matrix Representation
+
+The DFT can also be expressed in matrix form, which provides a different perspective on the transformation. The DFT of a sequence $f_n$ can be represented as a matrix multiplication:
+\begin{align}
+\mathbf{F} = \mathbf{W} \mathbf{f},
+\end{align}
+where
+$\mathbf{f}$ is the column vector of input samples $f_n$,
+$\mathbf{F}$ is the column vector of DFT coefficients $F_k$, and
+$\mathbf{W}$ is the DFT matrix with elements $W_{k n} = \exp(-2\pi i k n / N)$.
+This formulation highlights that the DFT is a linear transformation from the time domain to the frequency domain.
+
+Implementing the DFT using matrix multiplication in Python:
+
+```{code-cell} ipython3
+def DFT_matrix(N):
+    n = np.arange(N)
+    k = n.reshape((N, 1))
+    W = np.exp(-2j * np.pi * k * n / N)
+    return W
+
+# Compute DFT using matrix multiplication
+W = DFT_matrix(N)
+```
+
+```{code-cell} ipython3
+F_matrix = np.dot(W, f)
+
+# Plotting
+plt.figure(figsize=(10, 6))
+plt.stem(freq[:N // 2], np.abs(F_matrix[:N // 2])*(2/N), basefmt=" ")
+plt.xlabel('Frequency [Hz]')
+plt.ylabel('Amplitude')
+plt.grid(True)
+```
+
+This method produces the same result as the direct computation but is also computationally intensive with  $\mathcal{O}(N^2)$ complexity.
+The matrix representation is useful for theoretical analysis and understanding properties of the DFT, such as its eigenvalues and eigenvectors.
+
++++
+
 ## FFT and Computational Efficiency
 
 ## Fourier Transform and the Heat Equation
@@ -542,7 +583,3 @@ plt.grid(True)
 ## Astrophysical Applications and VLBI
 
 ## Conclusion and Further Resources
-
-```{code-cell} ipython3
-
-```
