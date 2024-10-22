@@ -165,6 +165,10 @@ A_n &= \frac{2}{L} \int_{-L/2}^{L/2} f(x) \cos\left( \frac{2n\pi x}{L} \right) d
 B_n &= \frac{2}{L} \int_{-L/2}^{L/2} f(x) \sin\left( \frac{2n\pi x}{L} \right) dx, \quad n = 1,2,3,\dots
 \end{align}
 
++++
+
+### Example
+
 Consider a square wave function defined over the interval $[-L/2, L/2)$:
 \begin{align}
   f(x) =
@@ -220,6 +224,13 @@ plt.ylabel('f(x)')
 plt.legend()
 plt.grid(True)
 ```
+
+Note that, near points of discontinuity in the function (e.g., the jumps in a square wave), the Fourier series overshoots the function's value.
+This overshoot does not diminish as more terms are added;
+instead, the maximum overshoot approaches a finite limit ($\sim 9\%$ of the jump's magnitude).
+This so called **Gibbs Phenomenon** states that, while the Fourier series converges pointwise almost everywhere, it does so non-uniformly at discontinuities.
+
++++
 
 ## Implementing Fourier Series in Python
 
