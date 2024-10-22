@@ -91,12 +91,8 @@ The general solution to the spatial equation is:
 \begin{align}
 X(x) = A \sin(kx) + B \cos(kx)
 \end{align}
-where
-\begin{align}
-k^2 = \frac{\lambda}{\alpha}.
-\end{align}
-
-+++
+where $k^2 = \lambda/\alpha$.
+Note that this form of solution is originated from the second-order derivative.
 
 Assuming Dirichlet boundary conditions for a rod of length $L$
 \begin{align}
