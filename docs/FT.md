@@ -13,3 +13,29 @@ kernelspec:
 ---
 
 # Fourier Transform and Spectral Analyses
+
+## Introduction
+
+## Fourier Series: Foundation and Interpretation
+
+## Implementing Fourier Series in Python
+
+## Transition to Fourier Transform
+
+## Sampling Theory and DFT
+
+## FFT and Computational Efficiency
+
+## Fourier Transform and the Heat Equation
+
+## Spectral Derivatives
+
+## Convolution and Parseval's Theorem
+
+## Denoising and Signal Processing Applications
+
+## Time-Frequency Analysis
+
+## Astrophysical Applications and VLBI
+
+## Conclusion and Further Resources
