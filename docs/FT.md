@@ -234,6 +234,69 @@ This so called **Gibbs Phenomenon** states that, while the Fourier series conver
 
 ## Implementing Fourier Series in Python
 
+We will implement the Fourier Series representation of functions using Python.
+We will compute the Fourier coefficients numerically and reconstruct the original function from these coefficients.
+
+```{code-cell} ipython3
+def An(f, x, L, n):
+    I = f(x) * np.cos(2 * n * np.pi * x / L)
+    return (2 / L) * np.trapezoid(I, x)
+
+def Bn(f, x, L, n):
+    I = f(x) * np.sin(2 * n * np.pi * x / L)
+    return (2 / L) * np.trapezoid(I, x)
+```
+
+```{code-cell} ipython3
+def Fourier_coefficients(f, x, L, N):
+    A = [An(f, x, L, n) for n in range(0, N)]
+    B = [Bn(f, x, L, n) for n in range(0, N)]
+    return A, B
+```
+
+```{code-cell} ipython3
+def Fourier_series(A, B, L, x):
+    fsum = (A[0]/2) * np.ones_like(x)
+    for n, An in enumerate(A[1:],1):
+        fsum += An * np.cos(2 * n * np.pi * x / L)
+    for n, Bn in enumerate(B[1:],1):
+        fsum += Bn * np.sin(2 * n * np.pi * x / L)
+    return fsum    
+```
+
+Now, we can obtain Fourier series numerically using arbitrary functions.
+
+```{code-cell} ipython3
+L = 2 * np.pi
+
+def f(x): # closure on L
+    a = -L/2
+    b =  L/2
+    x = (x - a) % (b - a) + a
+    return x
+
+x = np.linspace(-L/2, L/2, 10_000)
+A, B = Fourier_coefficients(f, x, L, 25)
+```
+
+```{code-cell} ipython3
+plt.figure(figsize=(10, 6))
+
+# Original function
+x = np.linspace(-L, L, 2_000)
+plt.plot(x, f(x), color='k', label='Original function')
+
+# Fourier series approximation
+for N in range(5,25,5):
+    y = Fourier_series(A[:N], B[:N], L, x)
+    plt.plot(x, y, label=f'Fourier Series Approximation (N={N})')
+
+plt.xlabel('x')
+plt.ylabel('f(x)')
+plt.legend()
+plt.grid(True)
+```
+
 ## Transition to Fourier Transform
 
 ## Sampling Theory and DFT
@@ -253,11 +316,3 @@ This so called **Gibbs Phenomenon** states that, while the Fourier series conver
 ## Astrophysical Applications and VLBI
 
 ## Conclusion and Further Resources
-
-```{code-cell} ipython3
-
-```
-
-```{code-cell} ipython3
-
-```
