@@ -78,6 +78,33 @@ This yields two ordinary differential equations (ODEs):
 \frac{d^2 X(x)}{dx^2} + \frac{\lambda}{\alpha} X(x) = 0
 \end{align}
 
+The general solution to the spatial equation is:
+\begin{align}
+X(x) = A \sin(kx) + B \cos(kx)
+\end{align}
+where
+\begin{align}
+k^2 = \frac{\lambda}{\alpha}.
+\end{align}
+
+Assuming Dirichlet boundary conditions for a rod of length $L$
+\begin{align}
+u(0,t) = u(L,t) = 0,
+\end{align}
+At $x = 0$, $X(0) = 0 \implies B = 0$.
+At $x = L$, all non-trivial solutions ($A \neq 0$) require:
+\begin{align}
+\sin(kL) = 0 \implies kL = n\pi, \quad n = 1,2,3,\dots
+\end{align}
+Thus, the "eigenvalues" are
+\begin{align}
+k_n = \frac{n\pi}{L}
+\end{align}
+and the eigenfunctions are 
+\begin{align}
+X_n(x) = \sin\left( \frac{n\pi x}{L} \right).
+\end{align}
+
 +++
 
 ## Fourier Series: Foundation and Interpretation
