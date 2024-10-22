@@ -416,6 +416,41 @@ Under ideal conditions, a band-limited signal can be reconstructed exactly from 
 
 +++
 
+### Aliasing Errors
+
+Aliasing occurs when a continuous signal is sampled at a rate insufficient to capture its changes accurately, causing different frequency components to become indistinguishable in the sampled signal.
+Frequencies higher than the Nyquist frequency are "folded" back into lowe frequencies, making them appeare as low frequencies.
+
+Let's illustrate aliasing with an example:
+
+```{code-cell} ipython3
+# Parameters
+f_signal = 3  # Frequency of the signal in Hz
+f_conf   = 1  # Frequency of the confused signal in Hz
+f_s      = 4  # Low sampling frequency in Hz (below Nyquist rate)
+t_end    = 2   # Duration in seconds
+
+# Time arrays
+t_cont = np.linspace(0, t_end, 10_000)
+t_s    = np.arange(0, t_end, 1 / f_s)
+
+# Signal
+x_cont =  np.sin(2 * np.pi * f_signal * t_cont)
+x_conf = -np.sin(2 * np.pi * f_conf   * t_cont)
+x_s    =  np.sin(2 * np.pi * f_signal * t_s)
+
+# Plotting
+plt.figure(figsize=(12, 6))
+plt.plot(t_cont, x_cont, label='Original Signal', color='k')
+plt.plot(t_cont, x_conf, label='Confused Signal', color='b')
+plt.scatter(t_s, x_s, label=f'Sampled at {f_s} Hz', color='red')
+
+plt.xlabel('Time [s]')
+plt.ylabel('Amplitude')
+plt.legend()
+plt.grid(True)
+```
+
 ## FFT and Computational Efficiency
 
 ## Fourier Transform and the Heat Equation
