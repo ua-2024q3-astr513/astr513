@@ -346,6 +346,7 @@ C_n = \frac{1}{L} \int_{-L/2}^{L/2} f(x) e^{-i n \omega_1 x} dx.
 \end{align}
 
 What are the relationship between the complex Fourier coefficients $C_n$ and the Fourier series coefficients $A_n$ and $B_n$?
+What is a special property of $C_n$ is the function $f(x)$ if purely real or purely imaginary?
 
 +++
 
@@ -381,12 +382,39 @@ f(x) = \frac{1}{2\pi} \int_{-\infty}^{\infty} F(\omega) e^{i \omega x} d\omega.
 \end{align}
 These equations allow us to transform a time-domain function $f(x)$ into its frequency-domain representation $F(\omega)$, and vice versa.
 
+What is a special property of $F(\omega)$ if the function $f(x)$ is purely real or purely imaginary?
+
 Because computers have finite memory, we almost never use the true Fourier transform in computational science.
 Nevertheless, it is extremely useful in proofs, study numerical properties of different algorithms, and derive corrections to algorithms.
 
 +++
 
 ## Sampling Theory and DFT
+
+This section focuses on the implications of sampling, introduces the Nyquist Sampling Theorem, explores the phenomenon of aliasing, and explains the role of the Discrete Fourier Transform (DFT) in analyzing discrete signals.
+We will switch our notation from $f(x)$ to $f(t)$.
+
+### Sampling Continuous Signals
+
+Continuous vs. Discrete Signals:
+* Continuous Signal: A function $f(t)$ defined for all real values of $t$.
+* Discrete Signal: A sequence of values $f_n = f(n T_\text{s})$, where $T_\text{s}$ is the sampling interval/time and $n$ is an integer index.
+We call $f_s = 1/\Delta t$ and $\omega_\text{s} = 2\pi f_\text{s}$ the sampling frequency and sampling angular frequency, respectively.
+
+The Nyquist Sampling Theorem states:
+
+A band-limited continuous-time signal with maximum frequency $f_\max$ can be perfectly reconstructed from its samples if the sampling frequency $f_\text{s}$ is greater than twice the maximum frequency of the signal:
+\begin{align}
+f_\text{s} > 2 f_\max.
+\end{align}
+The minimum sampling rate $f_{\text{Nyquist}} = 2 f_\max$ is called the Nyquist Rate.
+And half the sampling frequency $f_{\text{Nyquist}} = f_\text{s}/2 is called the 
+Nyquist Frequency.
+
+Sampling above the Nyquist rate ensures that high-frequency components do not overlap and cause distortion, preventing **aliasing**.
+Under ideal conditions, a band-limited signal can be reconstructed exactly from its samples, resulting perfect reconstruction.
+
++++
 
 ## FFT and Computational Efficiency
 
@@ -403,3 +431,7 @@ Nevertheless, it is extremely useful in proofs, study numerical properties of di
 ## Astrophysical Applications and VLBI
 
 ## Conclusion and Further Resources
+
+```{code-cell} ipython3
+
+```
