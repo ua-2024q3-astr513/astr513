@@ -165,7 +165,61 @@ A_n &= \frac{2}{L} \int_{-L/2}^{L/2} f(x) \cos\left( \frac{2n\pi x}{L} \right) d
 B_n &= \frac{2}{L} \int_{-L/2}^{L/2} f(x) \sin\left( \frac{2n\pi x}{L} \right) dx, \quad n = 1,2,3,\dots
 \end{align}
 
-+++
+Consider a square wave function defined over the interval $[-L/2, L/2)$:
+\begin{align}
+  f(x) =
+  \begin{cases}
+     1, &  0   < x < L/2, \\
+    -1, & -L/2 < x < 0.
+  \end{cases}
+\end{align}
+The Fourier coefficients for this function can be computed using the integrals above:
+\begin{align}
+  B_n = \frac{4}{n\pi}
+  \begin{cases}
+    0, & \text{even } n, \\
+    1, & \text{odd }  n.
+  \end{cases}
+\end{align}
+
+```{code-cell} ipython3
+:jp-MarkdownHeadingCollapsed: true
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+def f(x, L):
+    return np.where((x % L) < L/2, 1, -1)
+
+def f_approx(x, L, N):
+    fsum = np.zeros_like(x)
+    for n in range(1, N + 1, 2):  # Sum over odd n
+        B = 4 / (n * np.pi)
+        fsum += B * np.sin(2 * n * np.pi * x / L)
+    return fsum
+```
+
+```{code-cell} ipython3
+L  = 2 * np.pi  # Period is 2L
+xi = np.linspace(-L/2, L/2, 1000)
+
+# Plotting
+plt.figure(figsize=(10, 6))
+
+# Original function
+fi = f(xi, L)
+plt.plot(x, fi, label='Square Wave', color='k')
+
+# Fourier series approximation
+for N in range(5,25,5):
+    fN = f_approx(x, L, N)
+    plt.plot(x, fN, label=f'Fourier Series Approximation (N={N})')
+
+plt.xlabel('x')
+plt.ylabel('f(x)')
+plt.legend()
+plt.grid(True)
+```
 
 ## Implementing Fourier Series in Python
 
