@@ -48,6 +48,10 @@ The one-dimensional heat equation is:
 where $u(x,t)$ is the temperature distribution along a rod at position $x$ and time $t$, and
 $\alpha$ is the thermal diffusivity constant of the material.
 
++++
+
+### Solution Using Separation of Variables
+
 Here, we use the method of separation of variables, which is taught in undergraduate level Electricity and Magnetism, to motivate the Fourier series.
 Assuming the solution can be written as a product of functions, each depending only on a single variable:
 each depending only on a single variable:
@@ -63,6 +67,8 @@ Dividing both sides by $X(x) T(t)$, we obtain
 \frac{1}{T(t)} \frac{dT(t)}{dt} = \alpha \frac{1}{X(x)} \frac{d^2 X(x)}{dx^2}.
 \end{align}
 
++++
+
 Since the left side depends only on $t$ and the right side only on $x$, both sides must equal a constant $-\lambda$:
 \begin{align}
 \frac{1}{T(t)} \frac{dT(t)}{dt} = -\lambda = \alpha \frac{1}{X(x)} \frac{d^2 X(x)}{dx^2}
@@ -73,10 +79,13 @@ This yields two ordinary differential equations (ODEs):
 \begin{align}
 \frac{dT(t)}{dt} + \lambda T(t) = 0
 \end{align}
+
 2. Spatial Equation:
 \begin{align}
 \frac{d^2 X(x)}{dx^2} + \frac{\lambda}{\alpha} X(x) = 0
 \end{align}
+
++++
 
 The general solution to the spatial equation is:
 \begin{align}
@@ -86,6 +95,8 @@ where
 \begin{align}
 k^2 = \frac{\lambda}{\alpha}.
 \end{align}
+
++++
 
 Assuming Dirichlet boundary conditions for a rod of length $L$
 \begin{align}
@@ -104,6 +115,29 @@ and the eigenfunctions are
 \begin{align}
 X_n(x) = \sin\left( \frac{n\pi x}{L} \right).
 \end{align}
+
++++
+
+With $\lambda_n = \alpha k_n^2$, the temporal ODE becomes
+\begin{align}
+\frac{dT_n(t)}{dt} + \alpha \left( \frac{n\pi}{L} \right)^2 T_n(t) = 0.
+\end{align}
+with solution
+\begin{align}
+T_n(t) = C_n \exp\left[ -\alpha \left( \frac{n\pi}{L} \right)^2 t \right].
+\end{align}
+
++++
+
+Combining spatial and temporal parts and realizing the heat equation is linear, the general solution is the sum of all solutions:
+\begin{align}
+u(x,t) = \sum_{n=1}^\infty C_n \sin\left( \frac{n\pi x}{L} \right) \exp\left[ -\alpha \left( \frac{n\pi}{L} \right)^2 t \right]
+\end{align}
+and the coefficients $C_n$ are determined from the initial condition $u(x,0) = f(x)$:
+\begin{align}
+C_n = \frac{2}{L} \int_0^L f(x) \sin\left( \frac{n\pi x}{L} \right) dx.
+\end{align}
+This represents the Fourier sine series expansion of $f(x)$.
 
 +++
 
@@ -130,6 +164,10 @@ X_n(x) = \sin\left( \frac{n\pi x}{L} \right).
 ## Astrophysical Applications and VLBI
 
 ## Conclusion and Further Resources
+
+```{code-cell} ipython3
+
+```
 
 ```{code-cell} ipython3
 
