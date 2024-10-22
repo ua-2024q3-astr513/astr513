@@ -568,6 +568,29 @@ The matrix representation is useful for theoretical analysis and understanding p
 
 +++
 
+### Aliasing in the DFT
+
+The periodicity inherent in the DFT can lead to aliasing when analyzing signals that contain frequency components higher than the Nyquist frequency.
+Since the DFT assumes the input signal is one period of a periodic signal, any frequencies above $f_\text{s}/2$ will be indistinguishable from lower frequencies due to the wrapping around in the frequency domain.
+
+In practical applications, the maximum frequency that can be accurately represented without aliasing is  $f_\max = f_\text{s}/2$.
+If the signal contains components beyond this limit, aliasing will occur, and the DFT will incorrectly attribute these high frequencies to lower ones.
+Therefore, it is essential to ensure that the sampling rate is sufficiently high or that the signal is filtered to remove high-frequency components before sampling.
+
++++
+
+### Preventing Aliasing
+
+To prevent aliasing, an anti-aliasing filter is applied to the continuous signal before sampling.
+This filter is typically a low-pass filter that attenuates frequency components above the Nyquist frequency, ensuring that the sampled signal does not contain frequencies that could cause aliasing.
+In hardware, analog filters are used for this purpose, conditioning the signal prior to digitization.
+
+Another approach to preventing aliasing is to sample at a rate significantly higher than the Nyquist rate, a practice known as oversampling.
+Oversampling provides a buffer against aliasing by increasing the Nyquist frequency.
+Additionally, adaptive sampling techniques can adjust the sampling rate based on the signal's frequency content, sampling more rapidly when high-frequency components are present.
+
++++
+
 ## FFT and Computational Efficiency
 
 ## Fourier Transform and the Heat Equation
