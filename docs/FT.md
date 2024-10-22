@@ -345,9 +345,46 @@ The complex coefficients $C_n$ are given by:
 C_n = \frac{1}{L} \int_{-L/2}^{L/2} f(x) e^{-i n \omega_1 x} dx.
 \end{align}
 
+What are the relationship between the complex Fourier coefficients $C_n$ and the Fourier series coefficients $A_n$ and $B_n$?
+
 +++
 
 ## Transition to Fourier Transform
+
+In the previous sections, we explored how periodic functions can be represented as sums of sines and cosines using Fourier Series.
+However, many functions of interest in physics and engineering are not periodic or are defined over an infinite domain.
+To analyze such functions, we need to extend the concept of Fourier Series to the Fourier Transform.
+
+### From Discrete to Continuous Spectrum
+
+Recalling for a function $f(x)$ with period $L$, the (Complex) Fourier Series has discrete frequencies $\omega_n = 2n\pi/L \equiv n \omega_1$.
+
+When the period $L$ becomes infinitely large ($L \rightarrow \infty$), the spacing between the frequencies in the Fourier Series becomes infinitesimally small, turning the sum into an integral.
+
+\begin{align}
+\sum_{n=\infty}^{\infty} \rightarrow
+\int_{-\infty}^{\infty} \frac{d\omega}{\omega_1}
+\end{align}
+
+The discrete set of frequencies $\omega_n$ becomes a continuous variable $\omega$.
+This limit leads us to the Fourier Transform, which represents non-periodic functions defined over the entire real line.
+
+### Complex Fourier Transform Definitions
+
+The Fourier Transform $F(\omega)$ of a function $f(x)$ is defined as:
+\begin{align}
+F(\omega) = \int_{-\infty}^{\infty} f(x) e^{-i \omega x} dx.
+\end{align}
+The Inverse Fourier Transform is:
+\begin{align}
+f(x) = \frac{1}{2\pi} \int_{-\infty}^{\infty} F(\omega) e^{i \omega x} d\omega.
+\end{align}
+These equations allow us to transform a time-domain function $f(x)$ into its frequency-domain representation $F(\omega)$, and vice versa.
+
+Because computers have finite memory, we almost never use the true Fourier transform in computational science.
+Nevertheless, it is extremely useful in proofs, study numerical properties of different algorithms, and derive corrections to algorithms.
+
++++
 
 ## Sampling Theory and DFT
 
