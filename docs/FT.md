@@ -451,6 +451,82 @@ plt.legend()
 plt.grid(True)
 ```
 
+### Discrete Fourier Transform (DFT)
+
+Fourier transforming discrete samples $f_n$ of function $f(t)$ at $t = n T_\text{s}$ results the Discrete Fourier Transform (DFT).
+It transforms a sequence of $N$ (complex) numbers $f_n$ into another sequence of  $N$ complex numbers $F_k$:
+\begin{align}
+F_k = \sum_{n=0}^{N-1} f_n e^{-i 2\pi k n / N}, \quad k = 0, 1, …, N-1.
+\end{align}
+The inverse DFT is given by:
+\begin{align}
+f_n = \frac{1}{N} \sum_{k=0}^{N-1} F_k e^{i 2\pi k n / N}, \quad n = 0, 1, \dots, N-1.
+\end{align}
+
+The Discrete Fourier Transform possesses several key properties that make it an essential tool in signal processing:
+
+DFT is periodic.
+Both the input sequence $f_n$ and the output sequence $F_k$ are periodic with period $N$.
+This means that $f_{n+N} = f_n$ and $F_{k+N} = F_k$ for all integers $n$ and $k$.
+The periodicity arises because the DFT assumes that the finite-length sequence represents one period of an infinitely periodic signal.
+As a result, the DFT effectively analyzes the frequency content within this repeating structure.
+
+Another important property is the orthogonality of the basis functions used in the DFT.
+The complex exponentials $\exp(-i 2\pi k n / N)$ serve as the basis functions, and they are orthogonal over the discrete set of points $n = 0, 1, \dots, N-1$.
+Orthogonality implies that the inner product (sum over $n$) of different basis functions is zero:
+\begin{align}
+\sum_{n=0}^{N-1} e^{-i 2\pi k n / N} e^{i 2\pi k' n / N} = 0, \quad \text{for } k \ne k'.
+\end{align}
+This property ensures that each frequency component represented by $F_k$ is independent of the others, allowing for the separation and analysis of individual frequency components within the signal.
+
+Furthermore, the DFT provides an exact transformation of the discrete signal into the frequency domain.
+Unlike numerical approximations of the continuous Fourier Transform, the DFT computes the precise frequency components of a finite-length discrete signal, given the assumption of periodicity.
+This means that no information is lost or approximated during the transformation, and the original signal can be perfectly reconstructed from its DFT coefficients using the inverse DFT.
+
++++
+
+### Implementing the DFT in Python
+
+Although there are many Fourier transform packages (notiable `numpy.fft`), implementing the DFT directly helps to understand its underlying mechanics.
+
+A direct implementation of the DFT in Python involves computing the summations in the DFT definition for each value of $k$:
+
+```{code-cell} ipython3
+def DFT(f):
+    N = len(f)
+    F = np.zeros(N, dtype=complex)
+    for k in range(N):
+        for n in range(N):
+            F[k] += f[n] * np.exp(-2j * np.pi * k * n / N)
+    return F
+```
+
+This implementation has a computational complexity of $\mathcal{O}(N^2)$, making it inefficient for large $N$.
+However, it is valuable for educational purposes to see how each frequency component $F_k$ is calculated from the input sequence $f_n$.
+
+Consider a simple sine wave signal, where the DFT accurately identifies the frequency component at 5 Hz, as expected.
+The magnitude spectrum shows a peak at this frequency, demonstrating that the DFT can extract the frequency information from the sampled signal.
+
+```{code-cell} ipython3
+f_signal = 5 # Frequency in Hz
+f_s = 50     # Sampling frequency in Hz
+N = 100      # Number of samples
+
+t = np.arange(N) / f_s
+f = np.sin(2 * np.pi * f_signal * t)
+
+# Compute DFT
+F = DFT(f)
+freq = np.fft.fftfreq(N, d=1/f_s)
+
+# Plotting
+plt.figure(figsize=(10, 6))
+plt.stem(freq[:N // 2], np.abs(F[:N // 2])*(2/N), basefmt=" ")
+plt.xlabel('Frequency [Hz]')
+plt.ylabel('Amplitude')
+plt.grid(True)
+```
+
 ## FFT and Computational Efficiency
 
 ## Fourier Transform and the Heat Equation
