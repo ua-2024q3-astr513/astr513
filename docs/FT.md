@@ -681,16 +681,88 @@ plt.legend()
 plt.grid(True)
 ```
 
-## Fourier Transform and the Heat Equation
+## Convolution, Correlation, and Parseval's Theorem
 
-## Spectral Derivatives
+**Convolution** is a mathematical operation that describes how the shape of one function is modified by another function.
+Given two functions $f(t)$ and $g(t)$, their convolution $h(t)$ is defined as:
+\begin{align}
+h(t) = (f * g)(t) = \int_{-\infty}^{\infty} f(\tau) g(t - \tau) \, d\tau.
+\end{align}
+This integral computes the amount of overlap between $f$ and a time-reversed, shifted version of $g$ as a function of the shift $t$.
 
-## Convolution and Parseval's Theorem
+Convolution is often used to model systems where an input signal $f(t)$ passes through a linear time-invariant (LTI) system characterized by an impulse response $g(t)$. The output $h(t)$ represents the system's response to the input signal.
+In astrophysics, convolution can describe processes such as the blurring of images by a telescope's point spread function or the response of a detector to incoming signals.
 
-## Denoising and Signal Processing Applications
++++
 
-## Time-Frequency Analysis
+**Correlation** measures the similarity between two signals as a function of the displacement of one relative to the other.
+The cross-correlation $C_{fg}(t)$ of two functions $f(t)$ and $g(t)$ is defined as:
+\begin{align}
+C_{fg}(t) = (f \star g)(t) = \int_{-\infty}^{\infty} f(\tau) g^*(\tau + t) \, d\tau,
+\end{align}
+where $g^*(t)$ denotes the complex conjugate of $g(t)$.
+When $f = g$, the correlation becomes the autocorrelation, which measures the self-similarity of a signal over time.
 
-## Astrophysical Applications and VLBI
+Correlation is widely used in signal processing to detect known patterns within signals, measure delays between signals, and analyze similarities.
+In astrophysics, correlation techniques help in tasks such as aligning signals from different telescopes, detecting periodicities in time-series data, and searching for patterns in noisy observations.
 
-## Conclusion and Further Resources
++++
+
+### The Convolution and Correlation Theorem
+
+The Convolution Theorem establishes a fundamental relationship between convolution in the time domain and multiplication in the frequency domain.
+Specifically, it states:
+\begin{align}
+\mathcal{F}\{ f(t) * g(t) \} = F(\omega) \cdot G(\omega),
+\end{align}
+where $\mathcal{F}$ denotes the Fourier Transform, $F(\omega)$ and $G(\omega)$ are the Fourier Transforms of  $f(t)$ and $g(t)$, respectively.
+
+Similar, the Correlation Theorem relates the correlation of two signals in the time domain to the multiplication of their Fourier Transforms in the frequency domain, with one of the transforms being complex conjugated:
+\begin{align}
+\mathcal{F}\{ f(t) \star g(t) \} = F^*(\omega) \cdot G(\omega),
+\end{align}
+where $F^*(\omega)$ denotes the complex conjugate of $F(\omega)$.
+
+While convolution corresponds to multiplication of Fourier Transforms, correlation involves the multiplication of one Fourier Transform with the complex conjugate of the other. This difference reflects the time reversal in convolution and the direct comparison in correlation.
+
+These theorems allows us to compute the convolution and correlation of two signals efficiently by transforming them into the frequency domain, multiplying one Fourier Transform by the complex conjugate of the other, and then performing an inverse Fourier Transform to return to the time domain.
+
+```{code-cell} ipython3
+# Define the rectangular pulse
+f = np.zeros(50)
+f[20:30] = 1  # Pulse from n=20 to n=29
+
+# Define the smoothing kernel
+g = np.ones(5) / 5  # Moving average over 5 points
+
+# Compute the convolution
+h_conv = np.convolve(f, g, mode='same')
+
+# Plot the signals
+fig, axes = plt.subplots(3, 1, figsize=(12, 8))
+
+axes[0].stem(f, basefmt=" ")
+axes[0].set_title('Input Signal f[n]')
+axes[0].set_xlabel('n')
+axes[0].set_ylabel('Amplitude')
+
+axes[1].stem(g, basefmt=" ")
+axes[1].set_title('Kernel g[n]')
+axes[1].set_xlabel('n')
+axes[1].set_ylabel('Amplitude')
+
+axes[2].stem(h_conv, basefmt=" ")
+axes[2].set_title('Convolved Signal h_conv[n]')
+axes[2].set_xlabel('n')
+axes[2].set_ylabel('Amplitude')
+
+plt.tight_layout()
+```
+
+## Other Interesting Toipics:
+
+* Fourier Transform and the Heat Equation
+* Spectral Derivatives
+* Denoising and Signal Processing Applications
+* Time-Frequency Analysis
+* Astrophysical Applications and VLBI
