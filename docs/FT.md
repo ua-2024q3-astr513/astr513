@@ -767,6 +767,48 @@ axes[3].set_ylabel('Amplitude')
 plt.tight_layout()
 ```
 
+```{code-cell} ipython3
+# Compute the Fourier Transforms
+F = np.fft.fft(f)
+G = np.fft.fft(g, n=len(f))  # Ensure G has the same length as F
+
+# Multiply in the frequency domain
+H_freq_conv = F * G
+
+# Inverse FFT to get back to time domain
+h_conv_ifft = np.fft.ifft(H_freq_conv)
+
+# Plot the results
+plt.figure(figsize=(10, 6))
+plt.stem(h_conv, linefmt='C0-', markerfmt='C0o', label='Time Domain Convolution')
+plt.stem(h_conv_ifft.real, linefmt='C1--', markerfmt='C1x', label='Frequency Domain Multiplication')
+plt.xlabel('n')
+plt.ylabel('Amplitude')
+plt.legend()
+plt.grid(True)
+```
+
+```{code-cell} ipython3
+# Compute the Fourier Transforms
+F = np.fft.fft(f)
+G = np.fft.fft(g, n=len(f))
+
+# Multiply in the frequency domain (complex conjugate of F)
+H_freq_corr = F * G.conj()
+
+# Inverse FFT to get back to time domain
+h_corr_ifft = np.fft.ifft(H_freq_corr)
+
+# Plot the results
+plt.figure(figsize=(10, 6))
+plt.stem(h_corr, linefmt='C0-', markerfmt='C0o', label='Time Domain Correlation')
+plt.stem(np.fft.fftshift(h_corr_ifft.real), linefmt='C1--', markerfmt='C1x', label='Frequency Domain Multiplication')
+plt.xlabel('n')
+plt.ylabel('Amplitude')
+plt.legend()
+plt.grid(True)
+```
+
 ## Other Interesting Toipics:
 
 * Fourier Transform and the Heat Equation
