@@ -809,6 +809,47 @@ plt.legend()
 plt.grid(True)
 ```
 
+### Parseval's Theorem
+
+Parseval's Theorem relates the total energy of a signal in the time domain to the total energy in the frequency domain.
+For continuous functions, the theorem states:
+\begin{align}
+\int_{-\infty}^{\infty} |f(t)|^2 \, dt = \frac{1}{2\pi} \int_{-\infty}^{\infty} |F(\omega)|^2 \, d\omega,
+\end{align}
+where $F(\omega)$ is the Fourier Transform of $f(t)$.
+
+For discrete sequences, Parseval's Theorem is expressed as:
+\begin{align}
+\sum_{n=0}^{N-1} |f_n|^2 = \frac{1}{N} \sum_{k=0}^{N-1} |F_k|^2,
+\end{align}
+where $F_k$ is the Discrete Fourier Transform of $f_n$.
+
++++
+
+Parseval's Theorem confirms that the energy (or power) of a signal is preserved between the time domain and the frequency domain.
+It ensures that no energy is lost or gained during the Fourier Transform process, which is essential for accurate signal analysis and processing.
+
+It allows us to calculate the total energy of a signal using either its time-domain representation or its frequency-domain representation.
+This is particularly useful when the signal's energy is more easily computed in one domain due to the form of $f(t)$ or $F(\omega)$.
+In addition, when analyzing the similarity between two signals using correlation, Parseval's Theorem helps in understanding how the energy distribution affects the correlation outcome.
+
+Let's demonstrate Parseval’s Theorem numerically using Python:
+
+```{code-cell} ipython3
+# Compute the energy in the time domain
+energy_time = np.sum(np.abs(f) ** 2)
+
+# Compute the Fourier Transform
+F = np.fft.fft(f)
+
+# Compute the energy in the frequency domain
+energy_freq = (1 / len(f)) * np.sum(np.abs(F) ** 2)
+
+# Display the results
+print(f"Energy in time domain: {energy_time}")
+print(f"Energy in frequency domain: {energy_freq}")
+```
+
 ## Other Interesting Toipics:
 
 * Fourier Transform and the Heat Equation
