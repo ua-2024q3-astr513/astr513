@@ -733,13 +733,16 @@ f = np.zeros(50)
 f[20:30] = 1  # Pulse from n=20 to n=29
 
 # Define the smoothing kernel
-g = np.ones(5) / 5  # Moving average over 5 points
+g = np.linspace(0, 1, num=10)  # Moving average over 5 points
 
 # Compute the convolution
 h_conv = np.convolve(f, g, mode='same')
 
+# Compute the correlation
+h_corr = np.correlate(f, g, mode='same')
+
 # Plot the signals
-fig, axes = plt.subplots(3, 1, figsize=(12, 8))
+fig, axes = plt.subplots(4, 1, figsize=(12, 8))
 
 axes[0].stem(f, basefmt=" ")
 axes[0].set_title('Input Signal f[n]')
@@ -755,6 +758,11 @@ axes[2].stem(h_conv, basefmt=" ")
 axes[2].set_title('Convolved Signal h_conv[n]')
 axes[2].set_xlabel('n')
 axes[2].set_ylabel('Amplitude')
+
+axes[3].stem(h_corr, basefmt=" ")
+axes[3].set_title('Correlated Signal h_corr[n]')
+axes[3].set_xlabel('n')
+axes[3].set_ylabel('Amplitude')
 
 plt.tight_layout()
 ```
