@@ -90,6 +90,41 @@ print("Derivative of f(x):")
 sp.pprint(f_prime_simplified)
 ```
 
+### Advantages of Symbolic Differentiation
+
+Symbolic differentiation provides exact results by producing precise analytical expressions without approximation errors.
+This exactness is crucial in theoretical work where precise solutions are necessary.
+Additionally, symbolic derivatives are valid over continuous ranges of variables, offering general applicability in analyses.
+They facilitate further analytical processes by simplifying tasks such as solving differential equations and optimizing functions, as the exact expressions can be manipulated algebraically to gain deeper insights into the behavior of the system under study.
+
++++
+
+### Limitations
+
+Symbolic differentiation has limitations that can impact its practicality.
+One challenge is the potential for expression growth of the derivative expressions as the original function's complexity increases.
+This growth can make the expressions difficult to interpret and computationally intensive to process.
+The computational complexity associated with differentiating complex functions can require substantial resources and time, especially for high-dimensional systems or functions involving intricate compositions.
+Furthermore, symbolic differentiation is not suitable for functions without explicit symbolic forms, such as those defined by experimental data, simulations, or complex numerical algorithms.
+In such cases, alternative methods like numerical differentiation or automatic differentiation are more appropriate.
+
++++
+
+### Software Tools
+
+Several software tools facilitate symbolic differentiation by automating the application of calculus rules to mathematical expressions:
+
+* [`SymPy`](https://www.sympy.org/):
+  An open-source Python library that provides capabilities for symbolic differentiation, integration, and equation solving within the Python ecosystem.
+* [`Mathematica`](https://www.wolfram.com/mathematica/):
+  A computational software developed by Wolfram Research, offering extensive symbolic computation features used widely in academia and industry.
+* [`Maple`](https://www.maplesoft.com/):
+  A software package designed for symbolic and numeric computing, providing powerful tools for mathematical analysis.
+* [`Maxima`](https://maxima.sourceforge.io/):
+  An open-source computer algebra system specializing in symbolic manipulation, accessible for users seeking free alternatives.
+
++++
+
 ## Numerical Differentiation
 
 ### Finite Difference Methods
