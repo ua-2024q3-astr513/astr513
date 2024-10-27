@@ -45,7 +45,50 @@ This lecture will introduce these techniques, providing a comprehensive overview
 
 ## Symbolic Differentiation
 
-+++
+Symbolic differentiation computes the derivative of a function expressed symbolically by applying calculus rules directly to its mathematical expression.
+Unlike numerical methods that approximate derivatives at specific points, symbolic differentiation yields exact analytical expressions, making it valuable for theoretical analyses and precise computations.
+
+## Algorithmic Approach
+
+The general algorithm for symbolic differentiation involves:
+
+1. Parsing the Expression: Represent the function as an expression tree, where each node corresponds to an operation (e.g., addition, multiplication) or operand (e.g., variable, constant).
+2. Applying Differentiation Rules: Recursively apply differentiation rules to each node in the expression tree, including the chain rule.
+3. Simplifying the Result: After applying the differentiation rules, simplify the resulting expression to make it more readable and computationally efficient.
+
+Consider the function $f(x) = x^2 \sin(x) + e^{2x}$.
+To compute $f'(x)$, a symbolic differentiation system would:
+1. Differentiate $x^2 \sin(x)$ using the product rule:
+   \begin{align}
+   \frac{d}{dx}[x^2 \sin(x)] = x^2 \cos(x) + 2 x \sin(x)
+   \end{align}
+2. Differentiate $e^{2x}$ using the chain rule:
+   \begin{align}
+   \frac{d}{dx}[e^{2x}] = 2 e^{2x}
+   \end{align}
+3. Combine the results:
+   \begin{align}
+   f'(x) = x^2 \cos(x) + 2 x \sin(x) + 2 e^{2x}
+   \end{align}
+
+## Symbolic Computation with SymPy
+
+`SymPy` is an open-source Python library for symbolic mathematics.
+It allows for symbolic differentiation and manipulation of mathematical expressions.
+
+Using `SymPy` to Compute $f'(x)$:
+
+```{code-cell} ipython3
+import sympy as sp
+
+x = sp.symbols('x')
+f = x**2 * sp.sin(x) + sp.exp(2 * x)
+f_prime = sp.diff(f, x)
+f_prime_simplified = sp.simplify(f_prime)
+
+print("Derivative of f(x):")
+sp.pprint(f_prime_simplified)
+```
 
 ## Numerical Differentiation
 
