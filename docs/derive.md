@@ -19,6 +19,20 @@ In fields such as computational physics, engineering, and machine learning, the 
 Traditional analytical methods for finding derivatives may become intractable for complex or nonlinear functions commonly encountered in real-world applications
 Consequently, alternative techniques have emerged as indispensable tools in scientific computing.
 
+The derivative of a real-valued function $f(x)$ at a point $x = a$ is defined as the limit:
+\begin{align}
+f'(a) = \lim_{h \to 0} \frac{f(a + h) - f(a)}{h}.
+\end{align}
+This limit, if it exists, represents the slope of the tangent line to the curve $y = f(x)$ at $x = a$. The derivative function $f'(x)$ provides the rate of change of $f$ at any point within its domain where the derivative exists.
+
+Several fundamental rules facilitating the computation of derivatives are taught in undergraduate calculus courses.
+Among them, the most important one is the chain rule.
+It states that, for $f(x) = g(h(x))$, its derivative is given by
+\begin{align}
+f'(x) = g'(h(x)) h'(x).
+\end{align}
+We will show that the chain rule is extremely important in modern numerical and automatic derivatives.
+
 Methods for computing derivatives include symbolic differentiation, numerical approximation, and automatic differentiation.
 Symbolic differentiation applies analytical rules directly to mathematical expressions, yielding exact derivative formulas.
 Numerical methods, such as finite difference techniques, approximate derivatives using discrete data points and are straightforward to implement but may suffer from truncation and round-off errors.
