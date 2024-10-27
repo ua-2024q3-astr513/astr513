@@ -182,59 +182,52 @@ Typically, $h$ is chosen to balance the minimization of both truncation and roun
 To illustrate finite difference methods, consider the following Python implementation of the forward, backward, and central difference approximations:
 
 ```{code-cell} ipython3
-def forward_difference(f, x, h):
+def fx_forward(f, x, h):
     return (f(x + h) - f(x)) / h
 
-def backward_difference(f, x, h):
+def fx_backward(f, x, h):
     return (f(x) - f(x - h)) / h
 
-def central_difference(f, x, h):
+def fx_central(f, x, h):
     return (f(x + h) - f(x - h)) / (2 * h)
 ```
 
 ```{code-cell} ipython3
 import numpy as np
+from matplotlib import pyplot as plt
 
-def f(x):
-    return np.sin(x)
+X    = np.linspace(0, 2 * np.pi, 32)
+f    = lambda x: np.sin(x)
+fx   = lambda x: np.cos(x)
+fx_f = lambda x: fx_forward(np.sin, x, X[1])
 
-# Point of interest
-def errs(x0 = np.pi / 4):
+fig, axes = plt.subplots(2,1, figsize=(8, 4))
 
-    # True derivative
-    df0 = np.cos(x0)
-
-    # Step sizes
-    hs = np.logspace(0, -15, 31)
-
-    errs_forward  = []
-    errs_backward = []
-    errs_central  = []
-
-    for h in hs:
-        df_forward  = forward_difference (f, x0, h)
-        df_backward = backward_difference(f, x0, h)
-        df_central  = central_difference (f, x0, h)
-    
-        errs_forward .append(abs(df_forward  - df0))
-        errs_backward.append(abs(df_backward - df0))
-        errs_central .append(abs(df_central  - df0))
-
-    return hs, errs_forward, errs_backward, errs_central
+axes[0].plot(X, f(X),    'o-')
+axes[1].plot(X, fx(X),   '-',  label='Analytical')
+axes[1].plot(X, fx_f(X), '--', label='Forward Difference')
+axes[1].legend()
 ```
 
 ```{code-cell} ipython3
-import matplotlib.pyplot as plt
+def errs(x0):
+    fx0 = np.cos(x0) # true derivative
+    hs  = np.logspace(0, -15, 31) # step sizes
+    errs_f = [abs(fx_forward (f, x0, h) - fx0) for h in hs]
+    errs_b = [abs(fx_backward(f, x0, h) - fx0) for h in hs]
+    errs_c = [abs(fx_central (f, x0, h) - fx0) for h in hs]
+    return hs, errs_f, errs_b, errs_c
+```
 
+```{code-cell} ipython3
 fig, axes = plt.subplots(1,3, figsize=(12, 4), sharey=True)
 
 for i, x0 in enumerate([0, np.pi/4, np.pi/2]):
+    hs, errs_f, errs_b, errs_c = errs(x0)
 
-    hs, errs_forward, errs_backward, errs_central = errs(x0)
-
-    axes[i].loglog(hs, errs_forward,  'o-',  label='Forward Difference')
-    axes[i].loglog(hs, errs_backward, 's--', label='Backward Difference')
-    axes[i].loglog(hs, errs_central,  '^:',  label='Central Difference')
+    axes[i].loglog(hs, errs_f, 'o-',  label='Forward Difference')
+    axes[i].loglog(hs, errs_b, 's--', label='Backward Difference')
+    axes[i].loglog(hs, errs_c, '^:',  label='Central Difference')
     axes[i].loglog(hs, hs,    lw=1)
     axes[i].loglog(hs, hs**2, lw=1)
     axes[i].set_xlim(1e1, 1e-16)
@@ -284,26 +277,13 @@ To demonstrate the application of the central difference formula for the second 
 The true second derivative of this function is $f''(x) = -\sin(x)$.
 
 ```{code-cell} ipython3
-def f(x):
-    return np.sin(x)
-
 def fxx_central(f, x, h):
     return (f(x + h) - 2 * f(x) + f(x - h)) / h**2
 
-# Point of interest
-def errs(x0 = np.pi / 4):
-
-    # True derivative
-    fxx0 = -np.sin(x0)
-
-    # Step sizes
-    hs = np.logspace(0, -15, 31)
-    
-    errs = []
-    for h in hs:
-        fxx = fxx_central(f, x0, h)
-        errs.append(abs(fxx - fxx0))
-
+def errs2(x0):
+    fxx0 = -np.sin(x0) # true derivative
+    hs   = np.logspace(0, -15, 31) # step sizes
+    errs = [abs(fxx_central(f, x0, h) - fxx0) for h in hs]
     return hs, errs
 ```
 
@@ -311,8 +291,8 @@ def errs(x0 = np.pi / 4):
 fig, axes = plt.subplots(1,3, figsize=(12, 4), sharey=True)
 
 for i, x0 in enumerate([0, np.pi/4, np.pi/2]):
-    hs, errs_central = errs(x0)
-    axes[i].loglog(hs, errs_central,  'o-',  label='Central Difference')
+    hs, errs2_c = errs2(x0)
+    axes[i].loglog(hs, errs2_c, 'o-', label='Central Difference')
     axes[i].loglog(hs, hs,    lw=1)
     axes[i].loglog(hs, hs**2, lw=1)
     axes[i].set_xlim(1e1, 1e-16)
@@ -382,9 +362,7 @@ This leads to the fourth-order central difference formula for the first derivati
 * Concept and mathematical foundation.
 * Elimination of subtractive cancellation errors.
 
-```{code-cell} ipython3
-
-```
++++
 
 ## Automatic Differentiation
 
