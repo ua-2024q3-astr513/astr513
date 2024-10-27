@@ -225,11 +225,12 @@ fig, axes = plt.subplots(1,3, figsize=(12, 4), sharey=True)
 for i, x0 in enumerate([0, np.pi/4, np.pi/2]):
     hs, errs_f, errs_b, errs_c = errs(x0)
 
+    axes[i].loglog(hs, hs,    lw=0.5, color='k')
+    axes[i].loglog(hs, hs**2, lw=0.5, color='k')
+    axes[i].loglog(hs, hs**4, lw=0.5, color='k')    
     axes[i].loglog(hs, errs_f, 'o-',  label='Forward Difference')
     axes[i].loglog(hs, errs_b, 's--', label='Backward Difference')
     axes[i].loglog(hs, errs_c, '^:',  label='Central Difference')
-    axes[i].loglog(hs, hs,    lw=1)
-    axes[i].loglog(hs, hs**2, lw=1)
     axes[i].set_xlim(1e1, 1e-16)
     axes[i].set_ylim(1e-17, 1e0)
     axes[i].set_xlabel('Step size h')
@@ -292,9 +293,10 @@ fig, axes = plt.subplots(1,3, figsize=(12, 4), sharey=True)
 
 for i, x0 in enumerate([0, np.pi/4, np.pi/2]):
     hs, errs2_c = errs2(x0)
+    axes[i].loglog(hs, hs,    lw=0.5, color='k')
+    axes[i].loglog(hs, hs**2, lw=0.5, color='k')
+    axes[i].loglog(hs, hs**4, lw=0.5, color='k')
     axes[i].loglog(hs, errs2_c, 'o-', label='Central Difference')
-    axes[i].loglog(hs, hs,    lw=1)
-    axes[i].loglog(hs, hs**2, lw=1)
     axes[i].set_xlim(1e1, 1e-16)
     axes[i].set_ylim(1e-10, 1e15)
     axes[i].set_xlabel('Step size h')
@@ -348,7 +350,38 @@ f'(x) \approx \frac{-f(x + 2h) + 8f(x + h) - 8f(x - h) + f(x - 2h)}{12h} + \math
 \end{align}
 This leads to the fourth-order central difference formula for the first derivative.
 
-+++
+```{code-cell} ipython3
+def fx_central4(f, x, h):
+    return (-f(x+2*h) + 8*f(x+h) - 8*f(x-h) + f(x-2*h))/(12*h)
+
+def errs4(x0):
+    fx0 = np.cos(x0) # true derivative
+    hs  = np.logspace(0, -15, 31) # step sizes
+    errs_c4 = [abs(fx_central4(f, x0, h) - fx0) for h in hs]
+    return hs, errs_c4
+```
+
+```{code-cell} ipython3
+fig, axes = plt.subplots(1,3, figsize=(12, 4), sharey=True)
+
+for i, x0 in enumerate([0, np.pi/4, np.pi/2]):
+    hs, errs_f, errs_b, errs_c = errs(x0)
+    hs, errs_c4                = errs4(x0)
+    axes[i].loglog(hs, hs,    lw=0.5, color='k')
+    axes[i].loglog(hs, hs**2, lw=0.5, color='k')
+    axes[i].loglog(hs, hs**4, lw=0.5, color='k')
+    axes[i].loglog(hs, errs_f,  'o-',  label='Forward Difference')
+    axes[i].loglog(hs, errs_b,  's--', label='Backward Difference')
+    axes[i].loglog(hs, errs_c,  '^:',  label='Central Difference')
+    axes[i].loglog(hs, errs_c4, '.--', label='4th-order Central Difference')
+    axes[i].set_xlim(1e1, 1e-16)
+    axes[i].set_ylim(1e-17, 1e0)
+    axes[i].set_xlabel('Step size h')
+    axes[i].grid(True, which="both", ls="--")
+    
+axes[0].set_ylabel('Absolute Error')
+axes[0].legend()
+```
 
 ### Spectral Methods and Fourier Transform
 
