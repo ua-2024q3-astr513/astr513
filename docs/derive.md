@@ -250,6 +250,13 @@ axes[0].legend()
 
 Why do the convergence rates do not behave as expected?
 
+### On Choosing the Optimal Step Size $h$
+
+Selecting an appropriate step size $h$ is critical for minimizing the total error in finite difference approximations.
+An optimal $h$ balances the reduction of truncation error with the increase in round-off error.
+Empirical testing or theoretical estimates, such as $h \approx \sqrt{\epsilon}$, where $\epsilon$ is the machine epsilon, can guide the selection of $h$.
+In practice, $h$ is often chosen through experimentation to achieve the best trade-off for the specific function and computational environment.
+
 +++ {"jp-MarkdownHeadingCollapsed": true}
 
 * High-Order Finite Difference Methods
