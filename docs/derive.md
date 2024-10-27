@@ -163,6 +163,20 @@ This method reduces the truncation error to $\mathcal{O}(h^2)$, making it  more 
 The central difference requires function evaluations at both $x + h$ and $x - h$, effectively doubling the number of required computations compared to the forward or backward methods.
 Nevertheless, the enhanced accuracy often justifies the additional computational effort, especially in applications demanding high precision.
 
++++
+
+### Error Analysis
+
+Finite difference methods involve a trade-off between truncation error and round-off error.
+The truncation error arises from approximating the derivative using discrete differences, while the round-off error is due to the finite precision of floating-point arithmetic used in computations.
+
+For the forward and backward difference methods, the truncation error is proportional to $h$, meaning that decreasing $h$ improves the approximation's accuracy linearly.
+In contrast, the central difference method’s truncation error decreases quadratically with $h$, offering better accuracy for smaller step sizes.
+
+However, reducing $h$ too much can amplify round-off errors, as the difference $f(x + h) - f(x)$ becomes dominated by floating-point precision limitations.
+Therefore, selecting an optimal step size $h$ is crucial.
+Typically, $h$ is chosen to balance the minimization of both truncation and round-off errors, often on the order of the square root of machine epsilon (e.g., $h \approx \sqrt{\epsilon}$), where machine epsilon represents the smallest difference recognizable by the floating-point system.
+
 +++ {"jp-MarkdownHeadingCollapsed": true}
 
 * High-Order Finite Difference Methods
