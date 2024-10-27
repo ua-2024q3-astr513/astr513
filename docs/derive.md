@@ -177,6 +177,70 @@ However, reducing $h$ too much can amplify round-off errors, as the difference $
 Therefore, selecting an optimal step size $h$ is crucial.
 Typically, $h$ is chosen to balance the minimization of both truncation and round-off errors, often on the order of the square root of machine epsilon (e.g., $h \approx \sqrt{\epsilon}$), where machine epsilon represents the smallest difference recognizable by the floating-point system.
 
++++
+
+# Sample Implementation
+
+To illustrate finite difference methods, consider the following Python implementation of the forward, backward, and central difference approximations:
+
+```{code-cell} ipython3
+def forward_difference(f, x, h):
+    return (f(x + h) - f(x)) / h
+
+def backward_difference(f, x, h):
+    return (f(x) - f(x - h)) / h
+
+def central_difference(f, x, h):
+    return (f(x + h) - f(x - h)) / (2 * h)
+```
+
+```{code-cell} ipython3
+import numpy as np
+
+def f(x):
+    return np.sin(x)
+
+# Point of interest
+x0 = np.pi / 4
+
+# True derivative
+true_derivative = np.cos(x0)
+
+# Step sizes
+h_values = np.logspace(0, -15, 31)
+
+errs_forward  = []
+errs_backward = []
+errs_central  = []
+
+for h in h_values:
+    df_forward  = forward_difference (f, x0, h)
+    df_backward = backward_difference(f, x0, h)
+    df_central  = central_difference (f, x0, h)
+    
+    errs_forward .append(abs(df_forward  - true_derivative))
+    errs_backward.append(abs(df_backward - true_derivative))
+    errs_central .append(abs(df_central  - true_derivative))
+```
+
+```{code-cell} ipython3
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(10, 6))
+
+plt.loglog(h_values, errs_forward,  'o-', label='Forward Difference')
+plt.loglog(h_values, errs_backward, 's-', label='Backward Difference')
+plt.loglog(h_values, errs_central,  '^-', label='Central Difference')
+
+plt.xlim(1e0, 1e-15)
+
+plt.xlabel('Step size h')
+plt.ylabel('Absolute Error')
+
+plt.legend()
+plt.grid(True, which="both", ls="--")
+```
+
 +++ {"jp-MarkdownHeadingCollapsed": true}
 
 * High-Order Finite Difference Methods
