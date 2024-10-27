@@ -201,45 +201,54 @@ def f(x):
     return np.sin(x)
 
 # Point of interest
-x0 = np.pi / 4
+def errs(x0 = np.pi / 4):
 
-# True derivative
-true_derivative = np.cos(x0)
+    # True derivative
+    df0 = np.cos(x0)
 
-# Step sizes
-h_values = np.logspace(0, -15, 31)
+    # Step sizes
+    hs = np.logspace(0, -15, 31)
 
-errs_forward  = []
-errs_backward = []
-errs_central  = []
+    errs_forward  = []
+    errs_backward = []
+    errs_central  = []
 
-for h in h_values:
-    df_forward  = forward_difference (f, x0, h)
-    df_backward = backward_difference(f, x0, h)
-    df_central  = central_difference (f, x0, h)
+    for h in hs:
+        df_forward  = forward_difference (f, x0, h)
+        df_backward = backward_difference(f, x0, h)
+        df_central  = central_difference (f, x0, h)
     
-    errs_forward .append(abs(df_forward  - true_derivative))
-    errs_backward.append(abs(df_backward - true_derivative))
-    errs_central .append(abs(df_central  - true_derivative))
+        errs_forward .append(abs(df_forward  - df0))
+        errs_backward.append(abs(df_backward - df0))
+        errs_central .append(abs(df_central  - df0))
+
+    return hs, errs_forward, errs_backward, errs_central
 ```
 
 ```{code-cell} ipython3
 import matplotlib.pyplot as plt
 
-plt.figure(figsize=(10, 6))
+fig, axes = plt.subplots(1,3, figsize=(12, 4), sharey=True)
 
-plt.loglog(h_values, errs_forward,  'o-', label='Forward Difference')
-plt.loglog(h_values, errs_backward, 's-', label='Backward Difference')
-plt.loglog(h_values, errs_central,  '^-', label='Central Difference')
+for i, x0 in enumerate([0, np.pi/4, np.pi/2]):
 
-plt.xlim(1e0, 1e-15)
+    hs, errs_forward, errs_backward, errs_central = errs(x0)
 
-plt.xlabel('Step size h')
-plt.ylabel('Absolute Error')
-
-plt.legend()
-plt.grid(True, which="both", ls="--")
+    axes[i].loglog(hs, errs_forward,  'o-',  label='Forward Difference')
+    axes[i].loglog(hs, errs_backward, 's--', label='Backward Difference')
+    axes[i].loglog(hs, errs_central,  '^:',  label='Central Difference')
+    axes[i].loglog(hs, hs,    lw=1)
+    axes[i].loglog(hs, hs**2, lw=1)
+    axes[i].set_xlim(1e1, 1e-16)
+    axes[i].set_ylim(1e-17, 1e0)
+    axes[i].set_xlabel('Step size h')
+    axes[i].grid(True, which="both", ls="--")
+    
+axes[0].set_ylabel('Absolute Error')
+axes[0].legend()
 ```
+
+Why do the convergence rates do not behave as expected?
 
 +++ {"jp-MarkdownHeadingCollapsed": true}
 
