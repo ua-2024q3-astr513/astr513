@@ -127,13 +127,43 @@ Several software tools facilitate symbolic differentiation by automating the app
 
 ## Numerical Differentiation
 
+Numerical differentiation estimates the derivative of a function using discrete data points, providing approximate values where analytical derivatives are difficult or impossible to obtain.
+Unlike symbolic differentiation, which yields exact expressions, numerical methods offer flexibility in handling complex, empirical, or high-dimensional functions by leveraging computational algorithms to approximate derivatives at specific points.
+
++++
+
 ### Finite Difference Methods
 
-* Low-Order Finite Difference Formulas
-  * Forward difference formula.
-  * Backward difference formula.
-  * Central difference formula.
-  * Error analysis and truncation errors.
+Finite difference methods are fundamental techniques in numerical differentiation, estimating derivatives by evaluating the function at specific points and computing the ratio of differences.
+These methods are essential when analytical derivatives are difficult or impossible to obtain, particularly for complex or empirical functions encountered in scientific and engineering applications.
+
+The core idea behind finite difference methods is to approximate the derivative $f'(x)$ by evaluating the function $f(x)$ at selected points around $x$.
+The three most basic finite difference approximations are forward difference, backward difference, and central difference.
+
+The **forward difference approximation** estimates the first derivative at a point $x$ by using the function values at $x$ and $x + h$, where $h$ is a small step size:
+\begin{align}
+f'(x) \approx \frac{f(x + h) - f(x)}{h}.
+\end{align}
+This method is straightforward to implement and requires only one additional function evaluation beyond the point of interest.
+However, its accuracy is limited by a truncation error of order $\mathcal{O}(h)$.
+As $h$ decreases, the approximation becomes more accurate, but excessively small values of $h$ can lead to significant round-off errors due to the limitations of floating-point arithmetic.
+
+Similarly, the **backward difference approximation** estimates the derivative using the function values at $x$ and $x - h$:
+\begin{align}
+f'(x) \approx \frac{f(x) - f(x - h)}{h}.
+\end{align}
+Like the forward difference, the backward difference method has the same truncation error of $\mathcal{O}(h)$.
+It is particularly useful in situations where function evaluations at points greater than $x$ are not available or are computationally expensive.
+
+The central difference approximation provides a more accurate estimate by averaging the forward and backward differences:
+\begin{align}
+f'(x) \approx \frac{1}{2}\left[\frac{f(x + h) - f(x)}{h} + \frac{f(x) - f(x - h)}{h}\right] = \frac{f(x + h) - f(x - h)}{2h}.
+\end{align}
+This method reduces the truncation error to $\mathcal{O}(h^2)$, making it  more accurate for smooth functions.
+The central difference requires function evaluations at both $x + h$ and $x - h$, effectively doubling the number of required computations compared to the forward or backward methods.
+Nevertheless, the enhanced accuracy often justifies the additional computational effort, especially in applications demanding high precision.
+
++++ {"jp-MarkdownHeadingCollapsed": true}
 
 * High-Order Finite Difference Methods
   * Derivation of higher-order formulas.
