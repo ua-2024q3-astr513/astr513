@@ -165,8 +165,6 @@ Nevertheless, the enhanced accuracy often justifies the additional computational
 
 +++
 
-### Error Analysis
-
 Finite difference methods involve a trade-off between truncation error and round-off error.
 The truncation error arises from approximating the derivative using discrete differences, while the round-off error is due to the finite precision of floating-point arithmetic used in computations.
 
@@ -256,6 +254,73 @@ Selecting an appropriate step size $h$ is critical for minimizing the total erro
 An optimal $h$ balances the reduction of truncation error with the increase in round-off error.
 Empirical testing or theoretical estimates, such as $h \approx \sqrt{\epsilon}$, where $\epsilon$ is the machine epsilon, can guide the selection of $h$.
 In practice, $h$ is often chosen through experimentation to achieve the best trade-off for the specific function and computational environment.
+
++++
+
+### High-Order Finite Difference Methods
+
+Finite difference methods can also be extended beyond first derivatives to approximate higher-order derivatives with increased accuracy.
+One common approach to obtain a second derivative approximation involves combining two central difference formulas.
+
+To derive the finite difference approximation for the second derivative, consider the Taylor series expansions of $f(x + h)$ and $f(x - h)$ around the point $x$:
+\begin{align}
+f(x + h) &= f(x) + h f{\prime}(x) + \frac{h^2}{2} f{\prime}{\prime}(x) + \frac{h^3}{6} f{\prime}{\prime}{\prime}(x) + \mathcal{O}(h^4), \\
+f(x - h) &= f(x) - h f{\prime}(x) + \frac{h^2}{2} f{\prime}{\prime}(x) - \frac{h^3}{6} f{\prime}{\prime}{\prime}(x) + \mathcal{O}(h^4).
+\end{align}
+Adding these two equations eliminates the first and third derivative terms:
+\begin{align}
+f(x + h) + f(x - h) = 2 f(x) + h^2 f{\prime}{\prime}(x) + \mathcal{O}(h^4).
+\end{align}
+Rearranging the equation to solve for $f''(x)$:
+\begin{align}
+f''(x) \approx \frac{f(x + h) - 2 f(x) + f(x - h)}{h^2} + \mathcal{O}(h^2).
+\end{align}
+This yields the central difference formula for the second derivative with a truncation error of order $\mathcal{O}(h^2)$.
+It requires evaluating the function at three points: $x - h$, $x$, and $x + h$.
+
+To demonstrate the application of the central difference formula for the second derivative, consider the function $f(x) = \sin(x)$.
+The true second derivative of this function is $f''(x) = -\sin(x)$.
+
+```{code-cell} ipython3
+def f(x):
+    return np.sin(x)
+
+def fxx_central(f, x, h):
+    return (f(x + h) - 2 * f(x) + f(x - h)) / h**2
+
+# Point of interest
+def errs(x0 = np.pi / 4):
+
+    # True derivative
+    fxx0 = -np.sin(x0)
+
+    # Step sizes
+    hs = np.logspace(0, -15, 31)
+    
+    errs = []
+    for h in hs:
+        fxx = fxx_central(f, x0, h)
+        errs.append(abs(fxx - fxx0))
+
+    return hs, errs
+```
+
+```{code-cell} ipython3
+fig, axes = plt.subplots(1,3, figsize=(12, 4), sharey=True)
+
+for i, x0 in enumerate([0, np.pi/4, np.pi/2]):
+    hs, errs_central = errs(x0)
+    axes[i].loglog(hs, errs_central,  'o-',  label='Central Difference')
+    axes[i].loglog(hs, hs,    lw=1)
+    axes[i].loglog(hs, hs**2, lw=1)
+    axes[i].set_xlim(1e1, 1e-16)
+    axes[i].set_ylim(1e-10, 1e15)
+    axes[i].set_xlabel('Step size h')
+    axes[i].grid(True, which="both", ls="--")
+    
+axes[0].set_ylabel('Absolute Error')
+axes[0].legend()
+```
 
 +++ {"jp-MarkdownHeadingCollapsed": true}
 
