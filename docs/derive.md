@@ -248,6 +248,8 @@ axes[0].legend()
 
 Why do the convergence rates do not behave as expected?
 
++++
+
 ### On Choosing the Optimal Step Size $h$
 
 Selecting an appropriate step size $h$ is critical for minimizing the total error in finite difference approximations.
@@ -257,19 +259,19 @@ In practice, $h$ is often chosen through experimentation to achieve the best tra
 
 +++
 
-### High-Order Finite Difference Methods
+### High-Order Finite Difference Methods: Finite Difference Method of High-Order Derivatives
 
 Finite difference methods can also be extended beyond first derivatives to approximate higher-order derivatives with increased accuracy.
 One common approach to obtain a second derivative approximation involves combining two central difference formulas.
 
 To derive the finite difference approximation for the second derivative, consider the Taylor series expansions of $f(x + h)$ and $f(x - h)$ around the point $x$:
 \begin{align}
-f(x + h) &= f(x) + h f{\prime}(x) + \frac{h^2}{2} f{\prime}{\prime}(x) + \frac{h^3}{6} f{\prime}{\prime}{\prime}(x) + \mathcal{O}(h^4), \\
-f(x - h) &= f(x) - h f{\prime}(x) + \frac{h^2}{2} f{\prime}{\prime}(x) - \frac{h^3}{6} f{\prime}{\prime}{\prime}(x) + \mathcal{O}(h^4).
+f(x + h) &= f(x) + h f'(x) + \frac{h^2}{2} f''(x) + \frac{h^3}{6} f'''(x) + \mathcal{O}(h^4), \\
+f(x - h) &= f(x) - h f'(x) + \frac{h^2}{2} f''(x) - \frac{h^3}{6} f'''(x) + \mathcal{O}(h^4).
 \end{align}
 Adding these two equations eliminates the first and third derivative terms:
 \begin{align}
-f(x + h) + f(x - h) = 2 f(x) + h^2 f{\prime}{\prime}(x) + \mathcal{O}(h^4).
+f(x + h) + f(x - h) = 2 f(x) + h^2 f''(x) + \mathcal{O}(h^4).
 \end{align}
 Rearranging the equation to solve for $f''(x)$:
 \begin{align}
@@ -322,11 +324,51 @@ axes[0].set_ylabel('Absolute Error')
 axes[0].legend()
 ```
 
-+++ {"jp-MarkdownHeadingCollapsed": true}
+Why do the convergence rates do not behave as expected?
 
-* High-Order Finite Difference Methods
-  * Derivation of higher-order formulas.
-  * Error reduction and convergence rates.
++++
+
+### High-Order Finite Difference Methods
+
+Finite difference methods can also be extended to achieve higher-order accuracy by incorporating more function evaluation points and carefully constructing linear combinations that cancel out lower-order error terms.
+High-order finite difference schemes provide more precise derivative approximations, which are particularly beneficial in applications requiring high accuracy, such as computational fluid dynamics, structural analysis, and numerical simulations of physical systems.
+This is not be confused, however, with previous section, where (low-order) finite difference methods are used to compute high-order derivatives.
+
++++
+
+To derive high-order finite difference approximations, the standard method is to use Taylor series expansion of the function around the point of interest.
+By considering multiple points symmetrically distributed around the target point, it is possible to eliminate lower-order error terms, thereby increasing the accuracy of the derivative approximation.
+
+Specifically, consider approximating the first derivative $f'(x)$ with fourth-order accuracy.
+This requires that the truncation error be of order $\mathcal{O}(h^4)$, meaning that the error decreases proportionally to $h^4$ as the step size $h$ approaches zero.
+
+Expand the function $f$ at points $x - 2h$, $x - h$, $x + h$, and $x + 2h$ using the Taylor series around $x$:
+\begin{aligned}
+f(x - 2h) &= f(x) - 2h f'(x) + \frac{(2h)^2}{2} f''(x) - \frac{(2h)^3}{6} f'''(x) + \frac{(2h)^4}{24} f''''(x) + \mathcal{O}(h^5), \\
+f(x -  h) &= f(x) -  h f'(x) + \frac{  h ^2}{2} f''(x) - \frac{  h ^3}{6} f'''(x) + \frac{  h ^4}{24} f''''(x) + \mathcal{O}(h^5), \\
+f(x +  h) &= f(x) +  h f'(x) + \frac{  h ^2}{2} f''(x) + \frac{  h ^3}{6} f'''(x) + \frac{  h ^4}{24} f''''(x) + \mathcal{O}(h^5), \\
+f(x + 2h) &= f(x) + 2h f'(x) + \frac{(2h)^2}{2} f''(x) + \frac{(2h)^3}{6} f'''(x) + \frac{(2h)^4}{24} f''''(x) + \mathcal{O}(h^5).
+\end{aligned}
+
++++
+
+We will construct linear combinations of these expansions to eliminate the lower-order terms up to $h^3$.
+For example, subtract the expansion at $x - 2h$ from that at $x + 2h$ and adjust coefficients to isolate $f'(x)$:
+\begin{aligned}
+f(x + 2h) - f(x - 2h) &= 4h f'(x) + \frac{8h^3}{6} f'''(x) + \mathcal{O}(h^5), \\
+f(x +  h) - f(x -  h) &= 2h f'(x) + \frac{2h^3}{6} f'''(x) + \mathcal{O}(h^5).
+\end{aligned}
+It is now straightforward to eliminate the $f'''(x)$ term:
+\begin{align}
+-f(x + 2h) + f(x - 2h) + 2f(x + h) - 2f(x - h) = \mathcal{O}(h^5).
+\end{align}
+Solving for $f'(x)$:
+\begin{align}
+f'(x) \approx \frac{-f(x + 2h) + 8f(x + h) - 8f(x - h) + f(x - 2h)}{12h} + \mathcal{O}(h^5).
+\end{align}
+This leads to the fourth-order central difference formula for the first derivative.
+
++++
 
 ### Spectral Methods and Fourier Transform
 
@@ -340,7 +382,9 @@ axes[0].legend()
 * Concept and mathematical foundation.
 * Elimination of subtractive cancellation errors.
 
-+++
+```{code-cell} ipython3
+
+```
 
 ## Automatic Differentiation
 
