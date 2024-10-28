@@ -973,7 +973,7 @@ The close relationship between convolution, correlation, and their respective th
 
 * Denoising and Signal Processing Applications
 * Time-Frequency Analysis
-* Astrophysical Applications and VLBI
+* Astrophysical Applications and [VLBI](https://focisrc.github.io/eht-databook/intro/correlation.html)
 * [](sec:spectral-derivatives)
 * Fourier Transform and the Heat Equation (see "Numerical PDE IV: spectral methods")
 
