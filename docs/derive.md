@@ -760,7 +760,7 @@ for (x, f, fx) in list(zip(X, F, Fx))[::10]:
 
 ### Autodiff (and Vectorization and JIT) in Python with JAX
 
-`JAX` is a high-performance numerical computing library developed by Google that provides powerful tools for AD.
+[`JAX`](https://jax.readthedocs.io/en/latest/) is a high-performance numerical computing library developed by Google that provides powerful tools for AD.
 It extends NumPy with the ability to automatically compute gradients, making it particularly useful in machine learning, optimization, and scientific computing applications.
 `JAX` combines the ease of use of NumPy with the efficiency of Just-In-Time (JIT) compilation, enabling rapid and scalable computations.
 Key Features of JAX includes:
