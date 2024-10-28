@@ -758,6 +758,42 @@ for (x, f, fx) in list(zip(X, F, Fx))[::10]:
     )
 ```
 
+### Autodiff (and Vectorization and JIT) in Python with JAX
+
+`JAX` is a high-performance numerical computing library developed by Google that provides powerful tools for AD.
+It extends NumPy with the ability to automatically compute gradients, making it particularly useful in machine learning, optimization, and scientific computing applications.
+`JAX` combines the ease of use of NumPy with the efficiency of Just-In-Time (JIT) compilation, enabling rapid and scalable computations.
+Key Features of JAX includes:
+
+* Automatic Differentiation: JAX supports both forward and reverse mode AD, allowing for efficient computation of gradients, Jacobians, and Hessians.
+* JIT Compilation: Utilizing XLA (Accelerated Linear Algebra), JAX can compile and optimize numerical code for faster execution on CPUs and GPUs.
+* Composability: JAX's functional programming paradigm allows users to compose complex transformations seamlessly.
+* Interoperability: JAX integrates smoothly with existing NumPy code, requiring minimal changes to leverage its advanced features.
+
+To begin using JAX, ensure it is installed in your Python environment.
+You can install JAX via pip: `pip install --upgrade "jax[cpu]"`.
+
+Let's demonstrate how to use JAX to compute the derivative of a function.
+We'll use the function $f(x) = \sin(x + x^2)$, combining our previous Dual Number examples.
+
+```{code-cell} ipython3
+from jax import numpy as jnp, grad, vmap
+
+def f(x):
+    return jnp.sin(x + x*x)
+
+X  = jnp.linspace(-1,1,num=101)
+F  = f(X)
+Fx = vmap(grad(f))(X)
+
+plt.plot(X, F, lw=5, alpha=0.25)
+for (x, f, fx) in list(zip(X, F, Fx))[::10]:
+    plt.plot(
+        [x-0.05,    x+0.05],
+        [f-0.05*fx, f+0.05*fx],
+    )
+```
+
 ## Reverse Mode AD and Backpropagation
 
 * Concept of Reverse Mode AD
