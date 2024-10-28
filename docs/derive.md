@@ -394,9 +394,28 @@ Nevertheless, it is unusal to go above 6th-order.
 (sec:spectral-derivatives)=
 ### Spectral Derivatives
 
-* Connection between finite differences and Fourier Transform.
-* Introduction to spectral differentiation.
-* Advantages for smooth periodic functions.
+Spectral methods are a class of high-accuracy numerical techniques used to approximate derivatives by representing functions in terms of global basis functions.
+Unlike finite difference methods, which rely on local information, spectral methods utilize the entire domain's information, enabling exponential convergence rates for sufficiently smooth functions.
+
++++
+
+Fourier spectral methods leverage the Fourier series representation of periodic functions to compute derivatives with high precision.
+The fundamental idea is to transform the function into the frequency domain, where differentiation becomes a straightforward algebraic operation.
+
+For a function  f(x)  defined on a periodic interval  [0, L] , the Fourier series expansion is given by:
+\begin{align}
+f(x) = \sum_{k=-N/2}^{N/2} F_k e^{i 2\pi k x / L},
+\end{align}
+where $F_k$ are the Fourier coefficients, $N$ is the number of modes, and $i$ is the imaginary unit.
+
+Differentiation of $f(x)$ in the spatial domain corresponds to multiplication by $i 2\pi k / L$ in the frequency domain.
+Specifically, the first derivative $f'(x$) is:
+\begin{align}
+f'(x) = \sum_{k=-N/2}^{N/2} i \frac{2\pi k}{L} F_k e^{i 2\pi k x / L}.
+\end{align}
+This property simplifies the computation of derivatives, as it converts the differentiation process into a simple multiplication operation in the Fourier space.
+
++++
 
 ### Complex Step Differentiation
 
