@@ -155,7 +155,7 @@ f'(x) \approx \frac{f(x) - f(x - h)}{h}.
 Like the forward difference, the backward difference method has the same truncation error of $\mathcal{O}(h)$.
 It is particularly useful in situations where function evaluations at points greater than $x$ are not available or are computationally expensive.
 
-The central difference approximation provides a more accurate estimate by averaging the forward and backward differences:
+The **central difference approximation** provides a more accurate estimate by averaging the forward and backward differences:
 \begin{align}
 f'(x) \approx \frac{1}{2}\left[\frac{f(x + h) - f(x)}{h} + \frac{f(x) - f(x - h)}{h}\right] = \frac{f(x + h) - f(x - h)}{2h}.
 \end{align}
@@ -173,7 +173,7 @@ In contrast, the central difference method’s truncation error decreases quadra
 
 However, reducing $h$ too much can amplify round-off errors, as the difference $f(x + h) - f(x)$ becomes dominated by floating-point precision limitations.
 Therefore, selecting an optimal step size $h$ is crucial.
-Typically, $h$ is chosen to balance the minimization of both truncation and round-off errors, often on the order of the square root of machine epsilon (e.g., $h \approx \sqrt{\epsilon}$), where machine epsilon represents the smallest difference recognizable by the floating-point system.
+Typically, $h$ is chosen to balance the minimization of both truncation and round-off errors, often on the order of the square root of [machine epsilon](data.md) (e.g., $h \approx \sqrt{\epsilon}$), where machine epsilon represents the smallest difference recognizable by the floating-point system.
 
 +++
 
@@ -382,6 +382,16 @@ for i, x0 in enumerate([0, np.pi/4, np.pi/2]):
 axes[0].set_ylabel('Absolute Error')
 axes[0].legend()
 ```
+
+Does the convergence rate of the 4th-order central difference behave as expected?
+
++++
+
+Coefficients of high-order fininte difference for computing low order derivatives have been worked out.
+One may implementing them simply by following [tables](https://en.wikipedia.org/wiki/Finite_difference_coefficient).
+Nevertheless, it is unusal to go above 6th-order.
+
++++
 
 ### Spectral Methods and Fourier Transform
 
