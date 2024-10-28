@@ -1,5 +1,6 @@
 jupyter-book
 numpy
+jax
 matplotlib
 sympy
 ghp-import
