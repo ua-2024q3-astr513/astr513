@@ -418,10 +418,6 @@ This property simplifies the computation of derivatives, as it converts the diff
 Consider computing the first derivative of $f(x) = \sin(x)$ on the domain $[-\pi, \pi)$:
 
 ```{code-cell} ipython3
-k
-```
-
-```{code-cell} ipython3
 # Number of modes
 N = 64
 
@@ -459,19 +455,19 @@ plt.show()
 ```
 
 ```{code-cell} ipython3
-Ns   = 2**np.arange(1,10)
-errs = []
+Ns     = 2**np.arange(1,10)
+errs_s = []
 for N in Ns:
     x   = np.linspace(-L/2, L/2, N, endpoint=False)
     fx  = fx_spectral(np.sin, x)
     fx0 = np.cos(x)
     dfx = fx - fx0
     err = np.sqrt(np.mean(dfx*dfx))
-    errs.append(err)
+    errs_s.append(err)
 ```
 
 ```{code-cell} ipython3
-plt.loglog(Ns, errs, 'o-')
+plt.loglog(Ns, errs_s, 'o-')
 plt.xlabel('Number of samples N')
 plt.ylabel('RMS error')
 plt.grid(True, which="both", ls="--")
@@ -517,6 +513,42 @@ if $h$ is very small, $f(x + h)$ and $f(x - h)$ become nearly identical, and the
 In contrast, the Complex Step Method avoids this issue by perturbing the input in the imaginary direction.
 The derivative information is captured in the imaginary part, which is not subject to the same precision loss.
 As a result, the Complex Step Method can achieve derivative approximations accurate to machine precision without requiring excessively small step sizes.
+
+```{code-cell} ipython3
+def fx_complexstep(f, x, h):
+    return np.imag(f(x + 1j * h)) / h
+
+def errscs(x0):
+    fx0 = np.cos(x0) # true derivative
+    hs  = np.logspace(0, -15, 31) # step sizes
+    errs_c4 = [abs(fx_complexstep(f, x0, h) - fx0) for h in hs]
+    return hs, errs_c4
+```
+
+```{code-cell} ipython3
+fig, axes = plt.subplots(1,3, figsize=(12, 4), sharey=True)
+
+for i, x0 in enumerate([0, np.pi/4, np.pi/2]):
+    hs, errs_f, errs_b, errs_c = errs(x0)
+    hs, errs_c4                = errs4(x0)
+    hs, errs_cs                = errscs(x0)
+    axes[i].loglog(hs, hs,    lw=0.5, color='k')
+    axes[i].loglog(hs, hs**2, lw=0.5, color='k')
+    axes[i].loglog(hs, hs**4, lw=0.5, color='k')
+    axes[i].loglog(hs, errs_c,  '^:',  label='Central Difference')
+    axes[i].loglog(hs, errs_c4, '.--', label='4th-order Central Difference')
+    axes[i].loglog(hs, errs_cs, '.--', label='Complex Step Differentiation')
+    axes[i].set_xlim(1e1, 1e-16)
+    axes[i].set_ylim(1e-30, 1e0)
+    axes[i].set_xlabel('Step size h')
+    axes[i].grid(True, which="both", ls="--")
+
+axes[0].set_ylabel('Absolute Error')
+axes[2].legend()
+```
+
+* What is the convergent rate of Complex Step Differentiation?
+* Is it really better than finite difference?
 
 +++
 
