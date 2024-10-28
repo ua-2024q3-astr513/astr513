@@ -554,10 +554,24 @@ axes[2].legend()
 
 ## Automatic Differentiation
 
+Automatic Differentiation (AD) is a computational technique that enables the precise and efficient calculation of derivatives of functions, leveraging the chain rule of calculus at the elementary operation level.
+Unlike symbolic differentiation, which manipulates mathematical expressions to find exact derivatives, and numerical differentiation, which approximates derivatives using finite differences, AD provides exact derivatives up to machine precision without the complexity and computational overhead associated with symbolic methods.
+
++++
+
 ### Introduction to Automatic Differentiation
 
-* Motivation and need for AD.
-* Differences between AD, symbolic differentiation, and numerical approximation.
+The motivation for Automatic Differentiation comes from the need to compute derivatives accurately and efficiently, especially in high-dimensional and complex applications such as machine learning (especiall deep learning), optimization, and scientific computing.
+Traditional numerical methods like finite differences suffer from a trade-off between step size and approximation error, leading to inaccuracies due to truncation and round-off errors.
+Symbolic differentiation, while exact, becomes computationally infeasible for large-scale problems due to expression swell and high memory consumption.
+
+AD bridges the gap between these two approaches by systematically applying differentiation rules to each operation in a function's computational graph.
+This method ensures that derivatives are computed accurately and efficiently, making AD indispensable in modern computational tasks where gradient information is crucial.
+
+AD operates by decomposing functions into a sequence of elementary operations (addition, multiplication, etc.) and applying the chain rule to compute derivatives.
+This process can be implemented in two primary modes: forward mode and reverse mode, each suited to different types of problems.
+
++++
 
 ### Dual Numbers and Forward Mode AD
 
