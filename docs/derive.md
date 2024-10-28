@@ -173,7 +173,7 @@ In contrast, the central difference method’s truncation error decreases quadra
 
 However, reducing $h$ too much can amplify round-off errors, as the difference $f(x + h) - f(x)$ becomes dominated by floating-point precision limitations.
 Therefore, selecting an optimal step size $h$ is crucial.
-Typically, $h$ is chosen to balance the minimization of both truncation and round-off errors, often on the order of the square root of [machine epsilon](data.md) (e.g., $h \approx \sqrt{\epsilon}$), where machine epsilon represents the smallest difference recognizable by the floating-point system.
+Typically, $h$ is chosen to balance the minimization of both truncation and round-off errors, often on the order of the square root of [machine epsilon](sec:machine-accuracy) (e.g., $h \approx \sqrt{\epsilon}$), where machine epsilon represents the smallest difference recognizable by the floating-point system.
 
 +++
 
@@ -227,7 +227,7 @@ for i, x0 in enumerate([0, np.pi/4, np.pi/2]):
 
     axes[i].loglog(hs, hs,    lw=0.5, color='k')
     axes[i].loglog(hs, hs**2, lw=0.5, color='k')
-    axes[i].loglog(hs, hs**4, lw=0.5, color='k')    
+    axes[i].loglog(hs, hs**4, lw=0.5, color='k')
     axes[i].loglog(hs, errs_f, 'o-',  label='Forward Difference')
     axes[i].loglog(hs, errs_b, 's--', label='Backward Difference')
     axes[i].loglog(hs, errs_c, '^:',  label='Central Difference')
@@ -235,7 +235,7 @@ for i, x0 in enumerate([0, np.pi/4, np.pi/2]):
     axes[i].set_ylim(1e-17, 1e0)
     axes[i].set_xlabel('Step size h')
     axes[i].grid(True, which="both", ls="--")
-    
+
 axes[0].set_ylabel('Absolute Error')
 axes[0].legend()
 ```
@@ -299,7 +299,7 @@ for i, x0 in enumerate([0, np.pi/4, np.pi/2]):
     axes[i].set_ylim(1e-10, 1e15)
     axes[i].set_xlabel('Step size h')
     axes[i].grid(True, which="both", ls="--")
-    
+
 axes[0].set_ylabel('Absolute Error')
 axes[0].legend()
 ```
@@ -376,7 +376,7 @@ for i, x0 in enumerate([0, np.pi/4, np.pi/2]):
     axes[i].set_ylim(1e-17, 1e0)
     axes[i].set_xlabel('Step size h')
     axes[i].grid(True, which="both", ls="--")
-    
+
 axes[0].set_ylabel('Absolute Error')
 axes[0].legend()
 ```
@@ -391,7 +391,8 @@ Nevertheless, it is unusal to go above 6th-order.
 
 +++
 
-### Spectral Methods and Fourier Transform
+(sec:spectral-derivatives)=
+### Spectral Derivatives
 
 * Connection between finite differences and Fourier Transform.
 * Introduction to spectral differentiation.

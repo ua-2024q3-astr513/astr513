@@ -109,7 +109,7 @@ In any positional system, to represent a number:
 * then identify the notation for the digits
 * inally write $\pm (\dots d_3 d_2 d_1 d_0 . d_{-1} d_{-2} d_{-3} \dots)$ to represent $\pm (\dots + d_3 b^3 + d_2 b^2 + d_1 b^1 + d_0 b^0 + d_{-1} b^{-1} + d_{-2} b^{-2} + d_{-3} b^{-3} + \dots)$.
 
-To convert from a numeral system of base $b$ to the decimal one, we simply use the definition 
+To convert from a numeral system of base $b$ to the decimal one, we simply use the definition
 \begin{align}
 \pm (\dots + d_3 b^3 + d_2 b^2 + d_1 b^1 + d_0 b^0 + d_{-1} b^{-1} + d_{-2} b^{-2} + d_{-3} b^{-3} + \dots).
 \end{align}
@@ -151,7 +151,7 @@ There are 10 types of people in the world...
 ```
 
 In the binary system, only two digits are used: 0 and 1.
-The position of each digit in a binary number corresponds to a power of 2, just as the position of a digit in the decimal system corresponds to a power of 10. 
+The position of each digit in a binary number corresponds to a power of 2, just as the position of a digit in the decimal system corresponds to a power of 10.
 For example, the binary number $1011_2$ represents: $1 \times 2^3 + 0 \times 2^2 + 1 \times 2^1 + 1 \times 2^0$.
 This gives the decimal value: $1 \times 8 + 0 \times 4 + 1 \times 2 + 1 \times 1 = 11$.
 
@@ -500,6 +500,7 @@ The cost of the failed launch was upwards of 100 million dollars!
 
 +++
 
+(sec:machine-accuracy)=
 ## Machine Accuracy
 
 In order to quantify truncation errors, we define:
@@ -564,7 +565,7 @@ x_1 &= \frac{-b - \mathrm{sign}(b)\sqrt{b^2 - 4 a c}}{2a} \\
 x_2 &= \frac{c}{a x_1}
 \end{align}
 as used by
-[GSL](https://git.savannah.gnu.org/cgit/gsl.git/tree/poly/solve_quadratic.c#n57) and 
+[GSL](https://git.savannah.gnu.org/cgit/gsl.git/tree/poly/solve_quadratic.c#n57) and
 [fadge](https://github.com/adxsrc/fadge/blob/main/mod/fadge/utils.py#L25).
 
 +++

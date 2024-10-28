@@ -974,7 +974,7 @@ The close relationship between convolution, correlation, and their respective th
 * Denoising and Signal Processing Applications
 * Time-Frequency Analysis
 * Astrophysical Applications and VLBI
-* Spectral Derivatives (see "Numerical and automatic derivatives")
+* [](sec:spectral-derivatives)
 * Fourier Transform and the Heat Equation (see "Numerical PDE IV: spectral methods")
 
 ```{code-cell} ipython3
