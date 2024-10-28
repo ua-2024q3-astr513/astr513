@@ -971,12 +971,10 @@ The close relationship between convolution, correlation, and their respective th
 
 ## Other Interesting Toipics:
 
-* Denoising and Signal Processing Applications
 * Time-Frequency Analysis
+* Power Spectrum Estimation Using the FFT (See [Numerical Recipes](https://numerical.recipes/book.html) Section 13.4)
+* Denoising and Signal Processing Applications
 * Astrophysical Applications and [VLBI](https://focisrc.github.io/eht-databook/intro/correlation.html)
+* Calibration Algorithm for ADC Interleaving
 * [](sec:spectral-derivatives)
 * Fourier Transform and the Heat Equation (see "Numerical PDE IV: spectral methods")
-
-```{code-cell} ipython3
-
-```
