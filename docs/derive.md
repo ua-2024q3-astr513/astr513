@@ -748,13 +748,13 @@ def sin(x):
 def f(x):
     return sin(x + x*x)
 
-Y, dY = f(Dual(X))
+F, Fx = f(Dual(X))
 
-plt.plot(X, Y, lw=5, alpha=0.25)
-for (x, y, dy) in list(zip(X, Y, dY))[::10]:
+plt.plot(X, F, lw=5, alpha=0.25)
+for (x, f, fx) in list(zip(X, F, Fx))[::10]:
     plt.plot(
         [x-0.05,    x+0.05],
-        [y-0.05*dy, y+0.05*dy],
+        [f-0.05*fx, f+0.05*fx],
     )
 ```
 
