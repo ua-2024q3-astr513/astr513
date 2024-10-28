@@ -794,22 +794,6 @@ for (x, f, fx) in list(zip(X, F, Fx))[::10]:
     )
 ```
 
-## Reverse Mode AD and Backpropagation
-
-* Concept of Reverse Mode AD
-  * Computational graphs and the chain rule.
-* Backpropagation in Neural Networks
-  * Application in machine learning.
-
-### Higher-Order Derivatives: Jacobians and Hessians
-
-* Importance of higher-order derivatives
-  * Applications in optimization algorithms.
-  * Computing Jacobians and Hessians with AD
-* Techniques and computational considerations.
-
-+++
-
 ### Discussion on AD
 
 Despite its powerful capabilities, Automatic Differentiation presents several limitations and challenges that must be addressed to ensure effective implementation.
@@ -829,7 +813,7 @@ Functions with dynamic control flow, such as loops, conditionals, and recursion,
 Ensuring that the computational graph accurately represents all possible execution paths requires sophisticated handling within AD libraries.
 Some AD tools are better equipped to manage dynamic graphs than others, and selecting the appropriate framework is crucial based on the application's characteristics.
 
-**Best Practices for Efficient AD Implementation**
+**Best Practices for Efficient AD Implementation**:
 To maximize the efficiency and accuracy of Automatic Differentiation, consider the following best practices:
 1. Choose the Right AD Framework: Select an AD library that aligns with your application's requirements, especially regarding performance, scalability, and support for higher-order derivatives.
 2. Minimize Memory Consumption: Utilize techniques like checkpointing and in-place operations to reduce memory overhead, particularly when using Reverse Mode AD.
@@ -840,18 +824,32 @@ To maximize the efficiency and accuracy of Automatic Differentiation, consider t
 
 +++
 
-## Comparison of Differentiation Methods
-
-### Numerical vs. Automatic vs. Symbolic Differentiation
-
-* Strengths and weaknesses of each method.
-
-### Choosing the right method for different applications.
-
-+++
-
 ## Summary
 
-### Open questions and discussion
+Differentiation is a cornerstone technique in mathematics, science, and engineering, essential for analyzing and optimizing functions.
+The primary methods for computing derivatives include Symbolic Differentiation, Numerical Differentiation, and Automatic Differentiation (AD).
+Symbolic Differentiation involves analytically deriving exact expressions for derivatives, which is invaluable for obtaining precise analytical insights.
+However, it struggles with complex or large-scale functions due to expression swell, making it computationally intensive and impractical for intricate models.
+Numerical Differentiation approximates derivatives using discrete function evaluations, such as finite difference methods.
+While straightforward to implement and applicable to a wide range of functions, it is prone to truncation and round-off errors, requiring careful step size selection to balance accuracy and numerical stability.
 
-### Suggestions for further reading and exploration.
+Automatic Differentiation bridges the gap between symbolic and numerical methods by providing exact derivative computations up to machine precision without the complexity of symbolic manipulation.
+AD systematically applies the chain rule to each elementary operation within a function's computational graph, enabling efficient and accurate derivative calculations even for high-dimensional and complex functions.
+Forward Mode AD, possibility implemented by Dual Numbers, is particularly effective for functions with a small number of inputs, whereas Reverse Mode AD excels in scenarios with many inputs and a single output, such as training neural networks through backpropagation.
+Despite its advantages, AD can be memory-intensive and may encounter challenges with non-differentiable functions or dynamic control flows, necessitating sophisticated implementation strategies.
+
+When comparing these methods, Symbolic Differentiation offers exact results suitable for theoretical analyses but is limited by computational inefficiency for complex functions.
+Numerical Differentiation provides flexibility and simplicity, ideal for empirical or implicitly defined functions, yet suffers from approximation errors and sensitivity to step sizes.
+Automatic Differentiation combines the precision of symbolic methods with the efficiency of numerical approaches, delivering exact derivatives without expression swell, making it highly suitable for machine learning and optimization tasks.
+However, its implementation complexity and memory requirements can pose challenges in large-scale applications.
+
+Open questions in the field revolve around enhancing the scalability and efficiency of Automatic Differentiation, particularly for extremely large-scale problems and higher-order derivatives such as Jacobians and Hessians.
+Addressing how AD frameworks can better handle non-differentiable functions and dynamic computational graphs remains a critical area of research.
+Additionally, exploring hybrid differentiation approaches that integrate the strengths of symbolic, numerical, and automatic methods could lead to more versatile and robust derivative computation techniques.
+Understanding and mitigating phenomena like Gibbs and Runge in Spectral Methods also present ongoing challenges that require innovative solutions.
+
+For those interested in delving deeper, further reading and exploration are recommended in areas such as Reverse Mode AD and its applications in backpropagation for neural networks, as well as the computation of higher-order derivatives like Jacobians and Hessians.
+Key resources include:
+* [SymPy Documentations](https://www.sympy.org/en/index.html)
+* [Numerical Recipes](https://numerical.recipes/)
+* [JAX Documentations](https://jax.readthedocs.io/en/latest/)
