@@ -575,11 +575,31 @@ This process can be implemented in two primary modes: forward mode and reverse m
 
 ### Dual Numbers and Forward Mode AD
 
-* Understanding Dual Numbers
-  * Definition and algebra of dual numbers.
-  * How dual numbers enable forward mode AD.
-* Connection to Complex Step Method
-  * Mathematical similarities and practical differences.
+Dual numbers extend real numbers by introducing an infinitesimal component, enabling the simultaneous computation of function values and their derivatives.
+A dual number is expressed as:
+\begin{align}
+\tilde{x} = x + \epsilon x',
+\end{align}
+where $x$ is the real part, $x'$ is the dual part representing the derivative, and $\epsilon$ is an infinitesimal quantity satisfying $\epsilon^2 = 0$.
+
+The algebra of dual numbers follows standard arithmetic rules with the additional property that $\epsilon^2 = 0$.
+This property allows for the linear extraction of derivative information without higher-order terms interfering.
+Note that [exterior calculus](https://en.wikipedia.org/wiki/Differential_form) requires $d^2 = 0$.
+This is the same algebraic rule as dual number.
+
+Forward Mode AD utilizes dual numbers to propagate derivative information alongside function evaluations.
+By replacing each real input with a dual number, every operation performed on these dual numbers automatically carries derivative information through the computation.
+
+Example: Differentiating $f(x) = x^2$
+
+Consider the function $f(x) = x^2$. Using dual numbers:
+\begin{align}
+\tilde{x} &= x + \epsilon, \\
+\tilde{f}(\tilde{x}) &= (x + \epsilon)^2 = x^2 + 2x\epsilon + \epsilon^2 = x^2 + 2x\epsilon.
+\end{align}
+Since $\epsilon^2 = 0$, the dual part of $\tilde{f}(\tilde{x})$ is $2x$, which is the derivative $f'(x)$.
+
++++
 
 ### Reverse Mode AD and Backpropagation
 
