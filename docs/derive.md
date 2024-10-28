@@ -169,7 +169,7 @@ Finite difference methods involve a trade-off between truncation error and round
 The truncation error arises from approximating the derivative using discrete differences, while the round-off error is due to the finite precision of floating-point arithmetic used in computations.
 
 For the forward and backward difference methods, the truncation error is proportional to $h$, meaning that decreasing $h$ improves the approximation's accuracy linearly.
-In contrast, the central difference method’s truncation error decreases quadratically with $h$, offering better accuracy for smaller step sizes.
+In contrast, the central difference method's truncation error decreases quadratically with $h$, offering better accuracy for smaller step sizes.
 
 However, reducing $h$ too much can amplify round-off errors, as the difference $f(x + h) - f(x)$ becomes dominated by floating-point precision limitations.
 Therefore, selecting an optimal step size $h$ is crucial.
@@ -772,12 +772,35 @@ for (x, y, dy) in list(zip(X, Y, dY))[::10]:
   * Computing Jacobians and Hessians with AD
 * Techniques and computational considerations.
 
-### Limitations and Challenges of AD
++++
 
-* Handling non-differentiable functions and discontinuities.
-* Computational overhead and memory usage.
-* Control flow and dynamic graphs.
-* Best practices for efficient AD implementation.
+### Discussion on AD
+
+Despite its powerful capabilities, Automatic Differentiation presents several limitations and challenges that must be addressed to ensure effective implementation.
+
+**Handling Non-Differentiable Functions and Discontinuities**:
+AD relies on the smoothness and differentiability of functions.
+Functions with discontinuities, sharp corners, or non-differentiable points can lead to undefined or inaccurate derivatives.
+In practical applications, it is essential to ensure that the functions being differentiated are sufficiently smooth or to handle non-differentiable regions appropriately, possibly by smoothing or using subgradient methods.
+
+**Computational Overhead and Memory Usage**:
+Reverse Mode AD, while efficient for functions with many inputs and few outputs, can be memory-intensive due to the need to store intermediate variables during the forward pass.
+This overhead can limit its applicability in resource-constrained environments or for extremely large-scale problems.
+Techniques such as checkpointing and memory-efficient data structures are employed to mitigate these issues, but they add complexity to the implementation.
+
+**Control Flow and Dynamic Graphs**:
+Functions with dynamic control flow, such as loops, conditionals, and recursion, pose challenges for AD frameworks.
+Ensuring that the computational graph accurately represents all possible execution paths requires sophisticated handling within AD libraries.
+Some AD tools are better equipped to manage dynamic graphs than others, and selecting the appropriate framework is crucial based on the application's characteristics.
+
+**Best Practices for Efficient AD Implementation**
+To maximize the efficiency and accuracy of Automatic Differentiation, consider the following best practices:
+1. Choose the Right AD Framework: Select an AD library that aligns with your application's requirements, especially regarding performance, scalability, and support for higher-order derivatives.
+2. Minimize Memory Consumption: Utilize techniques like checkpointing and in-place operations to reduce memory overhead, particularly when using Reverse Mode AD.
+3. Handle Non-Differentiable Regions Carefully: Implement checks or preprocessing steps to manage functions with potential non-differentiable points.
+4. Optimize Computational Graphs: Simplify and optimize the computational graph to eliminate redundant operations and enhance differentiation efficiency.
+5. Leverage Vectorization: Utilize vectorized operations and parallelism where possible to accelerate derivative computations.
+6. Validate Derivatives: Compare AD-generated derivatives with analytical or numerical derivatives to ensure correctness, especially when implementing custom operations.
 
 +++
 
