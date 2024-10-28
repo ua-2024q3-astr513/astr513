@@ -334,10 +334,10 @@ f(x + 2h) &= f(x) + 2h f'(x) + \frac{(2h)^2}{2} f''(x) + \frac{(2h)^3}{6} f'''(x
 
 We will construct linear combinations of these expansions to eliminate the lower-order terms up to $h^3$.
 For example, subtract the expansion at $x - 2h$ from that at $x + 2h$ and adjust coefficients to isolate $f'(x)$:
-\begin{aligned}
+\begin{align}
 f(x + 2h) - f(x - 2h) &= 4h f'(x) + \frac{8h^3}{6} f'''(x) + \mathcal{O}(h^5), \\
 f(x +  h) - f(x -  h) &= 2h f'(x) + \frac{2h^3}{6} f'''(x) + \mathcal{O}(h^5).
-\end{aligned}
+\end{align}
 It is now straightforward to eliminate the $f'''(x)$ term:
 \begin{align}
 -f(x + 2h) + f(x - 2h) + 2f(x + h) - 2f(x - h) = \mathcal{O}(h^5).
