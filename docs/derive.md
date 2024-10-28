@@ -626,6 +626,138 @@ This connection demostrates how both techniques achieve high-accuracy derivative
 
 +++
 
+### Implementing Forward Mode Autodiff with Dual Numbers
+
+To implement Forward Mode AD with Dual Numbers in Python, we define a Dual class that overrides basic arithmetic operations to handle both the real and dual parts seamlessly.
+Additionally, helper functions V(x) and D(x) are introduced to extract the value and derivative from Dual Numbers or regular numerical inputs.
+
+```{code-cell} ipython3
+def V(x):
+    """Select the value from a dual number.
+
+    Work for both python built-in numbers (often used in function) and dual numbers.
+    """
+    if isinstance(x, Dual):
+        return x[0]
+    else:
+        return x
+
+def D(x):
+    """Select the derivative from a dual number.
+
+    Work for both python built-in numbers (often used in function) and dual numbers.
+    """
+    if isinstance(x, Dual):
+        return x[1]
+    else:
+        return 0
+```
+
+```{code-cell} ipython3
+class Dual(tuple):
+    """Dual number for implementing autodiff in pure python"""
+
+    def __new__(self, v, d=1): # tuple is immutable so we cannot use __init__()
+        return tuple.__new__(Dual, (v, d))
+
+    def __add__(self, r):
+        return Dual(
+            V(self) + V(r),
+            D(self) + D(r),
+        )
+    def __radd__(self, l):
+        return self + l # addition commutes
+
+    def __sub__(self, r):
+        return Dual(
+            V(self) - V(r),
+            D(self) - D(r),
+        )
+    def __rsub__(self, l):
+        return Dual(
+            V(l) - V(self),
+            D(l) - D(self),
+        )
+
+    def __mul__(self, r):
+        return Dual(
+            V(self) * V(r),
+            D(self) * V(r) + V(self) * D(r),
+        )
+    def __rmul__(self, l):
+        return self * l # multiplication commutes
+
+    def __truediv__(self, r):
+        return Dual(
+            V(self) / V(r),
+            ..., # leave as exercise
+        )
+    def __rtruediv__(self, l):
+        return Dual(
+            V(l) / V(self),
+            ..., # leave as exercise
+        )
+
+    def __pow__(self, r): # assume r is constant
+        if r == 0:
+            return ... # leave as exercise
+        elif r == 1:
+            return ... # leave as exercise
+        else:
+            return Dual(
+                V(self)**r,
+                ..., # leave as exercise
+            )
+```
+
+That's it!
+We've implemented (a limited version of) autodiff in pure python!
+
+To validate our Dual Number implementation, we define a simple function and compute its derivative using AD.
+Consider the function $f(x) = x + x^2$.
+We evaluate this function using Dual Numbers and plot both the function and its derivative.
+
+```{code-cell} ipython3
+def f(x):
+    return x + x*x
+
+X     = np.linspace(-1,1,num=101)
+F, Fx = f(Dual(X))
+
+plt.plot(X, F, lw=5, alpha=0.25)
+for (x, f, fx) in list(zip(X, F, Fx))[::10]:
+    plt.plot(
+        [x-0.05,    x+0.05],
+        [f-0.05*fx, f+0.05*fx],
+    )
+```
+
+The initial implementation of the Dual class handles basic arithmetic operations.
+However, to support more complex functions such as trigonometric functions, we need to define additional operations that correctly propagate derivative information.
+This can be achieved by implementing helper functions that operate on Dual Numbers.
+
+```{code-cell} ipython3
+def sin(x):
+    return Dual(
+        np.sin(V(x)),
+        np.cos(V(x)) * D(x)  # chain rule: d/dx sin(x) = cos(x) * x'
+    )
+```
+
+```{code-cell} ipython3
+def f(x):
+    return sin(x + x*x)
+
+Y, dY = f(Dual(X))
+
+plt.plot(X, Y, lw=5, alpha=0.25)
+for (x, y, dy) in list(zip(X, Y, dY))[::10]:
+    plt.plot(
+        [x-0.05,    x+0.05],
+        [y-0.05*dy, y+0.05*dy],
+    )
+```
+
 ## Reverse Mode AD and Backpropagation
 
 * Concept of Reverse Mode AD
