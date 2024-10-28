@@ -177,7 +177,7 @@ Typically, $h$ is chosen to balance the minimization of both truncation and roun
 
 +++
 
-# Sample Implementation
+### Sample Implementation
 
 To illustrate finite difference methods, consider the following Python implementation of the forward, backward, and central difference approximations:
 
@@ -243,8 +243,6 @@ axes[0].legend()
 Why do the convergence rates do not behave as expected?
 
 +++
-
-### On Choosing the Optimal Step Size $h$
 
 Selecting an appropriate step size $h$ is critical for minimizing the total error in finite difference approximations.
 An optimal $h$ balances the reduction of truncation error with the increase in round-off error.
@@ -325,12 +323,12 @@ Specifically, consider approximating the first derivative $f'(x)$ with fourth-or
 This requires that the truncation error be of order $\mathcal{O}(h^4)$, meaning that the error decreases proportionally to $h^4$ as the step size $h$ approaches zero.
 
 Expand the function $f$ at points $x - 2h$, $x - h$, $x + h$, and $x + 2h$ using the Taylor series around $x$:
-\begin{aligned}
+\begin{align}
 f(x - 2h) &= f(x) - 2h f'(x) + \frac{(2h)^2}{2} f''(x) - \frac{(2h)^3}{6} f'''(x) + \frac{(2h)^4}{24} f''''(x) + \mathcal{O}(h^5), \\
 f(x -  h) &= f(x) -  h f'(x) + \frac{  h ^2}{2} f''(x) - \frac{  h ^3}{6} f'''(x) + \frac{  h ^4}{24} f''''(x) + \mathcal{O}(h^5), \\
 f(x +  h) &= f(x) +  h f'(x) + \frac{  h ^2}{2} f''(x) + \frac{  h ^3}{6} f'''(x) + \frac{  h ^4}{24} f''''(x) + \mathcal{O}(h^5), \\
 f(x + 2h) &= f(x) + 2h f'(x) + \frac{(2h)^2}{2} f''(x) + \frac{(2h)^3}{6} f'''(x) + \frac{(2h)^4}{24} f''''(x) + \mathcal{O}(h^5).
-\end{aligned}
+\end{align}
 
 +++
 
@@ -460,7 +458,3 @@ Nevertheless, it is unusal to go above 6th-order.
 ### Open questions and discussion
 
 ### Suggestions for further reading and exploration.
-
-```{code-cell} ipython3
-
-```
