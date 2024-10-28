@@ -402,20 +402,61 @@ Unlike finite difference methods, which rely on local information, spectral meth
 Fourier spectral methods leverage the Fourier series representation of periodic functions to compute derivatives with high precision.
 The fundamental idea is to transform the function into the frequency domain, where differentiation becomes a straightforward algebraic operation.
 
-For a function  f(x)  defined on a periodic interval  [0, L] , the Fourier series expansion is given by:
+For a function  f(x)  defined on a periodic interval  [L/2, L/2), the Fourier series expansion is given by:
 \begin{align}
-f(x) = \sum_{k=-N/2}^{N/2} F_k e^{i 2\pi k x / L},
+f(x) = \sum_{n=-N/2}^{N/2} F_n e^{i 2\pi n x / L} \equiv \sum_{n=-N/2}^{N/2} F_k e^{i k_n x},
 \end{align}
-where $F_k$ are the Fourier coefficients, $N$ is the number of modes, and $i$ is the imaginary unit.
+where $N$ is the number of modes, $F_n$ are the Fourier coefficients, and $k_n \equiv 2\pi n/L$ are the wavenumbers.
 
-Differentiation of $f(x)$ in the spatial domain corresponds to multiplication by $i 2\pi k / L$ in the frequency domain.
+Differentiation of $f(x)$ in the spatial domain corresponds to multiplication by $i k_n$ in the frequency domain.
 Specifically, the first derivative $f'(x$) is:
 \begin{align}
-f'(x) = \sum_{k=-N/2}^{N/2} i \frac{2\pi k}{L} F_k e^{i 2\pi k x / L}.
+f'(x) = \sum_{k=-N/2}^{N/2} i k_n F_k e^{i k_n x}.
 \end{align}
 This property simplifies the computation of derivatives, as it converts the differentiation process into a simple multiplication operation in the Fourier space.
 
-+++
+Consider computing the first derivative of $f(x) = \sin(x)$ on the domain $[-\pi, \pi)$:
+
+```{code-cell} ipython3
+k
+```
+
+```{code-cell} ipython3
+# Number of modes
+N = 64
+
+# Domain
+L = 2 * np.pi
+x = np.linspace(-L/2, L/2, N, endpoint=False)
+
+def fx_spectral(func, x):
+    f  = func(x)
+    F  = np.fft.fft(f)
+    k  = 2 * np.pi * np.fft.fftfreq(len(x), d=x[1]-x[0])
+
+    # Multiply by ik to get derivative in frequency domain
+    Fx = 1j * k * F
+
+    # Inverse Fourier transform to get derivative in spatial domain
+    return np.fft.ifft(Fx).real
+
+# Spectral derivative
+fx  = fx_spectral(np.sin, x)
+
+# True derivative
+fx0 = np.cos(x)
+
+# Plotting
+plt.figure(figsize=(10, 6))
+plt.plot(x, fx,  'ro--', label='Spectral Derivative')
+plt.plot(x, fx0, 'b.-',  label='True Derivative')
+plt.xlabel('x')
+plt.ylabel("f'(x)")
+plt.title('Fourier Spectral Derivative of sin(2πx)')
+plt.legend()
+plt.grid(True)
+plt.show()
+```
 
 ### Complex Step Differentiation
 
