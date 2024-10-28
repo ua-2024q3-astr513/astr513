@@ -458,6 +458,32 @@ plt.grid(True)
 plt.show()
 ```
 
+```{code-cell} ipython3
+Ns   = 2**np.arange(1,10)
+errs = []
+for N in Ns:
+    x   = np.linspace(-L/2, L/2, N, endpoint=False)
+    fx  = fx_spectral(np.sin, x)
+    fx0 = np.cos(x)
+    dfx = fx - fx0
+    err = np.sqrt(np.mean(dfx*dfx))
+    errs.append(err)
+```
+
+```{code-cell} ipython3
+plt.loglog(Ns, errs, 'o-')
+plt.xlabel('Number of samples N')
+plt.ylabel('RMS error')
+plt.grid(True, which="both", ls="--")
+```
+
+* How should we interpret this convergence plot?
+* What if we change the function to, e.g., a Gaussian?
+* How about Lorentzian $1/(1+x^2$?
+* Does the domain matter?
+
++++
+
 ### Complex Step Differentiation
 
 * Introduction to Complex Step Method
