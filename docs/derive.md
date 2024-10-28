@@ -486,9 +486,37 @@ plt.grid(True, which="both", ls="--")
 
 ### Complex Step Differentiation
 
-* Introduction to Complex Step Method
-* Concept and mathematical foundation.
-* Elimination of subtractive cancellation errors.
+The Complex Step Method provides an innovative approach to numerical differentiation by evaluating the function at a complex-valued point.
+Unlike finite difference methods, which approximate derivatives using real-valued perturbations and suffer from subtractive cancellation errors, the Complex Step Method utilizes an imaginary perturbation to extract derivative information directly from the imaginary component of the function's output.
+This technique achieves high accuracy without the need for extremely small step sizes, thereby avoiding the numerical instability associated with finite differences.
+In astrophysics, this method was first used in numerical relativity to mitigate the stability of solving Einstein's field equation.
+
+The foundation of the Complex Step Method lies in the application of complex analysis to differentiation.
+Consider a real-valued function $f(x)$ that is analytic (i.e., differentiable) in a neighborhood around a point $x$.
+By introducing a small imaginary perturbation $ih$ to the input, where $h$ is a real step size and $i$ is the imaginary unit, we can express the function as:
+\begin{align}
+f(x + ih) = f(x) + ih f'(x) - \frac{h^2}{2} f''(x) - i \frac{h^3}{6} f''(x) + \cdots
+\end{align}
+The key insight is that the imaginary part of $f(x + ih)$ is directly proportional to the first derivative $f'(x)$:
+\begin{align}
+\operatorname{Im}[f(x + ih)] = h f'(x) + \mathcal{O}(h^3)
+\end{align}
+
+By isolating the imaginary component and dividing by  h , we obtain an approximation for the first derivative:
+\begin{align}
+f'(x) \approx \frac{\operatorname{Im}[f(x + ih)]}{h}
+\end{align}
+
+Subtractive cancellation errors arise in finite difference approximations when two nearly equal real numbers are subtracted, leading to a significant loss of precision.
+For example, in the central difference formula:
+\begin{align}
+f'(x) \approx \frac{f(x + h) - f(x - h)}{2h}
+\end{align}
+if $h$ is very small, $f(x + h)$ and $f(x - h)$ become nearly identical, and their difference is subject to floating-point round-off errors. This limits the accuracy of the derivative approximation.
+
+In contrast, the Complex Step Method avoids this issue by perturbing the input in the imaginary direction.
+The derivative information is captured in the imaginary part, which is not subject to the same precision loss.
+As a result, the Complex Step Method can achieve derivative approximations accurate to machine precision without requiring excessively small step sizes.
 
 +++
 
