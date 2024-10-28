@@ -601,7 +601,32 @@ Since $\epsilon^2 = 0$, the dual part of $\tilde{f}(\tilde{x})$ is $2x$, which i
 
 +++
 
-### Reverse Mode AD and Backpropagation
+### Connection to Complex Step Method
+
+The Dual Number formulation shares conceptual similarities with the Complex Step Method discussed earlier.
+Both techniques enhance the input by adding an additional component to capture derivative information accurately without introducing significant numerical errors.
+
+Consider the above example $f(x) = x^2$.
+In the Complex Step Method, the function is evaluated at a complex point $x + ih$, where $h$ is a small step size and $i$ is the imaginary unit:
+\begin{align}
+f(x + ih) = (x + ih)^2 = x^2 - h^2 + 2ihx.
+\end{align}
+By isolating the imaginary part and dividing by $h$, we obtain an approximation of the derivative:
+\begin{align}
+f'(x) \approx \frac{\operatorname{Im}[f(x + ih)]}{h} = 2x.
+\end{align}
+
+In this example, the imaginary part directly corresponds to the derivative, mirroring the Dual Number approach where the dual component carries derivative information.
+The real part contains an extra term $-h^2$, which becomes negligible when $h$ is sufficiently small.
+Specifically, by choosing $h \lesssim \sqrt{\epsilon}$ (where $\epsilon$ represents machine precision, the smallest difference recognizable by the floating-point system), the term $-h^2$ effectively vanishes due to finite precision arithmetic.
+
+This demonstrates that when $h$ is appropriately small, the Complex Step Method effectively reduces to the Dual Number formulation, providing an exact derivative within the limits of machine precision.
+Both methods avoid the subtractive cancellation errors inherent in traditional finite difference approaches by utilizing an augmented input—dual numbers use an infinitesimal component, while the Complex Step Method employs a small imaginary perturbation.
+This connection demostrates how both techniques achieve high-accuracy derivative computations by embedding derivative information directly into the evaluation process.
+
++++
+
+## Reverse Mode AD and Backpropagation
 
 * Concept of Reverse Mode AD
   * Computational graphs and the chain rule.
