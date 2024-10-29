@@ -84,6 +84,34 @@ Each is suited to different scenarios, depending on whether interpolation points
 
 +++
 
+### Bisection Search
+
+Bisection search is a reliable method that works by dividing the search interval in half with each step until the target value’s position is found.
+Given a sorted array of $N$ data points, this method requires approximately $\log_2(N)$ steps to locate the closest point, making it efficient even for large datasets.
+Bisection is particularly useful when interpolation requests are uncorrelated—meaning there is no pattern in the sequence of target points that could be exploited for faster searching.
+
+```{code-cell} ipython3
+def bisection(xs, target):
+    l, h = 0, len(xs) - 1
+    while h - l > 1:
+        m = (h + l) // 2
+        if target >= xs[m]:
+            l = m
+        else:
+            h = m
+    return l  # returns index of the closest value less than or equal to target
+```
+
+```{code-cell} ipython3
+import numpy as np
+
+for i in range(10):
+    xs = np.sort(np.random.uniform(0, 100, 10))
+    v  = np.random.uniform(min(xs), max(xs))
+    i  = bisection(xs, v)
+    print(f'{xs[i]} <= {v} < {xs[i+1]}')
+```
+
 ## Polynomial Interpolation and Extrapolation
 
 ## Cubic Spline Interpolation
