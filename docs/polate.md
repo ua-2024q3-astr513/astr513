@@ -33,6 +33,19 @@ Spline interpolation, particularly cubic splines, is valued for its smoothness a
 Extrapolation remains difficult, yet physics-informed machine learning (PIML) presents a promising avenue.
 By embedding known physical laws, such as ordinary differential equations (ODEs), into models, PIML enables extrapolation that aligns with fundamental constraints, making it possible to extend predictions meaningfully beyond the observed data range.
 
+Interpolation and function approximation are related but distinct tasks.
+While interpolation estimates values at specified points within a given dataset, function approximation creates a simplified function to replace a more complex one.
+In approximation, we can sample additional points as needed, whereas interpolation relies strictly on values at specific, fixed sampling points.
+(See [Numerical Recipes](https://numerical.recipes/) Chapter 5 for function approximation.)
+
+Interpolation also has limitations.
+Pathological functions can defy even the most sophisticated interpolation schemes.
+For example, consider a function that behaves smoothly except for a slight singularity at a certain point:
+\begin{align}
+f(x) = 3x^2 + \frac{1}{\pi^4}\ln\left[(\pi - x)^2\right] + 1
+\end{align}
+Interpolation based on values close to but not precisely at that singularity will likely produce an inaccurate result.
+
 ```{code-cell} ipython3
 import numpy as np
 
@@ -53,6 +66,11 @@ plt.plot(x3, f(x3), '--')
 plt.plot(x2, f(x2), 'o:')
 plt.plot(x1, f(x1), 'o-')
 ```
+
+These cases highlight the importance of incorporating error estimates in interpolation routines.
+Although no error estimate is foolproof, an effective interpolation method should still offer a reasonable assessment of its own accuracy within the presumption of smoothness.
+
++++
 
 ## Preliminaries: Searching an Ordered Table
 
