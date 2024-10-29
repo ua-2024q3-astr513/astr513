@@ -13,3 +13,23 @@ kernelspec:
 ---
 
 # Interpolation and Extrapolation
+
+## Introduction
+
+## Preliminaries: Searching an Ordered Table
+
+## Polynomial Interpolation and Extrapolation
+
+## Cubic Spline Interpolation
+
+## Rational Function Interpolation and Extrapolation
+
+## Coefficients of the Interpolating Polynomial
+
+## Interpolation on a Grid in Multidimensions
+
+## Interpolation on Scattered Data in Multidimensions
+
+## Laplace Interpolation
+
+## Conclusion and Discussion
