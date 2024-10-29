@@ -154,6 +154,52 @@ for _ in range(10):
     print(f'{xs[i]} <= {v} < {xs[i+1]}')
 ```
 
+### Linear Interpolation Using the Hunting Method
+
+Once the nearest position is identified, interpolation proceeds with the closest data points.
+Here, we implement a simple linear interpolation using the hunting method to locate the starting position, then use it to calculate the interpolated value.
+
+```{code-cell} ipython3
+class Interpolator:
+    def __init__(self, xs, ys):
+        assert len(xs) == len(ys)
+        self.xs, self.ys = xs, ys
+        self.i_last = len(xs)//2
+
+    def __call__(self, target, search_method=None):
+        if search_method is None:
+            i = hunt(self.xs, target, self.i_last)
+        else:
+            i = bisection(self.xs, target)
+        self.i_last = i  # Update last position for future hunts
+            
+        # Linear interpolation using the two nearest points
+        x0, x1 = self.xs[i], self.xs[i + 1]
+        y0, y1 = self.ys[i], self.ys[i + 1]
+
+        return (y1 - y0) * (target - x0) / (x1 - x0) + y0
+```
+
+```{code-cell} ipython3
+def f(x):
+    return np.exp(-0.5 * x * x)
+    
+Xs = np.sort(np.random.uniform(-5, 5, 20))
+Ys = f(Xs)
+
+fi = Interpolator(Xs, Ys)
+```
+
+```{code-cell} ipython3
+from matplotlib import pyplot as plt
+
+xs = np.linspace(min(Xs), max(Xs), 100)
+ys = np.array([fi(x) for x in xs])
+
+plt.plot(xs, ys, '.-')
+plt.plot(Xs, Ys, 'o')
+```
+
 ## Polynomial Interpolation and Extrapolation
 
 ## Cubic Spline Interpolation
