@@ -245,6 +245,30 @@ xs = np.linspace(min(Xs), max(Xs), 10000)
 
 ## Polynomial Interpolation and Extrapolation
 
+Given $M$ data points $(x_0, y_0), (x_1, y_1), \dots, (x_{M-1}, y_{M_1})$, there exists a unique polynomial of degree $M-1$ that pass through all $M$ points exactly.
+This polynomial is given by Lagrange's classical formula,
+\begin{align}
+P_{M-1}(x)
+&= \frac{(x-x_1)(x-x_2)\dots(x-x_{M-1})}{(x_0-x_1)(x_0-x_2)\dots(x_0-x_{M-1})} y_0 \\
+&+ \frac{(x-x_0)(x-x_2)\dots(x-x_{M-1})}{(x_1-x_0)(x_1-x_2)\dots(x_1-x_{M-1})} y_1 + \dots \\
+&+ \frac{(x-x_0)(x-x_2)\dots(x-x_{M-2})}{(x_{M-1}-x_0)(x_{M-1}-x_1)\dots(x_{M-1}-x_{M-2})} y_{M-1}
+\end{align}
+Using summation and product notations, one may rewrite Lagrange's formula as
+\begin{align}
+P_{M-1}(x)
+= \sum_{m=0}^{M-1} \frac{\prod_{n=0,n\ne m}^{M-1}(x-x_n)}{\prod_{n=0,n\ne m}^{M-1}(x_m-x_n)} y_m
+\end{align}
+Substituting $x = x_{m'}$ for $0 \le m; < M$, it is straightforward to show
+\begin{align}
+P_{M-1}(x_{m'})
+= \sum_{m=0}^{M-1} \delta_{mm'} y_m
+\end{align}
+and hence $P_{M-1}(x)$ does pass through all data points.
+
++++
+
+
+
 ## Cubic Spline Interpolation
 
 ## Rational Function Interpolation and Extrapolation
