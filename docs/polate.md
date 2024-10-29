@@ -74,6 +74,16 @@ Although no error estimate is foolproof, an effective interpolation method shoul
 
 ## Preliminaries: Searching an Ordered Table
 
+In many interpolation tasks, especially with irregularly sampled data, the process begins with a critical first step: identifying the nearest points surrounding the target interpolation value.
+
+Unlike regularly spaced data on a uniform grid, where adjacent points are easy to locate by simple indexing, randomly sampled or unevenly spaced data requires additional steps to find nearby values.
+This searching step can be as computationally intensive as the interpolation itself, so efficient search methods are essential to maintain overall performance.
+
+In Numerical Recipes, two primary methods are presented for this purpose: bisection and hunting.
+Each is suited to different scenarios, depending on whether interpolation points tend to be close to one another or scattered randomly.
+
++++
+
 ## Polynomial Interpolation and Extrapolation
 
 ## Cubic Spline Interpolation
