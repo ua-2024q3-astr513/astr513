@@ -102,13 +102,55 @@ def bisection(xs, target):
     return l  # returns index of the closest value less than or equal to target
 ```
 
+The above function efficiently narrows down the interval to locate the index of the nearest value.
+
+We can perform some tests:
+
 ```{code-cell} ipython3
 import numpy as np
 
-for i in range(10):
+for _ in range(10):
     xs = np.sort(np.random.uniform(0, 100, 10))
     v  = np.random.uniform(min(xs), max(xs))
     i  = bisection(xs, v)
+    print(f'{xs[i]} <= {v} < {xs[i+1]}')
+```
+
+### Hunting Method
+
+For cases where interpolation points are close together in sequence---common in applications with gradually changing target values---the hunting method offers faster performance than bisection from scratch.
+Hunting takes advantage of the idea that, if the previous interpolation point is nearby, the search can start close to the last found position and "hunt" outward in expanding steps to bracket the target value.
+Once the bracket is located, the search is refined using a quick bisection.
+
+The hunting method is beneficial for correlated data requests, where successive target values are close, as it can skip large portions of the data and converge faster than starting from scratch each time.
+
+```{code-cell} ipython3
+def hunt(xs, target, i_last):
+    n = len(xs)
+    assert 0 <= i_last < n - 1
+
+    # Determine the search direction based on the target value
+    if target >= xs[i_last]:
+        l, h, step = i_last, min(n-1, i_last+1), 1
+        while h < n - 1 and target > xs[h]:
+            l, h = h, min(n-1, h+step)
+            step *= 2
+    else:
+        l, h, step = max(0, i_last-1), i_last, 1
+        while l > 0 and target < xs[l]:
+            l, h = max(0, l-step), l
+            step *= 2
+
+    # Refine with bisection within the bracketed range
+    return bisection(xs[l:h+1], target) + l
+```
+
+```{code-cell} ipython3
+i = 5
+for _ in range(10):
+    xs = np.sort(np.random.uniform(0, 100, 10))
+    v  = np.random.uniform(min(xs), max(xs))
+    i  = hunt(xs, v, i)
     print(f'{xs[i]} <= {v} < {xs[i+1]}')
 ```
 
