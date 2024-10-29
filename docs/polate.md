@@ -16,6 +16,27 @@ kernelspec:
 
 ## Introduction
 
+```{code-cell} ipython3
+import numpy as np
+
+def f(x):
+    return 3 * x**2 + np.log((np.pi - x)**2) / np.pi**4 + 1
+
+x1 = np.array([3.13, 3.14, 3.15, 3.16])
+x2 = np.linspace(3.13, 3.16, 31)
+x3 = np.linspace(3.13, 3.16, 301)
+x4 = np.linspace(3.13, 3.16, 3001)
+```
+
+```{code-cell} ipython3
+from matplotlib import pyplot as plt
+
+plt.plot(x4, f(x4))
+plt.plot(x3, f(x3), '--')
+plt.plot(x2, f(x2), 'o:')
+plt.plot(x1, f(x1), 'o-')
+```
+
 ## Preliminaries: Searching an Ordered Table
 
 ## Polynomial Interpolation and Extrapolation
