@@ -84,6 +84,27 @@ Each is suited to different scenarios, depending on whether interpolation points
 
 +++
 
+### Linear Search
+
+As a reference, we will implement a linear search:
+
+```{code-cell} ipython3
+def linear(xs, target):
+    for l in range(len(xs)): # purposely use for-loop to avoid C optimization in numpy
+        if xs[l] >= target:
+            return l-1
+```
+
+```{code-cell} ipython3
+import numpy as np
+
+for _ in range(10):
+    xs = np.sort(np.random.uniform(0, 100, 10))
+    v  = np.random.uniform(min(xs), max(xs))
+    i  = linear(xs, v)
+    print(f'{xs[i]} <= {v} < {xs[i+1]}')
+```
+
 ### Bisection Search
 
 Bisection search is a reliable method that works by dividing the search interval in half with each step until the target value’s position is found.
@@ -99,7 +120,7 @@ def bisection(xs, target):
             l = m
         else:
             h = m
-    return l  # returns index of the closest value less than or equal to target
+    return l # returns index of the closest value less than or equal to target
 ```
 
 The above function efficiently narrows down the interval to locate the index of the nearest value.
@@ -107,8 +128,6 @@ The above function efficiently narrows down the interval to locate the index of 
 We can perform some tests:
 
 ```{code-cell} ipython3
-import numpy as np
-
 for _ in range(10):
     xs = np.sort(np.random.uniform(0, 100, 10))
     v  = np.random.uniform(min(xs), max(xs))
@@ -166,11 +185,13 @@ class Interpolator:
         self.xs, self.ys = xs, ys
         self.i_last = len(xs)//2
 
-    def __call__(self, target, search_method=None):
-        if search_method is None:
+    def __call__(self, target, search_method='hunt'):
+        if search_method == 'hunt':
             i = hunt(self.xs, target, self.i_last)
-        else:
+        elif search_method == 'bisection':
             i = bisection(self.xs, target)
+        else:
+            i = linear(self.xs, target)
         self.i_last = i  # Update last position for future hunts
             
         # Linear interpolation using the two nearest points
@@ -198,6 +219,28 @@ ys = np.array([fi(x) for x in xs])
 
 plt.plot(xs, ys, '.-')
 plt.plot(Xs, Ys, 'o')
+```
+
+Let's test if our claim in terms of performance works in real life.
+
+```{code-cell} ipython3
+Xs = np.sort(np.random.uniform(-5, 5, 100))
+Ys = f(Xs)
+fi = Interpolator(Xs, Ys)
+
+xs = np.linspace(min(Xs), max(Xs), 10000)
+```
+
+```{code-cell} ipython3
+%timeit ys = np.array([fi(x, search_method='linear') for x in xs])
+```
+
+```{code-cell} ipython3
+%timeit ys = np.array([fi(x, search_method='bisection') for x in xs])
+```
+
+```{code-cell} ipython3
+%timeit ys = np.array([fi(x, search_method='hunt') for x in xs])
 ```
 
 ## Polynomial Interpolation and Extrapolation
