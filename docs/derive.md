@@ -48,7 +48,9 @@ This lecture will introduce these techniques, providing a comprehensive overview
 Symbolic differentiation computes the derivative of a function expressed symbolically by applying calculus rules directly to its mathematical expression.
 Unlike numerical methods that approximate derivatives at specific points, symbolic differentiation yields exact analytical expressions, making it valuable for theoretical analyses and precise computations.
 
-## Algorithmic Approach
++++
+
+### Algorithmic Approach
 
 The general algorithm for symbolic differentiation involves:
 
@@ -71,7 +73,9 @@ To compute $f'(x)$, a symbolic differentiation system would:
    f'(x) = x^2 \cos(x) + 2 x \sin(x) + 2 e^{2x}
    \end{align}
 
-## Symbolic Computation with SymPy
++++
+
+### Symbolic Computation with SymPy
 
 `SymPy` is an open-source Python library for symbolic mathematics.
 It allows for symbolic differentiation and manipulation of mathematical expressions.
@@ -475,7 +479,7 @@ plt.grid(True, which="both", ls="--")
 
 * How should we interpret this convergence plot?
 * What if we change the function to, e.g., a Gaussian?
-* How about Lorentzian $1/(1+x^2$?
+* How about Lorentzian $1/(1+x^2)$?
 * Does the domain matter?
 
 +++
@@ -561,22 +565,22 @@ Unlike symbolic differentiation, which manipulates mathematical expressions to f
 
 ### Introduction to Automatic Differentiation
 
-The motivation for Automatic Differentiation comes from the need to compute derivatives accurately and efficiently, especially in high-dimensional and complex applications such as machine learning (especiall deep learning), optimization, and scientific computing.
-Traditional numerical methods like finite differences suffer from a trade-off between step size and approximation error, leading to inaccuracies due to truncation and round-off errors.
-Symbolic differentiation, while exact, becomes computationally infeasible for large-scale problems due to expression swell and high memory consumption.
+Automatic Differentiation (AD) is motivated by the need for accurate and efficient derivative computation, especially in complex, high-dimensional applications such as machine learning, optimization, and scientific computing.
+Traditional numerical methods, like finite differences, balance step size and approximation error, leading to inaccuracies from truncation and round-off errors.
+Symbolic differentiation, while exact, can be computationally infeasible for large-scale problems due to expression growth and memory demands.
 
-AD bridges the gap between these two approaches by systematically applying differentiation rules to each operation in a function's computational graph.
-This method ensures that derivatives are computed accurately and efficiently, making AD indispensable in modern computational tasks where gradient information is crucial.
+AD bridges the gap between these approaches by applying differentiation rules directly to each operation in a function's computational graph.
+By breaking functions into elementary operations and applying the chain rule, AD calculates derivatives with precision and efficiency, making it indispensable in fields where gradient information is essential, such as deep learning and physics-informed modeling.
 
-AD operates by decomposing functions into a sequence of elementary operations (addition, multiplication, etc.) and applying the chain rule to compute derivatives.
-This process can be implemented in two primary modes: forward mode and reverse mode, each suited to different types of problems.
+AD operates in two main modes: forward mode and reverse mode, each suited to different types of problems.
 
-+++
+
 
 ### Dual Numbers and Forward Mode AD
 
-Dual numbers extend real numbers by introducing an infinitesimal component, enabling the simultaneous computation of function values and their derivatives.
-A dual number is expressed as:
+In forward mode AD, dual numbers provide a practical and intuitive way to propagate derivative information alongside function values.
+Dual numbers extend real numbers by introducing an additional component representing an infinitesimal value, enabling simultaneous calculation of function values and their derivatives.
+A dual number is represented as:
 \begin{align}
 \tilde{x} = x + \epsilon x',
 \end{align}
@@ -587,8 +591,9 @@ This property allows for the linear extraction of derivative information without
 Note that [exterior calculus](https://en.wikipedia.org/wiki/Differential_form) requires $d^2 = 0$.
 This is the same algebraic rule as dual number.
 
-Forward Mode AD utilizes dual numbers to propagate derivative information alongside function evaluations.
-By replacing each real input with a dual number, every operation performed on these dual numbers automatically carries derivative information through the computation.
+Dual numbers follow standard arithmetic rules but with the additional property $\epsilon^2 = 0$, which makes it possible to compute derivatives without higher-order terms.
+This approach mirrors forward mode AD's method of applying the chain rule step-by-step through the computation, storing both the value and its derivative for each operation.
+Forward mode is particularly efficient when there are few input variables (such as when calculating the gradient of a function with one input and multiple outputs).
 
 Example: Differentiating $f(x) = x^2$
 
@@ -599,12 +604,15 @@ Consider the function $f(x) = x^2$. Using dual numbers:
 \end{align}
 Since $\epsilon^2 = 0$, the dual part of $\tilde{f}(\tilde{x})$ is $2x$, which is the derivative $f'(x)$.
 
+By replacing each real input with a dual number, forward mode AD propagates derivative information automatically through computation.
+This approach provides exact derivatives up to machine precision, avoiding the approximation errors of finite differences.
+
 +++
 
-### Implementing Forward Mode Autodiff with Dual Numbers
+### Implementing Autodiff with Dual Numbers
 
-To implement Forward Mode AD with Dual Numbers in Python, we define a Dual class that overrides basic arithmetic operations to handle both the real and dual parts seamlessly.
-Additionally, helper functions V(x) and D(x) are introduced to extract the value and derivative from Dual Numbers or regular numerical inputs.
+To implement forward mode AD in Python, we can define a `Dual` class that overrides arithmetic operations to handle both the value and derivative parts.
+Additionally, we introduce helper functions `V(x)` and `D(x)` to extract the value and derivative from Dual Numbers or regular numerical inputs.
 
 ```{code-cell} ipython3
 def V(x):
@@ -758,6 +766,18 @@ This connection demostrates how both techniques achieve high-accuracy derivative
 
 +++
 
+### Reverse Mode AD
+
+While forward mode AD, implemented through dual numbers, is efficient for functions with few inputs, reverse mode AD is more suitable for functions with many inputs and a single output.
+Reverse mode AD computes derivatives by tracing the computational graph in reverse, calculating the gradient with respect to all inputs in a single backward pass.
+This makes it highly effective for machine learning models, where the goal is often to compute derivatives with respect to numerous parameters (such as weights in neural networks).
+
+In practice, reverse mode AD requires tracking the computational graph of operations from inputs to outputs, storing intermediate values for each operation.
+This graph is then traversed in reverse during the backpropagation process, systematically applying the chain rule to compute gradients.
+Modern machine learning frameworks (e.g., `TensorFlow`, `PyTorch`, and `JAX`) utilize reverse mode AD to optimize models with many parameters, leveraging memory-efficient strategies like checkpointing to handle large-scale models.
+
++++
+
 ### Autodiff (and Vectorization and JIT) in Python with JAX
 
 [`JAX`](https://jax.readthedocs.io/en/latest/) is a high-performance numerical computing library developed by Google that provides powerful tools for AD.
@@ -794,62 +814,30 @@ for (x, f, fx) in list(zip(X, F, Fx))[::10]:
     )
 ```
 
-### Discussion on AD
-
-Despite its powerful capabilities, Automatic Differentiation presents several limitations and challenges that must be addressed to ensure effective implementation.
-
-**Handling Non-Differentiable Functions and Discontinuities**:
-AD relies on the smoothness and differentiability of functions.
-Functions with discontinuities, sharp corners, or non-differentiable points can lead to undefined or inaccurate derivatives.
-In practical applications, it is essential to ensure that the functions being differentiated are sufficiently smooth or to handle non-differentiable regions appropriately, possibly by smoothing or using subgradient methods.
-
-**Computational Overhead and Memory Usage**:
-Reverse Mode AD, while efficient for functions with many inputs and few outputs, can be memory-intensive due to the need to store intermediate variables during the forward pass.
-This overhead can limit its applicability in resource-constrained environments or for extremely large-scale problems.
-Techniques such as checkpointing and memory-efficient data structures are employed to mitigate these issues, but they add complexity to the implementation.
-
-**Control Flow and Dynamic Graphs**:
-Functions with dynamic control flow, such as loops, conditionals, and recursion, pose challenges for AD frameworks.
-Ensuring that the computational graph accurately represents all possible execution paths requires sophisticated handling within AD libraries.
-Some AD tools are better equipped to manage dynamic graphs than others, and selecting the appropriate framework is crucial based on the application's characteristics.
-
-**Best Practices for Efficient AD Implementation**:
-To maximize the efficiency and accuracy of Automatic Differentiation, consider the following best practices:
-1. Choose the Right AD Framework: Select an AD library that aligns with your application's requirements, especially regarding performance, scalability, and support for higher-order derivatives.
-2. Minimize Memory Consumption: Utilize techniques like checkpointing and in-place operations to reduce memory overhead, particularly when using Reverse Mode AD.
-3. Handle Non-Differentiable Regions Carefully: Implement checks or preprocessing steps to manage functions with potential non-differentiable points.
-4. Optimize Computational Graphs: Simplify and optimize the computational graph to eliminate redundant operations and enhance differentiation efficiency.
-5. Leverage Vectorization: Utilize vectorized operations and parallelism where possible to accelerate derivative computations.
-6. Validate Derivatives: Compare AD-generated derivatives with analytical or numerical derivatives to ensure correctness, especially when implementing custom operations.
-
-+++
-
 ## Summary
 
-Differentiation is a cornerstone technique in mathematics, science, and engineering, essential for analyzing and optimizing functions.
-The primary methods for computing derivatives include Symbolic Differentiation, Numerical Differentiation, and Automatic Differentiation (AD).
-Symbolic Differentiation involves analytically deriving exact expressions for derivatives, which is invaluable for obtaining precise analytical insights.
-However, it struggles with complex or large-scale functions due to expression swell, making it computationally intensive and impractical for intricate models.
-Numerical Differentiation approximates derivatives using discrete function evaluations, such as finite difference methods.
-While straightforward to implement and applicable to a wide range of functions, it is prone to truncation and round-off errors, requiring careful step size selection to balance accuracy and numerical stability.
+Differentiation is a fundamental tool in mathematics, science, and engineering, essential for function analysis and optimization.
+Primary methods include Symbolic Differentiation, Numerical Differentiation, and AD, each with unique strengths and limitations.
 
-Automatic Differentiation bridges the gap between symbolic and numerical methods by providing exact derivative computations up to machine precision without the complexity of symbolic manipulation.
-AD systematically applies the chain rule to each elementary operation within a function's computational graph, enabling efficient and accurate derivative calculations even for high-dimensional and complex functions.
-Forward Mode AD, possibility implemented by Dual Numbers, is particularly effective for functions with a small number of inputs, whereas Reverse Mode AD excels in scenarios with many inputs and a single output, such as training neural networks through backpropagation.
-Despite its advantages, AD can be memory-intensive and may encounter challenges with non-differentiable functions or dynamic control flows, necessitating sophisticated implementation strategies.
+Symbolic Differentiation provides exact analytical derivatives, ideal for theoretical insights, but struggles with complexity and memory demands for large-scale functions due to expression swell.
+Numerical Differentiation approximates derivatives using finite differences, offering simplicity and flexibility but often limited by truncation and round-off errors, requiring careful step-size management for stability.
 
-When comparing these methods, Symbolic Differentiation offers exact results suitable for theoretical analyses but is limited by computational inefficiency for complex functions.
-Numerical Differentiation provides flexibility and simplicity, ideal for empirical or implicitly defined functions, yet suffers from approximation errors and sensitivity to step sizes.
-Automatic Differentiation combines the precision of symbolic methods with the efficiency of numerical approaches, delivering exact derivatives without expression swell, making it highly suitable for machine learning and optimization tasks.
-However, its implementation complexity and memory requirements can pose challenges in large-scale applications.
+Automatic Differentiation bridges symbolic and numerical methods by calculating exact derivatives up to machine precision through systematic application of the chain rule in a function's computational graph.
+Forward Mode AD, often implemented with Dual Numbers, is efficient for functions with few inputs, while Reverse Mode AD is well-suited for functions with many inputs and a single output, such as in neural network training via backpropagation.
+Though highly accurate, AD can be memory-intensive, especially in large-scale applications, and may encounter issues with non-differentiable functions and dynamic control flows.
 
-Open questions in the field revolve around enhancing the scalability and efficiency of Automatic Differentiation, particularly for extremely large-scale problems and higher-order derivatives such as Jacobians and Hessians.
-Addressing how AD frameworks can better handle non-differentiable functions and dynamic computational graphs remains a critical area of research.
-Additionally, exploring hybrid differentiation approaches that integrate the strengths of symbolic, numerical, and automatic methods could lead to more versatile and robust derivative computation techniques.
-Understanding and mitigating phenomena like Gibbs and Runge in Spectral Methods also present ongoing challenges that require innovative solutions.
+Comparing these methods:
 
-For those interested in delving deeper, further reading and exploration are recommended in areas such as Reverse Mode AD and its applications in backpropagation for neural networks, as well as the computation of higher-order derivatives like Jacobians and Hessians.
-Key resources include:
+* Symbolic Differentiation is exact but computationally intensive for complex functions.
+* Numerical Differentiation is accessible but prone to approximation errors.
+* Automatic Differentiation combines precision and efficiency, making it indispensable in machine learning and optimization but challenging to scale efficiently.
+* Complex Step Differentiation address the round off error problem of Numerical Differentiation, and is numerically identical to the Dual number formulation in forward AD with small enough complex step $ih$.
+
+Future research is focused on improving the scalability of AD for large models, supporting higher-order derivatives (e.g., Jacobians, Hessians), and better managing non-differentiable functions and dynamic graphs.
+Hybrid approaches combining symbolic, numerical, and automatic differentiation could provide more robust solutions.
+
+For further exploration:
+
 * [SymPy Documentations](https://www.sympy.org/en/index.html)
 * [Numerical Recipes](https://numerical.recipes/)
 * [JAX Documentations](https://jax.readthedocs.io/en/latest/)
