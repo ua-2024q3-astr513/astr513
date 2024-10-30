@@ -409,17 +409,16 @@ class PolynomialInterpolator:
         i-= 1
  
         for n in range(1,self.n):
-            for m in range(self.n-n):
-                ho  = self.xs[m  ] - target
-                hp  = self.xs[m+n] - target
-                w   = C[m+1] - D[m]
-                den = ho - hp
-                if den == 0:
-                    raise Exception("two input xs are (to within roundoﬀ) identical.")
-                else:
-                    f = w / den
-                D[m] = hp * f
-                C[m] = ho * f
+            ho  = self.xs[:-n] - target
+            hp  = self.xs[+n:] - target
+            w   = C[1:self.n-n+1] - D[:-n]
+            den = ho - hp
+            if any(den == 0):
+                raise Exception("two input xs are (to within roundoﬀ) identical.")
+            else:
+                f = w / den
+            D[:-n] = hp * f
+            C[:-n] = ho * f
                 
             if 2*(i+1) < (self.n-n):
                 self.dy = C[i+1]
@@ -451,6 +450,10 @@ axes[0].scatter(Xs, Ys)
 axes[0].plot(xs, ys, '-', color='r')
 axes[1].semilogy(xs, abs(es))
 ```
+
+What will happen if we try to extrapolate?
+
++++
 
 ## Cubic Spline Interpolation
 
