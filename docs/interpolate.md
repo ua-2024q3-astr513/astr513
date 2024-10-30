@@ -26,7 +26,7 @@ When attempting to predict outside this range, however, we enter the realm of ex
 Extrapolation is challenging because models typically lack information beyond their training data, making reliable predictions difficult.
 
 Interpolation methods include polynomial and rational function interpolation, as well as spline approaches.
-Polynomial interpolation is versatile but prone to significant oscillations, especially at the edges of data (Runge’s phenomenon).
+Polynomial interpolation is versatile but prone to significant oscillations, especially at the edges of data (Runge's phenomenon).
 Rational functions, which use ratios of polynomials, can offer more stable estimates and handle asymptotic behavior better.
 Spline interpolation, particularly cubic splines, is valued for its smoothness and continuity up to the second derivative, making it effective for applications requiring a smooth fit.
 
@@ -107,7 +107,7 @@ for _ in range(10):
 
 ### Bisection Search
 
-Bisection search is a reliable method that works by dividing the search interval in half with each step until the target value’s position is found.
+Bisection search is a reliable method that works by dividing the search interval in half with each step until the target value's position is found.
 Given a sorted array of $N$ data points, this method requires approximately $\log_2(N)$ steps to locate the closest point, making it efficient even for large datasets.
 Bisection is particularly useful when interpolation requests are uncorrelated—meaning there is no pattern in the sequence of target points that could be exploited for faster searching.
 
@@ -432,11 +432,14 @@ class PolynomialInterpolator:
 ```
 
 ```{code-cell} ipython3
-Xs = np.linspace(0,2*np.pi,10)
-Ys = np.sin(Xs)
+Xs = np.linspace(-1,1,21)
+#Xs = np.linspace(-5,5,21)
+#Xs = -5 * np.cos(np.linspace(0, np.pi, 21))
+Ys = np.exp(-0.5 * Xs*Xs)
 P = PolynomialInterpolator(Xs, Ys)
 
-xs = np.linspace(0,2*np.pi,315)
+xs = np.linspace(-1,1,201)
+#xs = np.linspace(-5,5,201)
 ys = []
 es = []
 for x in xs:
@@ -451,20 +454,29 @@ axes[0].plot(xs, ys, '-', color='r')
 axes[1].semilogy(xs, abs(es))
 ```
 
-What will happen if we try to extrapolate?
+* How does the error converge if we increase (or decrease) the number of sampling points?
+* What will happen if we increase the size of the domain?  (This is called Runge phenomenon.)
+* What will happen if we try to extrapolate?
 
 +++
 
-## Cubic Spline Interpolation
+## Summary
 
-## Rational Function Interpolation and Extrapolation
+In this lecture, we covered polynomial interpolation, a technique to estimate values between known data points by constructing a polynomial that passes through them.
+Given $M$ data points, a unique polynomial of degree $M - 1$ can fit the data exactly.
+However, polynomial interpolation can suffer from Runge's phenomenon, where higher-degree polynomials exhibit oscillations, particularly at the edges of the interval.
+While polynomial interpolation is straightforward, this phenomenon can make it impractical for large datasets or evenly spaced points over wide intervals.
 
-## Coefficients of the Interpolating Polynomial
+To implement polynomial interpolation efficiently, we introduced Neville's Algorithm, a recursive approach that incrementally constructs the interpolating polynomial.
+Although Neville's method does not directly address Runge's phenomenon, it provides an internal error estimate that offers insight into the stability of the interpolation at specific points.
+Neville's algorithm is particularly useful for small datasets where precise error tracking is valuable.
 
-## Interpolation on a Grid in Multidimensions
+For further study, consider the following topics discussed in Numerical Recipes:
 
-## Interpolation on Scattered Data in Multidimensions
+* Cubic Spline Interpolation: Piecewise polynomials that ensure continuity and smoothness, useful for larger datasets without the oscillations seen in high-degree polynomial interpolation.
+* Rational Function Interpolation: Uses the ratio of polynomials to model asymptotic behavior, often reducing oscillations.
+* Interpolating Polynomial Coefficients: Efficient approaches to determine polynomial coefficients for direct interpolation.
+* Multidimensional Interpolation: Methods for interpolation on grids or scattered data in multiple dimensions, useful in spatial data analysis.
+* Laplace Interpolation: A specialized technique for interpolating harmonic functions, based on Laplace's equation.
 
-## Laplace Interpolation
-
-## Conclusion and Discussion
+These techniques provide powerful alternatives, each suited to specific interpolation challenges and helping to expand the range of applications in complex interpolation tasks.
