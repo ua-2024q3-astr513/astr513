@@ -313,6 +313,21 @@ Here, we try to use some python codes to motivate the algorithm step by step.
    P_{m,m+1,\dots,m+n} &= \frac{(x - x_{m+n})P_{m,m+1,\dots,m+n-1} + (x_{m} - x)P_{m+1,m+2,\dots,m+n} }{x_{m} - x_{m+n}}.
    \end{align}
 
+5. Recalling the **catastrophic cancellation** discussed in [](data.md), given that $P_{m,m+1,\dots,m+n} - P_{m,m+1,\dots,m+n-1}$ has the meaning of "small correction", it is better to keep track of this small quantities instead of $P_{m,m+1,\dots,m+n}$ themselves.
+   Following Numerical Recipes, we define
+   \begin{align}
+   C_{n,m} &\equiv P_{m,m+1,\dots,m+n} - P_{m,m+1,\dots,m+n-1} \\
+   D_{n,m} &\equiv P_{m,m+1,\dots,m+n} - P_{m+1,m+2,\dots,m+n}
+   \end{align}
+   Neville's algorithm can now be rewritten as
+   \begin{align}
+   D_{n+1,m} &= \frac{x_{m+n+1}-x}{x_m - x_{m+n+1}}(C_{n,m+1} - D_{n,m}) \\
+   C_{n+1,m} &= \frac{x_{n}-x}{x_m - x_{m+n+1}}(C_{n,m+1} - D_{n,m})
+   \end{align}
+   From this expression, it is now clear that the $C$'s and $D$'s are the corrections that make the interpolation one order higher.
+
+6. The final polynomial $P_{0,1,\dots,M-1}$ is equal to the sum of any yi plus a set of $C$'s and/or $D$'s that form a path through the family tree of $P_{m,m+1,\dots,m+n}$.
+
 +++
 
 
