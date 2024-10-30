@@ -286,6 +286,17 @@ Here, we try to use some python codes to motivate the algorithm step by step.
 1. Note that a polynomial of 0 dgree is simply a constant.
    We use $P_m$ to denote the 0 degree polynomails that approxmation points $(x_m, y_m)$.
    Hence, $P_m = y_m$.
+   This is represented by the horizontal bars in the following figure.
+
+```{code-cell} ipython3
+Xs = np.sort(np.random.uniform(-5, 5, 100))
+Ys = f(Xs)
+
+plt.scatter(Xs, Ys, marker='_', label=r'$P_m$: polynomials with 0 degree')
+plt.xlim(-0.5, 0.5)
+plt.ylim( 0.9, 1.05)
+plt.legend()
+```
 
 2. To improve the accuracy of the approximation, we try to linearly interpolate two nearby points $(x_{m'}, y_{m'})$ and $(x_{m'+1}, y_{m'+1})$.
    For book keeping reason, we will call this polynomial of 1 degree $P_{m',m'+1}$.
@@ -301,6 +312,25 @@ Here, we try to use some python codes to motivate the algorithm step by step.
    P_{m',m'+1} &= \frac{(x - x_{m'+1})P_{m'} + (x_{m'} - x)P_{m'+1} }{x_{m'} - x_{m'+1}}
    \end{align}
    This is nothing but a special case of equation (3.2.3) in Numerical Recipes 3rd Edition in C++.
+
+```{code-cell} ipython3
+Pmm1s = []
+for m in range(len(Xs)-1):
+    Pmm1s.append(lambda x: ((x - Xs[m+1]) * Ys[m] + (Xs[m] - x) * Ys[m+1]) / (Xs[m] - Xs[m+1]))
+```
+
+```{code-cell} ipython3
+plt.scatter(Xs, Ys, marker='_', label=r'$P_m$: polynomials with 0 degree')
+
+for m, Pmm1 in enumerate(Pmm1s):
+    xs = np.linspace(Xs[m], Xs[m+1], 100)
+    ys = Pmm1(xs)
+    plt.plot(xs, ys)
+
+plt.xlim(-0.5, 0.5)
+plt.ylim( 0.9, 1.05)
+plt.legend()
+```
 
 3. By the same token, to improve the accuracy of the approximation, we linearly interpolate $P_{m'',m''+1}$ and $P_{m''+1,m''+2}$.
    We will call this polynomial of 2 degrees $P_{m'',m''+1,m''+2}$:
