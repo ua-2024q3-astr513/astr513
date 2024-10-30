@@ -332,11 +332,41 @@ plt.ylim( 0.9, 1.05)
 plt.legend()
 ```
 
+```{code-cell} ipython3
+Pmm1m2s = []
+for m in range(len(Xs)-2):
+    Pmm1  = lambda x: ((x - Xs[m+1]) * Ys[m  ] + (Xs[m  ] - x) * Ys[m+1]) / (Xs[m  ] - Xs[m+1])
+    Pm1m2 = lambda x: ((x - Xs[m+2]) * Ys[m+1] + (Xs[m+1] - x) * Ys[m+2]) / (Xs[m+1] - Xs[m+2])
+    Pmm1m2s.append(
+        lambda x: ((x - Xs[m+2]) * Pmm1(x) + (Xs[m] - x) * Pm1m2(x)) / (Xs[m] - Xs[m+2])
+    )
+```
+
+```{code-cell} ipython3
+plt.scatter(Xs, Ys, marker='o', label=r'$P_m$: polynomials with 0 degree')
+
+for m, Pmm1 in enumerate(Pmm1s[:-1]):
+    xs = np.linspace(Xs[m], Xs[m+2], 100)
+    ys = Pmm1(xs)
+    plt.plot(xs, ys)
+
+for m, Pmm1m2 in enumerate(Pmm1m2s):
+    xs = np.linspace(Xs[m], Xs[m+2], 100)
+    ys = Pmm1m2(xs)
+    plt.plot(xs, ys, ':')
+
+plt.xlim(-0.5, 0.5)
+plt.ylim( 0.9, 1.05)
+plt.legend()
+```
+
 3. By the same token, to improve the accuracy of the approximation, we linearly interpolate $P_{m'',m''+1}$ and $P_{m''+1,m''+2}$.
    We will call this polynomial of 2 degrees $P_{m'',m''+1,m''+2}$:
    \begin{align}
    P_{m'',m''+1,m''+2} &= \frac{(x - x_{m''+2})P_{m'',m''+1} + (x_{m''} - x)P_{m''+1,m''+2} }{x_{m'} - x_{m'+2}}.
    \end{align}
+
++++
 
 4. Doing this recursively, we obtain Neville's algorithm, equation (3.2.3) in Numerical Recipes:
    \begin{align}
