@@ -246,6 +246,11 @@ xs = np.linspace(min(Xs), max(Xs), 10000)
 ## Polynomial Interpolation and Extrapolation
 
 Given $M$ data points $(x_0, y_0), (x_1, y_1), \dots, (x_{M-1}, y_{M_1})$, there exists a unique polynomial of degree $M-1$ that pass through all $M$ points exactly.
+
++++
+
+### Lagrange's formula
+
 This polynomial is given by Lagrange's classical formula,
 \begin{align}
 P_{M-1}(x)
@@ -264,6 +269,49 @@ P_{M-1}(x_{m'})
 = \sum_{m=0}^{M-1} \delta_{mm'} y_m
 \end{align}
 and hence $P_{M-1}(x)$ does pass through all data points.
+
++++
+
+### Neville's Algorithm
+
+Although one may directly implement Lagrange's formula, it does not offer a way to estimate errors.
+Instead, we will use Neville's algorithm, which constructs an interpolating polynomial by combining values in a recursive manner.
+This approach avoids some of the issues in Lagrange interpolation and is particularly useful for small sets of points where we need an error estimate along with the interpolation result.
+
+Although Numerical Receipts usually give excellent explainations of numerical methods, its section on Neville's Algorithm is a bit confusing.
+Here, we try to use some python codes to motivate the algorithm step by step.
+
++++
+
+1. Note that a polynomial of 0 dgree is simply a constant.
+   We use $P_m$ to denote the 0 degree polynomails that approxmation points $(x_m, y_m)$.
+   Hence, $P_m = y_m$.
+
+2. To improve the accuracy of the approximation, we try to linearly interpolate two nearby points $(x_{m'}, y_{m'})$ and $(x_{m'+1}, y_{m'+1})$.
+   For book keeping reason, we will call this polynomial of 1 degree $P_{m',m'+1}$.
+   Recall the previous definition $P_{m'} = y_{m'}$ and $P_{m'+1} = y_{m'+1}$,
+   we may now use the "two-point form" and write down:
+   \begin{align}
+   \frac{P_{m',m'+1} - P_{m'}}{x - x_{m'}} &= \frac{P_{m'+1} - P_{m'}}{x_{m'+1} - x_{m'}} \\
+   P_{m',m'+1} - P_{m'} &= \frac{x - x_{m'}}{x_{m'+1} - x_{m'}}(P_{m'+1} - P_{m'}) \\
+   P_{m',m'+1} &= P_{m'} + \frac{x - x_{m'}}{x_{m'+1} - x_{m'}}(P_{m'+1} - P_{m'}) \\
+   P_{m',m'+1} &= \frac{x_{m'+1} - x_{m'}}{x_{m'+1} - x_{m'}}P_{m'} + \frac{x - x_{m'}}{x_{m'+1} - x_{m'}}(P_{m'+1} - P_{m'}) \\
+   P_{m',m'+1} &= \left(\frac{x_{m'+1} - x_{m'}}{x_{m'+1} - x_{m'}} - \frac{x - x_{m'}}{x_{m'+1} - x_{m'}}\right)P_{m'} + \frac{x - x_{m'}}{x_{m'+1} - x_{m'}}P_{m'+1} \\
+   P_{m',m'+1} &= \frac{x_{m'+1} - x}{x_{m'+1} - x_{m'}}P_{m'} + \frac{x - x_{m'}}{x_{m'+1} - x_{m'}}P_{m'+1} \\
+   P_{m',m'+1} &= \frac{(x - x_{m'+1})P_{m'} + (x_{m'} - x)P_{m'+1} }{x_{m'} - x_{m'+1}}
+   \end{align}
+   This is nothing but a special case of equation (3.2.3) in Numerical Recipes 3rd Edition in C++.
+
+3. By the same token, to improve the accuracy of the approximation, we linearly interpolate $P_{m'',m''+1}$ and $P_{m''+1,m''+2}$.
+   We will call this polynomial of 2 degrees $P_{m'',m''+1,m''+2}$:
+   \begin{align}
+   P_{m'',m''+1,m''+2} &= \frac{(x - x_{m''+2})P_{m'',m''+1} + (x_{m''} - x)P_{m''+1,m''+2} }{x_{m'} - x_{m'+2}}.
+   \end{align}
+
+4. Doing this recursively, we obtain Neville's algorithm, equation (3.2.3) in Numerical Recipes:
+   \begin{align}
+   P_{m,m+1,\dots,m+n} &= \frac{(x - x_{m+n})P_{m,m+1,\dots,m+n-1} + (x_{m} - x)P_{m+1,m+2,\dots,m+n} }{x_{m} - x_{m+n}}.
+   \end{align}
 
 +++
 
