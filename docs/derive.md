@@ -582,16 +582,16 @@ In forward mode AD, dual numbers provide a practical and intuitive way to propag
 Dual numbers extend real numbers by introducing an additional component representing an infinitesimal value, enabling simultaneous calculation of function values and their derivatives.
 A dual number is represented as:
 \begin{align}
-\tilde{x} = x + \epsilon x',
+\tilde{x} = x + \delta x',
 \end{align}
-where $x$ is the real part, $x'$ is the dual part representing the derivative, and $\epsilon$ is an infinitesimal quantity satisfying $\epsilon^2 = 0$.
+where $x$ is the real part, $x'$ is the dual part representing the derivative, and $\delta$ is an infinitesimal quantity satisfying $\delta^2 = 0$.
 
-The algebra of dual numbers follows standard arithmetic rules with the additional property that $\epsilon^2 = 0$.
+The algebra of dual numbers follows standard arithmetic rules with the additional property that $\delta^2 = 0$.
 This property allows for the linear extraction of derivative information without higher-order terms interfering.
 Note that [exterior calculus](https://en.wikipedia.org/wiki/Differential_form) requires $d^2 = 0$.
 This is the same algebraic rule as dual number.
 
-Dual numbers follow standard arithmetic rules but with the additional property $\epsilon^2 = 0$, which makes it possible to compute derivatives without higher-order terms.
+Dual numbers follow standard arithmetic rules but with the additional property $\delta^2 = 0$, which makes it possible to compute derivatives without higher-order terms.
 This approach mirrors forward mode AD's method of applying the chain rule step-by-step through the computation, storing both the value and its derivative for each operation.
 Forward mode is particularly efficient when there are few input variables (such as when calculating the gradient of a function with one input and multiple outputs).
 
@@ -599,10 +599,10 @@ Example: Differentiating $f(x) = x^2$
 
 Consider the function $f(x) = x^2$. Using dual numbers:
 \begin{align}
-\tilde{x} &= x + \epsilon, \\
-\tilde{f}(\tilde{x}) &= (x + \epsilon)^2 = x^2 + 2x\epsilon + \epsilon^2 = x^2 + 2x\epsilon.
+\tilde{x} &= x + \delta, \\
+\tilde{f}(\tilde{x}) &= (x + \delta)^2 = x^2 + 2x\delta + \delta^2 = x^2 + 2x\delta.
 \end{align}
-Since $\epsilon^2 = 0$, the dual part of $\tilde{f}(\tilde{x})$ is $2x$, which is the derivative $f'(x)$.
+Since $\delta^2 = 0$, the dual part of $\tilde{f}(\tilde{x})$ is $2x$, which is the derivative $f'(x)$.
 
 By replacing each real input with a dual number, forward mode AD propagates derivative information automatically through computation.
 This approach provides exact derivatives up to machine precision, avoiding the approximation errors of finite differences.
@@ -758,7 +758,7 @@ f'(x) \approx \frac{\operatorname{Im}[f(x + ih)]}{h} = 2x.
 
 In this example, the imaginary part directly corresponds to the derivative, mirroring the Dual Number approach where the dual component carries derivative information.
 The real part contains an extra term $-h^2$, which becomes negligible when $h$ is sufficiently small.
-Specifically, by choosing $h \lesssim \sqrt{\epsilon}$ (where $\epsilon$ represents machine precision, the smallest difference recognizable by the floating-point system), the term $-h^2$ effectively vanishes due to finite precision arithmetic.
+Specifically, by choosing $h < \sqrt{\epsilon}$ (recalling $\epsilon$ is the machine precision), the term $-h^2$ effectively vanishes due to round off erroir in finite precision arithmetic.
 
 This demonstrates that when $h$ is appropriately small, the Complex Step Method effectively reduces to the Dual Number formulation, providing an exact derivative within the limits of machine precision.
 Both methods avoid the subtractive cancellation errors inherent in traditional finite difference approaches by utilizing an augmented input—dual numbers use an infinitesimal component, while the Complex Step Method employs a small imaginary perturbation.
