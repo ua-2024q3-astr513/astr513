@@ -386,11 +386,71 @@ plt.legend()
    \end{align}
    From this expression, it is now clear that the $C$'s and $D$'s are the corrections that make the interpolation one order higher.
 
-6. The final polynomial $P_{0,1,\dots,M-1}$ is equal to the sum of any yi plus a set of $C$'s and/or $D$'s that form a path through the family tree of $P_{m,m+1,\dots,m+n}$.
+6. The final polynomial $P_{0,1,\dots,M-1}$ is equal to the sum of *any* $y_i$ plus a set of $C$'s and/or $D$'s that form a path through the family tree of $P_{m,m+1,\dots,m+n}$.
 
-+++
+```{code-cell} ipython3
+class PolynomialInterpolator:
+    def __init__(self, xs, ys, n=None):
+        if n is None:
+            n = len(xs)
+        
+        assert len(xs) == len(ys)        
+        assert len(xs) >= n
+        
+        self.xs, self.ys, self.n = xs, ys, n
 
+    def __call__(self, target, search_method='hunt'):
 
+        C = np.copy(self.ys)
+        D = np.copy(self.ys)
+        
+        i = np.argmin(abs(self.xs - target))
+        y = self.ys[i]
+        i-= 1
+ 
+        for n in range(1,self.n):
+            for m in range(self.n-n):
+                ho  = self.xs[m  ] - target
+                hp  = self.xs[m+n] - target
+                w   = C[m+1] - D[m]
+                den = ho - hp
+                if den == 0:
+                    raise Exception("two input xs are (to within roundoﬀ) identical.")
+                else:
+                    f = w / den
+                D[m] = hp * f
+                C[m] = ho * f
+                
+            if 2*(i+1) < (self.n-n):
+                self.dy = C[i+1]
+            else:
+                self.dy = D[i]
+                i -= 1
+
+            y += self.dy
+        
+        return y
+```
+
+```{code-cell} ipython3
+Xs = np.linspace(0,2*np.pi,10)
+Ys = np.sin(Xs)
+P = PolynomialInterpolator(Xs, Ys)
+
+xs = np.linspace(0,2*np.pi,315)
+ys = []
+es = []
+for x in xs:
+    ys.append(P(x))
+    es.append(P.dy)
+ys = np.array(ys)
+es = np.array(es)
+
+fig, axes = plt.subplots(2,1,figsize=(8,6))
+axes[0].scatter(Xs, Ys)
+axes[0].plot(xs, ys, '-', color='r')
+axes[1].semilogy(xs, abs(es))
+```
 
 ## Cubic Spline Interpolation
 
