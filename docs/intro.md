@@ -25,7 +25,7 @@ covers the "comoputation" part of the course, including:
 | Week | Monday | Wednesday |
 | --- | --- | --- |
 | Oct 21--Oct 25 | [](data.md)                             | [](FT.md)                                  |
-| Oct 28--Nov  1 | [](derive.md)                           | [](polate.md)                              |
+| Oct 28--Nov  1 | [](derive.md)                           | [](interpolate.md)                         |
 | Nov  4--Nov  8 | Root finding and optimization           | Integration of functions                   |
 | Nov 11--Nov 15 | *Veterans Day (no class)*               | ODE integration I: introduction            |
 | Nov 18--Nov 22 | ODE integration II: Runge-Kutta methods | ODE integration III: symplectic integrator |
