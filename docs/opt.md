@@ -72,6 +72,41 @@ print("f(x0) = ", f(root))
 
 ### Newton-Raphson Method
 
+The Newton-Raphson Method is based on the concept of using the tangent line at a point on the curve of a function to approximate its root.
+It leverages the Taylor series expansion to iteratively move closer to the root, achieving quadratic convergence when the initial guess is close to the actual root.
+
+Consider a function $f(x)$ that we want to find the root.
+Suppose we have an initial guess $x_0$ near the root.
+We can expand $f(x)$ around this point $x_0$ using the Taylor series:
+\begin{align}
+f(x) = f(x_0) + f'(x_0)(x - x_0) + \frac{f''(x_0)}{2}(x - x_0)^2 + \cdots
+\end{align}
+For simplicity, we approximate the function linearly by ignoring the higher-order terms. This gives us a linear approximation:
+\begin{align}
+f(x) \approx f(x_0) + f'(x_0)(x - x_0)
+\end{align}
+We want to find the value of $x_0$ where $f(x_0) = 0$.
+Therefore, 
+\begin{align}
+x \approx x_0 - \frac{f(x_0)}{f'(x_0)}.
+\end{align}
+We may call this next approximation $x_{n+1}$.
+Thus, we define the iterative update as:
+\begin{align}
+x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)}
+\end{align}
+This formula is the foundation of the Newton-Raphson Method.
+It has a simple geometric interpretation.
+Starting with an initial guess $x_0$, we compute the tangent line to the function $f(x)$ at $x_0$.
+The tangent line provides a linear approximation of $f(x)$ near $x_0$, and where this tangent crosses the $x$-axis is our next estimate for the root, $x_1$.
+By iterating this process, we continue to update our estimate, ideally converging quickly to the root.
+
+The Newton-Raphson Method is quadratically convergence near the root, which means that the error approximately squares with each iteration.
+Specifically, if $x_n$ is close enough to the root, the error at the next step, $|x_{n+1} - x_\infty|$, is roughly proportional to $|x_n - x_\infty|^2$.
+This quadratic convergence makes the Newton-Raphson Method highly efficient when close to the root.
+
++++
+
 ### Secant Method
 
 ### Van Wijngaarden-Dekker-Brent Method
