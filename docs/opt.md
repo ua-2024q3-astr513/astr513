@@ -182,6 +182,33 @@ print("f(x0) = ", f(root))
 
 ### Secant Method
 
+While in python we can use packages like `jax` to implement `autonewton()`, autodiff may not be available in some languages or in special embedded systems that has minimal compiler infrastructures.
+In such a case, one may use the Secant Method, which approximates the derivative using values of $f(x)$ at two nearby points.
+This makes it useful for functions where the derivative is difficult or expensive to compute.
+The method is generally faster than the Bisection Method but can be less stable than Newton-Raphson if the initial points are not chosen carefully.
+
+Here is a python implementation:
+
+```{code-cell} ipython3
+def secant(f, x0, x1, tol=1e-6, imax=100):
+    for _ in range(imax):
+        f0, f1 = f(x0), f(x1)
+        if f0 == f1:
+            raise ValueError("Division by zero in secant method.")
+        x2 = x1 - f1 * (x1 - x0) / (f1 - f0)
+        if abs(x2 - x1) < tol:
+            return x2
+        x0, x1 = x1, x2
+    raise ValueError("Maximum iterations reached without convergence")
+```
+
+```{code-cell} ipython3
+root = secant(f, 1, 2)
+print("Approximate root:")
+print("  x0  = ",   root )
+print("f(x0) = ", f(root))
+```
+
 ### Van Wijngaarden-Dekker-Brent Method
 
 ### Multidimensional Root Finding
