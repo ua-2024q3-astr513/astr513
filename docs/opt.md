@@ -70,6 +70,12 @@ print("  x0  = ",   root )
 print("f(x0) = ", f(root))
 ```
 
+The Bisection Method is guaranteed to converge to a root if the function is continuous on $[l, h]$ and $f(l)$ and $f(h)$ have different signs.
+However, its convergence rate is relatively slow, decreasing the interval size by half with each iteration.
+This results in a linear convergence rate (of error at fixed step).
+
++++
+
 ### Newton-Raphson Method
 
 The Newton-Raphson Method is based on the concept of using the tangent line at a point on the curve of a function to approximate its root.
