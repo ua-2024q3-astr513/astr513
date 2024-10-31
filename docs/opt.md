@@ -209,9 +209,18 @@ print("  x0  = ",   root )
 print("f(x0) = ", f(root))
 ```
 
-### Van Wijngaarden-Dekker-Brent Method
+### Newton-Raphson Method for Nonlinear Systems of Equations
 
-### Multidimensional Root Finding
+The Newton-Raphson Method is also a powerful technique for solving systems of nonlinear equations, where variables are interdependent in complex ways.
+In a system of linear equations, we can directly solve for variables by inverting the coefficient matrix.
+However, for nonlinear systems, such direct inversion is not possible.
+Instead, the Newton-Raphson method provides an iterative approach, refining an initial guess using the Jacobian matrix of partial derivatives to approximate solutions.
+
+In astrophysics, this method is essential for modeling complex phenomena such as stellar structure, orbit determination, and radiative transfer.
+For example, in stellar structure modeling, equations governing temperature, pressure, and density must be solved simultaneously to describe a star's internal equilibrium.
+Similarly, in orbit determination, nonlinear gravitational interactions are iteratively solved to yield accurate trajectories of celestial bodies.
+
++++
 
 ## Optimization Methods
 
