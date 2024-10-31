@@ -222,6 +222,26 @@ Similarly, in orbit determination, nonlinear gravitational interactions are iter
 
 +++
 
+The Newton-Raphson method for systems proceeds as follows:
+1.  Define Initial Guess: Start with an initial vector $\mathbf{x}^{(0)}$.
+2.  Compute the Jacobian Matrix $J$:
+    This matrix of partial derivatives represents the sensitivity of each equation with respect to each variable:
+    \begin{align}
+    J(\mathbf{x}) = \begin{bmatrix}
+    \frac{\partial f_1}{\partial x_1} & \frac{\partial f_1}{\partial x_2} & \dots & \frac{\partial f_1}{\partial x_n} \\
+    \frac{\partial f_2}{\partial x_1} & \frac{\partial f_2}{\partial x_2} & \dots & \frac{\partial f_2}{\partial x_n} \\
+    \vdots & \vdots & \ddots & \vdots \\
+    \frac{\partial f_n}{\partial x_1} & \frac{\partial f_n}{\partial x_2} & \dots & \frac{\partial f_n}{\partial x_n}
+    \end{bmatrix}
+    \end{align}
+3.  Update Solution: Solve the linear system $J(\mathbf{x}) \Delta\mathbf{x} = -\mathbf{F}(\mathbf{x})$ for the correction term $\Delta \mathbf{x}$ and update $\mathbf{x}$ as:
+    \begin{align}
+    \mathbf{x}^{(n+1)} = \mathbf{x}^{(n)} + \Delta \mathbf{x}
+    \end{align}
+4.  Check Convergence: Iterate until $\|\Delta \mathbf{x}\|$ or $\|\mathbf{F}(\mathbf{x})\|$ is below a specified tolerance.
+
++++
+
 ## Optimization Methods
 
 ### Gradient Descent Methods
