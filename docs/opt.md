@@ -315,6 +315,14 @@ print("  R  = ",   Root )
 print("F(R) = ", F(Root))
 ```
 
+This section introduced multiple root finding methods.
+We covered the Bisection Method, a reliable but slower approach, and the more efficient Newton-Raphson Method, which converges quadratically but requires the function's derivative.
+We then discuss the Secant Method, which approximates the derivative, allowing it to bypass the need for explicit derivative calculations.
+For complex applications, modern libraries like `JAX` provide tools to automatically differentiate functions, making methods like Newton-Raphson easier to implement even for complex functions.
+These techniques are widely applicable in astrophysics, where precise root approximations are needed.
+
++++
+
 ## Optimization Methods
 
 ### Gradient Descent Methods
