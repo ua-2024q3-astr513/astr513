@@ -147,6 +147,39 @@ print("  x0  = ",   root )
 print("f(x0) = ", f(root))
 ```
 
+The Newton-Raphson Method is fast and efficient, especially when close to the root, due to its quadratic convergence.
+However, in addition to the convergence conditions list above, it requires computing derivatives, making it less convenient compared to the bisection method.
+
+Nevertheless, we learned about different derivative methods in this course, specifically, the machine accurate autodiff method.
+By using it, we can implement a convenient Newton-Raphson Method:
+
+```{code-cell} ipython3
+import jax
+jax.config.update("jax_enable_x64", True)
+
+from jax import grad
+
+def autonewton(f, x0, tol=1e-6, imax=100):
+    df = grad(f)    
+    for _ in range(imax):
+        f0, df0 = f(x0), df(x0)
+        if df0 == 0:
+            raise ValueError("Derivative is zero. No convergence.")
+        x = x0 - f0 / df0
+        if abs(x - x0) < tol:
+            return x
+        x0 = x
+    raise ValueError("Maximum iterations reached without convergence")
+```
+
+```{code-cell} ipython3
+initial_guess = 1.5
+root = autonewton(f, initial_guess)
+print("Approximate root:")
+print("  x0  = ",   root )
+print("f(x0) = ", f(root))
+```
+
 ### Secant Method
 
 ### Van Wijngaarden-Dekker-Brent Method
