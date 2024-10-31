@@ -282,6 +282,39 @@ print("  R  = ",   Root )
 print("F(R) = ", F(Root))
 ```
 
+Similarly, we may take advantage of `JAX`'s autodifff to obtain the Jacobian:
+
+```{code-cell} ipython3
+from jax import jacfwd, numpy as jnp
+
+# Newton-Raphson method for systems
+def autonewton_system(F, X0, tol=1e-6, max_iter=100):
+    J = jacfwd(F)
+    for _ in range(max_iter):
+        F0 = F(X0)
+        J0 = J(X0)
+        dX = np.linalg.solve(J0, -F0)
+        X  = X0 + dX
+        if np.linalg.norm(dX) < tol:
+            return X
+        X0 = X
+    raise ValueError("Maximum iterations reached without convergence")
+```
+
+```{code-cell} ipython3
+# Define the function vector with `jnp`
+def F(X):
+    return jnp.array([X[0]**2 + X[1]**2 - 4, jnp.exp(X[0]) + X[1] - 1])
+
+# Example usage
+X0   = np.array([1.0, 1.0])
+Root = autonewton_system(F, X0)
+
+print("Approximate root:")
+print("  R  = ",   Root )
+print("F(R) = ", F(Root))
+```
+
 ## Optimization Methods
 
 ### Gradient Descent Methods
