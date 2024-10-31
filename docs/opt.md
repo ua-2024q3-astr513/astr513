@@ -240,7 +240,47 @@ The Newton-Raphson method for systems proceeds as follows:
     \end{align}
 4.  Check Convergence: Iterate until $\|\Delta \mathbf{x}\|$ or $\|\mathbf{F}(\mathbf{x})\|$ is below a specified tolerance.
 
-+++
+```{code-cell} ipython3
+import numpy as np
+
+# Newton-Raphson method for systems
+def newton_system(F, J, X0, tol=1e-6, max_iter=100):
+    for _ in range(max_iter):
+        F0 = F(X0)
+        J0 = J(X0)
+        dX = np.linalg.solve(J0, -F0)
+        X  = X0 + dX
+        if np.linalg.norm(dX) < tol:
+            return X
+        X0 = X
+    raise ValueError("Maximum iterations reached without convergence")
+```
+
+Consider a simplified model with two hypothetical equations that could represent balance conditions in astrophysics:
+\begin{align}
+\begin{cases}
+f_1(x, y) = x^2 + y^2 - 4 = 0 \\
+f_2(x, y) = e^x + y - 1 = 0
+\end{cases}
+\end{align}
+
+```{code-cell} ipython3
+# Define the function vector
+def F(X):
+    return np.array([X[0]**2 + X[1]**2 - 4, np.exp(X[0]) + X[1] - 1])
+
+# Define the Jacobian matrix
+def J(X):
+    return np.array([[2 * X[0], 2 * X[1]], [np.exp(X[0]), 1]])
+
+# Example usage
+X0   = np.array([1.0, 1.0])
+Root = newton_system(F, J, X0)
+
+print("Approximate root:")
+print("  R  = ",   Root )
+print("F(R) = ", F(Root))
+```
 
 ## Optimization Methods
 
