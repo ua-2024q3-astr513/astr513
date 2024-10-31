@@ -121,6 +121,32 @@ However, it requires:
 
 +++
 
+Here is a Python function that implements the Newton-Raphson Method with an initial guess and a tolerance level:
+
+```{code-cell} ipython3
+def newton(f, df, x0, tol=1e-6, imax=100):
+    for _ in range(imax):
+        f0, df0 = f(x0), df(x0)
+        if df0 == 0:
+            raise ValueError("Derivative is zero. No convergence.")
+        x = x0 - f0 / df0
+        if abs(x - x0) < tol:
+            return x
+        x0 = x
+    raise ValueError("Maximum iterations reached without convergence")
+```
+
+```{code-cell} ipython3
+f  = lambda x: x**3 - x - 2
+df = lambda x: 3*x**2 - 1
+
+initial_guess = 1.5
+root = newton(f, df, initial_guess)
+print("Approximate root:")
+print("  x0  = ",   root )
+print("f(x0) = ", f(root))
+```
+
 ### Secant Method
 
 ### Van Wijngaarden-Dekker-Brent Method
