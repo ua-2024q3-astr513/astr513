@@ -14,7 +14,12 @@ kernelspec:
 
 # Root Finding and Optimization Techniques
 
-## Introduction to Root Finding and Optimization
+Root finding and optimization are core numerical techniques that enable us to solve complex equations and optimize functions in fields where analytical solutions are often impossible.
+Root finding aims to determine values for which a function $f(x) = 0$, and finds application across engineering, physics, and finance—whether calculating stresses in materials, energy levels in quantum mechanics, or rates of return in investments.
+Optimization seeks to find the minimum or maximum of a function and is especially crucial in machine learning, where minimizing loss functions directly affects model performance.
+The two concepts intersect in gradient-based optimization, where finding the roots of a gradient helps locate stationary points and optimize complex models.
+
++++ {"jp-MarkdownHeadingCollapsed": true}
 
 ## Root Finding Techniques
 
