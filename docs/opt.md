@@ -107,9 +107,17 @@ Starting with an initial guess $x_0$, we compute the tangent line to the functio
 The tangent line provides a linear approximation of $f(x)$ near $x_0$, and where this tangent crosses the $x$-axis is our next estimate for the root, $x_1$.
 By iterating this process, we continue to update our estimate, ideally converging quickly to the root.
 
++++
+
 The Newton-Raphson Method is quadratically convergence near the root, which means that the error approximately squares with each iteration.
 Specifically, if $x_n$ is close enough to the root, the error at the next step, $|x_{n+1} - x_\infty|$, is roughly proportional to $|x_n - x_\infty|^2$.
 This quadratic convergence makes the Newton-Raphson Method highly efficient when close to the root.
+However, it requires:
+* **Non-Zero Derivative:** The method requires that $f'(x) \neq 0$ at each iteration.
+  If $f'(x) = 0$ at any point, the update formula becomes undefined, and the algorithm will fail.
+* **Good Initial Guess:** Convergence to the root is not guaranteed if the initial guess $x_0$ is too far from the actual root.
+  Poor starting points can lead the method to diverge or to converge to the wrong root.
+* **Well-Behaved Function:** The method performs best when $f(x)$ is smooth and continuous near the root.
 
 +++
 
