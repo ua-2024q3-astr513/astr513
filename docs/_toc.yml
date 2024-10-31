@@ -8,3 +8,4 @@ chapters:
 - file: FT
 - file: derive
 - file: interpolate
+- file: opt
