@@ -429,7 +429,7 @@ def f(x):
 
 # Parameters for gradient descent
 x0    = 0.0  # Starting point for optimization
-alpha = 0.1
+alpha = 0.9
 imax  = 100
 
 # Run gradient descent
@@ -443,6 +443,68 @@ plt.plot(X,    f(X))
 plt.plot(Xmin, f(Xmin), '-o')
 plt.xlim(2.5, 3.5)
 plt.ylim(3.95,4.3)
+```
+
+### Gradient Descent with `JAX` for Multiple Dimensions
+
+Multidimensional gradient descent is crucial for optimizing functions involving multiple parameters, making it essential for applications like model fitting and deep learning.
+In model fitting tasks across scientific domains, such as astrophysics, gradient descent helps refine models by iteratively adjusting parameters to minimize discrepancies between observed data and theoretical predictions.
+For example, in galaxy modeling, each parameter in the function may represent a physical property, such as brightness, size, or position, and gradient descent enables efficient optimization of these parameters to achieve the best fit to observational data.
+
+In deep learning, multidimensional gradient descent is foundational, as modern neural networks can contain millions of parameters.
+During training, gradient descent is used to minimize a loss function that measures the error between the model's predictions and actual outcomes.
+Automatic differentiation with `JAX` simplifies the calculation of these gradients, allowing deep learning practitioners to easily train complex models without manually computing derivatives.
+This automatic handling of gradient calculations is particularly valuable when networks have intricate architectures, such as convolutional or recurrent layers, where gradients must be calculated for a vast number of parameters across multiple dimensions.
+
+The following example demonstrates how to use `JAX` to perform gradient descent on a multivariable function and track the optimization path, illustrating how gradient descent converges toward a minimum.
+
++++
+
+In this example, we will minimize the function:
+\begin{align}
+f(x, y) = (x - 3)^2 + (y + 4)^2
+\end{align}
+where the minimum is at $(x, y) = (3, -4)$.
+By tracking each update step, we can visualize the optimization path as it approaches the minimum.
+
+```{code-cell} ipython3
+# Function to perform gradient descent with history tracking
+def autogd_hist(f, X, alpha, imax):
+    df = grad(f)  # Use JAX to compute gradient
+    Xs = [np.array(X)]
+    for _ in range(imax):
+        Xs.append(Xs[-1] - alpha * df(Xs[-1]))  # Gradient descent update
+    return jnp.array(Xs)
+```
+
+```{code-cell} ipython3
+# Define a multivariable function
+def f(X):
+    x, y = X
+    return (x - 3)**2 + 2 * (y + 4)**2
+
+# Parameters for gradient descent
+X0    = jnp.array([0.0, 0.0]) # Starting point for optimization
+alpha = 0.1                   # Learning rate
+imax  = 100                   # Number of iterations
+
+# Run gradient descent with history tracking
+Xs = autogd_hist(f, X0, alpha, imax)
+print("Approximate minimum:")
+print("  xmin  =",   Xs[-1] )
+print("f(xmin) =", f(Xs[-1]))
+
+# Plot the function and gradient descent path
+x_vals = jnp.linspace(-1, 7, 100)
+y_vals = jnp.linspace(-8, 0, 100)
+X, Y   = jnp.meshgrid(x_vals, y_vals)
+Z      = f([X, Y])
+
+plt.contour(X, Y, Z, levels=20)
+plt.plot(Xs[:,0], Xs[:,1], '-o', color='red')
+plt.xlabel('x')
+plt.ylabel('y')
+plt.gca().set_aspect('equal')
 ```
 
 ### Stochastic Gradient Descent (SGD)
@@ -466,3 +528,7 @@ plt.ylim(3.95,4.3)
 ## Connecting Root Finding and Optimization
 
 ## Conclusion
+
+```{code-cell} ipython3
+
+```
