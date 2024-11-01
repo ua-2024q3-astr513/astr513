@@ -507,6 +507,57 @@ plt.ylabel('y')
 plt.gca().set_aspect('equal')
 ```
 
+To demonstrate a more complex optimization scenario, let's consider fitting a multi-parameter model to noisy data.
+We will use polynomial regression as our example, where we fit a polynomial curve to data points by optimizing the coefficients.
+This is a non-trivial problem because, as the degree of the polynomial increases, the number of parameters grows, resulting in a high-dimensional optimization task.
+
+```{code-cell} ipython3
+groundtruth = np.array([1.2, -3, 0.5, 1.0, -1.8, 2.0, -0.1])
+
+Xdata = np.linspace(-1, 1, 100)
+Ytrue = sum(c * Xs**i for i, c in enumerate(groundtruth))
+Ydata = Ytrue + np.random.normal(scale=0.1, size=Xdata.shape)
+```
+
+```{code-cell} ipython3
+plt.plot(Xdata, Ytrue)
+plt.plot(Xdata, Ydata)
+```
+
+```{code-cell} ipython3
+# Define polynomial model
+def model(Xs, Cs):
+    return sum(c * Xs**i for i, c in enumerate(Cs))
+    
+# Define the objective function
+def chi2(Cs):
+    Ymodel = model(Xdata, Cs)
+    return jnp.mean((Ymodel - Ydata)**2)
+
+# Parameters for gradient descent
+C0    = jnp.zeros(len(groundtruth)) # Start with zeros as initial coefficients
+alpha = 0.1                         # Learning rate
+imax  = 1000                        # Number of iterations
+
+Cs = autogd_hist(chi2, C0, alpha, imax)
+
+print("Optimized coefficients:", Cs[-1])
+print("True coefficients:",      groundtruth)
+print("Mean Squared Error:",     np.mean((groundtruth - Cs[-1])**2))
+```
+
+```{code-cell} ipython3
+plt.scatter(Xdata, Ydata, color='blue', label='Noisy Data', alpha=0.5)
+plt.plot(Xdata, Ytrue, 'g--', label='True Polynomial')
+skip = 100
+for i, Ci in enumerate(Cs[::skip]):
+    Yfit = model(Xdata, Ci)
+    plt.plot(Xdata, Yfit, 'r', alpha=skip*i/imax, label='Fitted Polynomial' if skip*i == imax else '')
+plt.xlabel("x")
+plt.ylabel("y")
+plt.legend()
+```
+
 ### Stochastic Gradient Descent (SGD)
 
 ### Momentum and Adaptive Methods
