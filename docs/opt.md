@@ -468,9 +468,11 @@ where the minimum is at $(x, y) = (3, -4)$.
 By tracking each update step, we can visualize the optimization path as it approaches the minimum.
 
 ```{code-cell} ipython3
+from jax import jit
+
 # Function to perform gradient descent with history tracking
 def autogd_hist(f, X, alpha, imax):
-    df = grad(f)  # Use JAX to compute gradient
+    df = jit(grad(f))  # Use JAX to compute gradient
     Xs = [np.array(X)]
     for _ in range(imax):
         Xs.append(Xs[-1] - alpha * df(Xs[-1]))  # Gradient descent update
@@ -514,8 +516,8 @@ This is a non-trivial problem because, as the degree of the polynomial increases
 ```{code-cell} ipython3
 groundtruth = np.array([1.2, -3, 0.5, 1.0, -1.8, 2.0, -0.1])
 
-Xdata = np.linspace(-1, 1, 100)
-Ytrue = sum(c * Xs**i for i, c in enumerate(groundtruth))
+Xdata = np.linspace(-1, 1, 100_000)
+Ytrue = sum(c * Xdata**i for i, c in enumerate(groundtruth))
 Ydata = Ytrue + np.random.normal(scale=0.1, size=Xdata.shape)
 ```
 
@@ -540,6 +542,7 @@ alpha = 0.1                         # Learning rate
 imax  = 1000                        # Number of iterations
 
 Cs = autogd_hist(chi2, C0, alpha, imax)
+%timeit -r1 Cs = autogd_hist(chi2, C0, alpha, imax)
 
 print("Optimized coefficients:", Cs[-1])
 print("True coefficients:",      groundtruth)
@@ -547,9 +550,9 @@ print("Mean Squared Error:",     np.mean((groundtruth - Cs[-1])**2))
 ```
 
 ```{code-cell} ipython3
-plt.scatter(Xdata, Ydata, color='blue', label='Noisy Data', alpha=0.5)
-plt.plot(Xdata, Ytrue, 'g--', label='True Polynomial')
 skip = 100
+plt.scatter(Xdata[::skip], Ydata[::skip], color='blue', label='Noisy Data', alpha=0.5)
+plt.plot(Xdata, Ytrue, 'g--', label='True Polynomial')
 for i, Ci in enumerate(Cs[::skip]):
     Yfit = model(Xdata, Ci)
     plt.plot(Xdata, Yfit, 'r', alpha=skip*i/imax, label='Fitted Polynomial' if skip*i == imax else '')
@@ -559,6 +562,57 @@ plt.legend()
 ```
 
 ### Stochastic Gradient Descent (SGD)
+
+Stochastic Gradient Descent (SGD) is a widely used optimization technique, especially valuable for high-dimensional and large-scale datasets.
+In traditional gradient descent, each parameter update involves computing the gradient over the entire dataset, which can be computationally intensive.
+In contrast, SGD updates parameters based on a randomly selected subset (or "batch") of data points in each iteration.
+This approach has several advantages:
+1. Efficiency: By using a smaller batch of data, SGD significantly reduces computation time per iteration, allowing faster updates.
+2. Memory Management: Processing smaller batches of data at a time is less memory-intensive, making SGD scalable for large datasets.
+3. Avoiding Local Minima: The randomness introduced in each update step can help the optimizer escape local minima, as it prevents the algorithm from settling into small dips in the landscape.
+
+SGD is particularly valuable in machine learning, where models have a large number of parameters and datasets are extensive.
+For example, in deep learning, SGD enables the efficient training of models with millions of parameters by adjusting weights based on mini-batches, allowing faster convergence with less computational burden.
+In scientific research areas like astronomy, SGD is useful for optimizing parameters in models that analyze large survey data. By applying mini-batch SGD, researchers can fit complex models to data efficiently, even in cases with high-dimensional parameter spaces.
+
+```{code-cell} ipython3
+# Define the batch MSE loss function
+def chi2_batch(Cs, Xbatch, Ybatch):
+    Ymodel = model(Xbatch, Cs)
+    return jnp.mean((Ymodel - Ybatch)**2)
+
+# Function to perform gradient descent with history tracking
+def sgd_hist(f, X, alpha, imax, batch_size):
+    df = jit(grad(f))  # Use JAX to compute gradient
+    Xs = [np.array(X)]
+    for _ in range(imax):
+        indices = np.random.choice(len(Xdata), batch_size, replace=False)
+        Xbatch  = Xdata[indices]
+        Ybatch  = Ydata[indices]
+        Xs.append(Xs[-1] - alpha * df(Xs[-1], Xbatch, Ybatch))  # Gradient descent update
+    return jnp.array(Xs)
+```
+
+```{code-cell} ipython3
+Cs = sgd_hist(chi2_batch, C0, alpha, imax, 100)
+%timeit -r1 Cs = sgd_hist(chi2_batch, C0, alpha, imax, 100)
+
+print("Optimized coefficients:", Cs[-1])
+print("True coefficients:",      groundtruth)
+print("Mean Squared Error:",     np.mean((groundtruth - Cs[-1])**2))
+```
+
+```{code-cell} ipython3
+skip = 100
+plt.scatter(Xdata[::skip], Ydata[::skip], color='blue', label='Noisy Data', alpha=0.5)
+plt.plot(Xdata, Ytrue, 'g--', label='True Polynomial')
+for i, Ci in enumerate(Cs[::skip]):
+    Yfit = model(Xdata, Ci)
+    plt.plot(Xdata, Yfit, 'r', alpha=skip*i/imax, label='Fitted Polynomial' if skip*i == imax else '')
+plt.xlabel("x")
+plt.ylabel("y")
+plt.legend()
+```
 
 ### Momentum and Adaptive Methods
 
@@ -579,7 +633,3 @@ plt.legend()
 ## Connecting Root Finding and Optimization
 
 ## Conclusion
-
-```{code-cell} ipython3
-
-```
