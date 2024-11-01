@@ -326,6 +326,8 @@ These techniques are widely applicable in astrophysics, where precise root appro
 ## Optimization Methods
 
 Optimization methods aim to find values that maximize or minimize an objective function, making them essential across fields like engineering, economics, and data science.
+In fact, the whole action principle is about optimization.
+
 In astronomy and astrophysics, optimization is crucial for model fitting, data analysis, and instrument calibration.
 For example, in astrophysical model fitting, researchers use optimization to adjust parameters in models of, e.g., AGNs or galaxies, minimizing the difference between observed data and theoretical predictions.
 This allows them to infer physical properties like energy output and elemental composition.
@@ -338,9 +340,75 @@ It enables tasks like galaxy classification and transient detection across large
 
 Together, these applications demonstrate how optimization facilitates efficient, high-precision solutions in traditional fields and modern astronomy, advancing data quality, model accuracy, and scientific discovery.
 
-+++ {"jp-MarkdownHeadingCollapsed": true}
++++
 
 ### Gradient Descent Methods
+
+Gradient Descent is one of the most widely used optimization techniques, particularly effective for high-dimensional problems in fields like machine learning and astrophysics.
+The method iteratively moves toward the minimum of a function by taking steps proportional to the negative of the gradient (or slope) at the current point, guiding the process toward the lowest value of the function.
+For differentiable objective functions, gradient descent is fundamental in minimizing errors, making it essential for training machine learning models.
+
+For a function $f(x)$, the gradient $\nabla f(x)$ points in the direction of steepest ascent, so taking steps in the opposite direction (the negative gradient) reduces the function's value. Gradient descent iteratively updates the parameters $x$ as follows:
+\begin{align}
+x_{n+1} = x_n - \alpha \nabla f(x_n)
+\end{align}
+where $\alpha$ is the learning rate, which controls the step size.
+The choice of $\alpha$ is crucial to convergence: a large $\alpha$ may cause divergence (where the steps overshoot the minimum and fail to settle), while a very small $\alpha$ leads to slow convergence.
+Proper tuning of $\alpha$ is therefore essential to ensure the algorithm successfully converges to a minimum without oscillating or diverging.
+
+```{code-cell} ipython3
+def gradient_descent(df, x, alpha, imax):
+    for _ in range(imax):
+        x -= alpha * df(x)
+    return x
+```
+
+```{code-cell} ipython3
+# Define the function and its gradient
+def f(x):
+    return (x - 3)**2 + 4
+
+def df(x):
+    return 2 * (x - 3)
+
+# Parameters for gradient descent
+x0    = 0.0  # Starting point for optimization
+alpha = 0.1
+imax  = 100
+
+# Run gradient descent
+xmin = gradient_descent(df, x0, alpha, imax)
+print("Approximate minimum:")
+print("  xmin  = ",   xmin )
+print("f(xmin) = ", f(xmin))
+```
+
+We may visualize it by keep track of the history.
+What will happen if we choose a large learning rate?
+
+```{code-cell} ipython3
+def gradient_descent_hist(df, x, alpha, imax):
+    X = [x]
+    for _ in range(imax):
+        X.append(X[-1] - alpha * df(X[-1]))
+    return X
+```
+
+```{code-cell} ipython3
+from matplotlib import pyplot as plt
+
+X = np.linspace(0, 6, 6001)
+plt.plot(X, f(X))
+
+alpha = 0.9
+
+X = np.array(gradient_descent_hist(df, x0, alpha, imax))
+print(X[-1])
+
+plt.plot(X, f(X), '-o')
+plt.xlim(2.5, 3.5)
+plt.ylim(3.95,4.3)
+```
 
 ### Stochastic Gradient Descent (SGD)
 
