@@ -576,6 +576,10 @@ For example, in deep learning, SGD enables the efficient training of models with
 In scientific research areas like astronomy, SGD is useful for optimizing parameters in models that analyze large survey data. By applying mini-batch SGD, researchers can fit complex models to data efficiently, even in cases with high-dimensional parameter spaces.
 
 ```{code-cell} ipython3
+p = np.random.permutation(len(Xdata))
+Xrand = Xdata[p]
+Yrand = Ydata[p]
+
 # Define the batch MSE loss function
 def chi2_batch(Cs, Xbatch, Ybatch):
     Ymodel = model(Xbatch, Cs)
@@ -585,17 +589,23 @@ def chi2_batch(Cs, Xbatch, Ybatch):
 def sgd_hist(f, X, alpha, imax, batch_size):
     df = jit(grad(f))  # Use JAX to compute gradient
     Xs = [np.array(X)]
-    for _ in range(imax):
-        indices = np.random.choice(len(Xdata), batch_size, replace=False)
-        Xbatch  = Xdata[indices]
-        Ybatch  = Ydata[indices]
+    for i in range(imax):
+        if i == len(Xdata) // batch_size - 1:
+            i = 0
+        Xbatch = Xrand[i*batch_size:(i+1)*batch_size]
+        Ybatch = Yrand[i*batch_size:(i+1)*batch_size]
         Xs.append(Xs[-1] - alpha * df(Xs[-1], Xbatch, Ybatch))  # Gradient descent update
     return jnp.array(Xs)
 ```
 
 ```{code-cell} ipython3
-Cs = sgd_hist(chi2_batch, C0, alpha, imax, 100)
-%timeit -r1 Cs = sgd_hist(chi2_batch, C0, alpha, imax, 100)
+# Parameters for gradient descent
+C0    = jnp.zeros(len(groundtruth)) # Start with zeros as initial coefficients
+alpha = 0.5                         # Learning rate
+imax  = 1000                        # Number of iterations
+
+Cs = sgd_hist(chi2_batch, C0, alpha, imax, 1000)
+%timeit -r1 Cs = sgd_hist(chi2_batch, C0, alpha, imax, 1000)
 
 print("Optimized coefficients:", Cs[-1])
 print("True coefficients:",      groundtruth)
