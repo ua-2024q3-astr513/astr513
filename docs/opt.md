@@ -410,6 +410,41 @@ plt.xlim(2.5, 3.5)
 plt.ylim(3.95,4.3)
 ```
 
+Similar to our implementation of Newton-Raphson Method, it is possible to employ `JAX` to automatically obtain the derivative.
+Here is an updated version of automatic gradient descent.
+
+```{code-cell} ipython3
+def autogd_hist(f, x, alpha, imax):
+    df = grad(f)
+    X  = [x]
+    for _ in range(imax):
+        X.append(X[-1] - alpha * df(X[-1]))
+    return X
+```
+
+```{code-cell} ipython3
+# Define the function and its gradient
+def f(x):
+    return (x - 3)**2 + 4
+
+# Parameters for gradient descent
+x0    = 0.0  # Starting point for optimization
+alpha = 0.1
+imax  = 100
+
+# Run gradient descent
+Xmin = np.array(autogd_hist(f, x0, alpha, imax))
+print("Approximate minimum:")
+print("  xmin  = ",   Xmin[-1] )
+print("f(xmin) = ", f(Xmin[-1]))
+
+X = np.linspace(0, 6, 6001)
+plt.plot(X,    f(X))
+plt.plot(Xmin, f(Xmin), '-o')
+plt.xlim(2.5, 3.5)
+plt.ylim(3.95,4.3)
+```
+
 ### Stochastic Gradient Descent (SGD)
 
 ### Momentum and Adaptive Methods
@@ -431,7 +466,3 @@ plt.ylim(3.95,4.3)
 ## Connecting Root Finding and Optimization
 
 ## Conclusion
-
-```{code-cell} ipython3
-
-```
