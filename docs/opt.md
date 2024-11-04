@@ -752,6 +752,21 @@ plt.xlabel('Step')
 plt.ylabel('Chi2')
 ```
 
+**Exercise**: Program Adam for Stochastic Gradient Descent.
+
++++
+
+Adam combines the strengths of adaptive learning rates and momentum, making it robust and effective for a variety of optimization tasks. Some key advantages include:
+
+* Efficient Parameter Updates: By adapting the learning rate per parameter, Adam handles sparse gradients and complex loss surfaces effectively.
+* Faster Convergence: Adam's use of momentum allows it to converge more quickly than standard SGD, particularly in cases with noisy gradients.
+* Stable Optimization: The algorithm’s adaptive approach reduces the risk of overshooting or oscillations, leading to more stable convergence.
+
+Adam is widely used in machine learning and deep learning because it combines the benefits of SGD with momentum and adaptive learning rates, making it more robust to the noise and non-convexity typical of high-dimensional models.
+Its efficiency and stability have made it the default optimizer in many neural network libraries, enabling practitioners to train models faster and more reliably.
+
++++
+
 ## Discussion
 
 Root finding and optimization are foundational tools that enable the analysis, modeling, and solution of complex problems across many fields.
