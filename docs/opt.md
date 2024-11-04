@@ -92,7 +92,7 @@ For simplicity, we approximate the function linearly by ignoring the higher-orde
 f(x) \approx f(x_0) + f'(x_0)(x - x_0)
 \end{align}
 We want to find the value of $x_0$ where $f(x_0) = 0$.
-Therefore, 
+Therefore,
 \begin{align}
 x \approx x_0 - \frac{f(x_0)}{f'(x_0)}.
 \end{align}
@@ -160,7 +160,7 @@ jax.config.update("jax_enable_x64", True)
 from jax import grad
 
 def autonewton(f, x0, tol=1e-6, imax=100):
-    df = grad(f)    
+    df = grad(f)
     for _ in range(imax):
         f0, df0 = f(x0), df(x0)
         if df0 == 0:
@@ -525,7 +525,7 @@ This is a non-trivial problem because, as the degree of the polynomial increases
 ```{code-cell} ipython3
 groundtruth = np.array([1.2, -3, 0.5, 1.0, -1.8, 2.0, -0.1])
 
-Xdata = np.linspace(-1, 1, 100_000)
+Xdata = np.linspace(-1, 1, 1_000)
 Ytrue = sum(c * Xdata**i for i, c in enumerate(groundtruth))
 Ydata = Ytrue + np.random.normal(scale=0.1, size=Xdata.shape)
 ```
@@ -539,7 +539,7 @@ plt.plot(Xdata, Ydata)
 # Define polynomial model
 def model(Xs, Cs):
     return sum(c * Xs**i for i, c in enumerate(Cs))
-    
+
 # Define the objective function
 def chi2(Cs):
     Ymodel = model(Xdata, Cs)
@@ -559,7 +559,7 @@ print("Mean Squared Error:",     np.mean((groundtruth - Cs[-1])**2))
 ```
 
 ```{code-cell} ipython3
-skip = 100
+skip = 10
 plt.scatter(Xdata[::skip], Ydata[::skip], color='blue', label='Noisy Data', alpha=0.5)
 plt.plot(Xdata, Ytrue, 'g--', label='True Polynomial')
 for i, Ci in enumerate(Cs[::skip]):
@@ -611,10 +611,9 @@ def sgd_hist(f, X, alpha, imax, batch_size):
     df = jit(grad(f))  # Use JAX to compute gradient
     Xs = [np.array(X)]
     for i in range(imax):
-        if i == len(Xdata) // batch_size - 1:
-            i = 0
-        Xbatch = Xrand[i*batch_size:(i+1)*batch_size]
-        Ybatch = Yrand[i*batch_size:(i+1)*batch_size]
+        j = i % (len(Xdata) // batch_size)
+        Xbatch = Xrand[j*batch_size:(j+1)*batch_size]
+        Ybatch = Yrand[j*batch_size:(j+1)*batch_size]
         Xs.append(Xs[-1] - alpha * df(Xs[-1], Xbatch, Ybatch))  # Gradient descent update
     return jnp.array(Xs)
 ```
@@ -622,11 +621,11 @@ def sgd_hist(f, X, alpha, imax, batch_size):
 ```{code-cell} ipython3
 # Parameters for gradient descent
 C0    = jnp.zeros(len(groundtruth)) # Start with zeros as initial coefficients
-alpha = 0.5                         # Learning rate
+alpha = 0.1                         # Learning rate
 imax  = 1000                        # Number of iterations
 
-Cs = sgd_hist(chi2_batch, C0, alpha, imax, 1000)
-%timeit -r1 Cs = sgd_hist(chi2_batch, C0, alpha, imax, 1000)
+Cs = sgd_hist(chi2_batch, C0, alpha, imax, 100)
+%timeit -r1 Cs = sgd_hist(chi2_batch, C0, alpha, imax, 100)
 
 print("Optimized coefficients:", Cs[-1])
 print("True coefficients:",      groundtruth)
@@ -634,7 +633,7 @@ print("Mean Squared Error:",     np.mean((groundtruth - Cs[-1])**2))
 ```
 
 ```{code-cell} ipython3
-skip = 100
+skip = 10
 plt.scatter(Xdata[::skip], Ydata[::skip], color='blue', label='Noisy Data', alpha=0.5)
 plt.plot(Xdata, Ytrue, 'g--', label='True Polynomial')
 for i, Ci in enumerate(Cs[::skip]):
