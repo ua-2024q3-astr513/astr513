@@ -716,6 +716,42 @@ def adam_hist(f, X0, alpha, imax, beta1=0.9, beta2=0.999, epsilon=1e-8):
     return Xs
 ```
 
+```{code-cell} ipython3
+# Parameters for gradient descent
+C0    = jnp.zeros(len(groundtruth)) # Start with zeros as initial coefficients
+alpha = 0.1                         # Learning rate
+imax  = 1000                        # Number of iterations
+
+Cs = adam_hist(chi2, C0, alpha, imax)
+%timeit -r1 Cs = adam_hist(chi2, C0, alpha, imax)
+
+print("Optimized coefficients:", Cs[-1])
+print("True coefficients:",      groundtruth)
+print("Mean Squared Error:",     np.mean((groundtruth - Cs[-1])**2))
+```
+
+```{code-cell} ipython3
+skip = 10
+plt.scatter(Xdata[::skip], Ydata[::skip], color='blue', label='Noisy Data', alpha=0.5)
+plt.plot(Xdata, Ytrue, 'g--', label='True Polynomial')
+for i, Ci in enumerate(Cs[::skip]):
+    Yfit = model(Xdata, Ci)
+    plt.plot(Xdata, Yfit, 'r', alpha=skip*i/imax, label='Fitted Polynomial' if skip*i == imax else '')
+plt.xlabel("x")
+plt.ylabel("y")
+plt.legend()
+```
+
+```{code-cell} ipython3
+Chi2 = [chi2(Ci) for Ci in Cs]
+```
+
+```{code-cell} ipython3
+plt.loglog(Chi2)
+plt.xlabel('Step')
+plt.ylabel('Chi2')
+```
+
 ## Discussion
 
 Root finding and optimization are foundational tools that enable the analysis, modeling, and solution of complex problems across many fields.
