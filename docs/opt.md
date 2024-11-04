@@ -697,6 +697,25 @@ At each iteration $t$, Adam performs the following updates:
 
 Here, $\alpha$ is the learning rate, $\epsilon$ is a small constant to prevent division by zero, and $\beta_1$ and  $\beta_2$ are decay rates for the first and second moments, typically set to 0.9 and 0.999, respectively.
 
+```{code-cell} ipython3
+# Adam Optimizer
+def adam_hist(f, X0, alpha, imax, beta1=0.9, beta2=0.999, epsilon=1e-8):
+    df = jit(grad(f))  # Use JAX to compute gradient
+    Xs = [X0]
+    M  =  0  # Initialize first moment
+    V  =  0  # Initialize second moment
+
+    for t in range(1, imax + 1): # use t instead of i to match the formulation
+        dfX = df(Xs[-1])  # Compute gradient
+        M   = beta1 * M + (1 - beta1) *  dfX      # Update biased first  moment estimate
+        V   = beta2 * V + (1 - beta2) * (dfX**2)  # Update biased second moment estimate
+        Mdb = M / (1 - beta1**t)  # debias first moment
+        Vdb = V / (1 - beta2**t)  # debias second moment
+        Xs.append(Xs[-1] - alpha * Mdb / (jnp.sqrt(Vdb) + epsilon))  # Update parameters
+
+    return Xs
+```
+
 ## Discussion
 
 Root finding and optimization are foundational tools that enable the analysis, modeling, and solution of complex problems across many fields.
