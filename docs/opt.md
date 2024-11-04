@@ -91,7 +91,7 @@ For simplicity, we approximate the function linearly by ignoring the higher-orde
 \begin{align}
 f(x) \approx f(x_0) + f'(x_0)(x - x_0)
 \end{align}
-We want to find the value of $x_0$ where $f(x_0) = 0$.
+We want to find the value of $x$ where $f(x) = 0$.
 Therefore,
 \begin{align}
 x \approx x_0 - \frac{f(x_0)}{f'(x_0)}.
