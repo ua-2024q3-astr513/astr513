@@ -509,6 +509,15 @@ plt.ylabel('y')
 plt.gca().set_aspect('equal')
 ```
 
+Because we minimize $f(x,y)$, it can be seen as the loss function.
+Hence we can plot the evolution of the loss:
+
+```{code-cell} ipython3
+plt.loglog(f(Xs.T))
+plt.xlabel('Step')
+plt.ylabel('Loss f(x,y)')
+```
+
 To demonstrate a more complex optimization scenario, let's consider fitting a multi-parameter model to noisy data.
 We will use polynomial regression as our example, where we fit a polynomial curve to data points by optimizing the coefficients.
 This is a non-trivial problem because, as the degree of the polynomial increases, the number of parameters grows, resulting in a high-dimensional optimization task.
@@ -559,6 +568,18 @@ for i, Ci in enumerate(Cs[::skip]):
 plt.xlabel("x")
 plt.ylabel("y")
 plt.legend()
+```
+
+Let's also plot $\chi^2$:
+
+```{code-cell} ipython3
+Chi2 = [chi2(Ci) for Ci in Cs]
+```
+
+```{code-cell} ipython3
+plt.loglog(Chi2)
+plt.xlabel('Step')
+plt.ylabel('Chi2')
 ```
 
 ### Stochastic Gradient Descent (SGD)
@@ -622,6 +643,16 @@ for i, Ci in enumerate(Cs[::skip]):
 plt.xlabel("x")
 plt.ylabel("y")
 plt.legend()
+```
+
+```{code-cell} ipython3
+Chi2 = [chi2(Ci) for Ci in Cs]
+```
+
+```{code-cell} ipython3
+plt.loglog(Chi2)
+plt.xlabel('Step')
+plt.ylabel('Chi2')
 ```
 
 ## Discussion
