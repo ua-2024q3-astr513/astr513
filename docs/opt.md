@@ -654,6 +654,49 @@ plt.xlabel('Step')
 plt.ylabel('Chi2')
 ```
 
+### The Adam Optimizer
+
+The Adam optimizer (short for Adaptive Moment Estimation) is a popular optimization algorithm that combines features of both momentum and adaptive learning rates.
+Introduced in the paper ["Adam: A Method for Stochastic Optimization" by Kingma and Ba](https://arxiv.org/abs/1412.6980), Adam has since become one of the most widely used optimizers in machine learning and deep learning.
+Its efficiency, robustness, and ease of use make it particularly suited for training large neural networks and handling high-dimensional parameter spaces.
+
+Adam builds on two primary ideas:
+
+1. Momentum: Like momentum-based optimization methods, Adam incorporates a moving average of past gradients, which helps smooth the updates and accelerates convergence in directions with consistent gradients.
+2. Adaptive Learning Rates: Adam adapts the learning rate for each parameter individually, based on the historical gradient information. This feature allows it to adjust step sizes dynamically, making it more effective on functions with non-uniform gradient scales.
+
+By combining these elements, Adam achieves faster and more stable convergence than traditional stochastic gradient descent (SGD), especially for noisy and sparse data.
+
++++
+
+The Adam optimizer maintains two moving averages for each parameter:
+
+* First moment ($m$): This tracks the average of the gradients, effectively capturing the direction and smoothing the gradient signal.
+* Second moment ($v$): This tracks the average of the squared gradients, allowing the algorithm to adapt the learning rate based on the variance of gradients.
+
+At each iteration $t$, Adam performs the following updates:
+
+1.  Compute the Gradients: Calculate the gradient $g_t$ at the current step.
+2.  Update the First Moment (Mean of Gradients):
+    \begin{align}
+    m_t = \beta_1 m_{t-1} + (1 - \beta_1) g_t
+    \end{align}
+3.  Update the Second Moment (Mean of Squared Gradients):
+    \begin{align}
+    v_t = \beta_2 v_{t-1} + (1 - \beta_2) g_t^2
+    \end{align}
+4.  Bias Correction: To account for initialization bias in the first few steps, Adam applies bias correction to both  $m_t$ and $v_t$:
+    \begin{align}
+    \hat{m}_t &= \frac{m_t}{1 - \beta_1^t} \\
+    \hat{v}_t &= \frac{v_t}{1 - \beta_2^t}
+    \end{align}
+5.  Parameter Update:
+    \begin{align}
+    x_{t+1} = x_t - \frac{\alpha}{\sqrt{\hat{v}_t} + \epsilon} \hat{m}_t
+    \end{align}
+
+Here, $\alpha$ is the learning rate, $\epsilon$ is a small constant to prevent division by zero, and $\beta_1$ and  $\beta_2$ are decay rates for the first and second moments, typically set to 0.9 and 0.999, respectively.
+
 ## Discussion
 
 Root finding and optimization are foundational tools that enable the analysis, modeling, and solution of complex problems across many fields.
