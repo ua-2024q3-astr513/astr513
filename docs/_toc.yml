@@ -9,3 +9,4 @@ chapters:
 - file: derive
 - file: interpolate
 - file: opt
+- file: integration
