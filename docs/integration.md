@@ -14,25 +14,32 @@ kernelspec:
 
 # Numerical Integration of Functions
 
-## Importance of Integration in Physics
++++ {"jp-MarkdownHeadingCollapsed": true}
 
-* Physical (dynamic) systems are very often described by ordinary differential equations, examples include Newton's second law:
-   $f = m a = m \frac{dx^2}{dt^2}$.
+## Introduction
 
-* For fields, they are described by partial differential equations.
+### Importance of Integration in Physics
 
-* In order to predict how physical systems behave, we need to integrate these diffrential equations.
+Integration is foundational in physics, as many physical systems are described by differential equations that represent dynamic behaviors.
+For instance, Newton's second law, $f = m a = m d^2 x/d t^2$, is an ordinary differential equation (ODE) that models the acceleration of a mass under a force.
+When physical phenomena are modeled as continuous fields, we often move to partial differential equations (PDEs), such as those governing fluid dynamics, electromagnetism, and quantum fields.
 
-+++
+To predict the behavior of these systems, we frequently need to integrate these differential equations, either over time, space, or other domains.
+Analytical solutions, though ideal, are rarely feasible for real-world problems due to the complex nature of the equations and boundary conditions.
+This makes numerical integration essential for approximating solutions in computational physics, enabling us to simulate and analyze physical systems that defy closed-form solutions.
 
-## Nmerical Integration of Functions
+### Numerical Integration of Functions
 
-* But before we learn how to solve generic ODEs, let's learn a simple special case:
-  $I = \int_a^b f(x) dx$.
+Before diving into the numerical methods for solving complex differential equations, we start with a simpler, yet essential case: the numerical evaluation of a definite integral, represented as
+\begin{align}
+I = \int_a^b f(x) \, dx.
+\end{align}
+In many ways, this task is a special case of solving an initial-value problem for an ODE.
+Specifically, computing the integral $I$ is equivalent to solving the differential equation $d y/d x = f(x)$, with a boundary condition $y(a) = 0$, and evaluating $y(b)$.
+This perspective connects integration directly to the broader framework of solving differential equations.
 
-* Note that this integration is equivalent to solving for the value $I \equiv y(b)$ of the differential equation $dy/dx = f(x)$ with the boundary condition $y(a) = 0$.
-
-* By doing so, we will learn the important concept of convergence.
+By focusing first on the numerical integration of functions, we will see the key concept of convergence---the manner in which a numerical approximation approaches the true value as computational parameters (like step size) are refined.
+This foundation will prepare us for tackling more general ODEs and PDEs, where convergence and error control are critical for obtaining reliable solutions.
 
 +++
 
