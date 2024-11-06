@@ -14,7 +14,7 @@ kernelspec:
 
 # Numerical Integration of Functions
 
-+++ {"jp-MarkdownHeadingCollapsed": true}
++++
 
 ## Introduction
 
@@ -43,171 +43,159 @@ This foundation will prepare us for tackling more general ODEs and PDEs, where c
 
 +++
 
-## Analytical Example
+### Analytical Example
 
-* Numerical integration can help us solve problems without analytical solutions.
+Numerical integration is a key tool for solving problems without analytical solutions.
+However, to build our understanding, let's start with a function that does have a known solution.
+This approach allows us to test and validate our algorithms and implementations.
 
-* But to help our understanding, we will first use an example with an analytical solution. Often, it is best to start from a case with a known solution, so that we can test our algorithms and implementations.
+Consider the function $f(x) = e^x$.
+Its indefinite integral is:
+\begin{align}
+\int f(x) \, dx = e^x + C
+\end{align}
+where $C$ is the constant of integration.
+For a definite integral over the interval $[a, b]$, we have:
+\begin{align}
+\int_a^b f(x) \, dx = e^b - e^a
+\end{align}
 
-* Let's consider $f(x) = e^{x}$.
-
-* The indefinite integral is $\int f(x) dx = e^{x} + C$, where $C$ is a constant.
-
-* The definite integral is $\int_a^b f(x) dx = e^{b} - e^{a}$.
+Below, we plot this function over the interval $[0, 1]$ for visualization.
 
 ```{code-cell} ipython3
-# It is useful to plot the function for visualization.
-
+# Importing necessary libraries
 import numpy as np
 from matplotlib import pyplot as plt
 
+# Define the function
 def f(x):
     return np.exp(x)
 
-x = np.linspace(0, 1, 129) # define a fine grid for plotting
-y = f(x)                   # sample function f on the grid
+# Define a fine grid for plotting
+x = np.linspace(0, 1, 129)
+y = f(x)
 
+# Plotting the function
 plt.plot(x, y)
 plt.fill_between(x, y, alpha=0.33)
+plt.title(r'Plot of $f(x) = e^x$')
+plt.xlabel('x')
+plt.ylabel('f(x)')
+plt.show()
 ```
 
-## Riemann Sums
+### Riemann Sums
 
-* When we first learn about ingegration, we usually learn about the Riemann sum.
+The Riemann sum is a foundational approach to numerical integration.
+It approximates the area under a curve by summing up the values of the function at specific points across the interval, multiplied by the width of each sub-interval.
 
-    $I \approx S \equiv \sum_{i = 1}^n f(x_i^*) \Delta x_i$
+A general Riemann sum for an interval $[a, b]$ is given by:
+\begin{align}
+I \approx S = \sum_{i=1}^n f(x_i^*) \Delta x_i
+\end{align}
+where $\Delta x_i = x_i - x_{i-1}$ is the width of each sub-interval.
 
-  where $\Delta x_i = x_i - x_{i-1}$.
+There are different types of Riemann sums:
 
-* If $x_i^* = x_{i-1}$ for all $i$, then $S$ is called the left Reimann Sum.
+- **Left Riemann Sum**: $x_i^* = x_{i-1}$
+- **Right Riemann Sum**: $x_i^* = x_i$
+- **Middle Riemann Sum**: $x_i^* = \frac{x_{i-1} + x_i}{2}$
 
-* If $x_i^* = x_i$ for all $i$, then $S$ is called the right Reimann Sum.
+As $\Delta x_i \rightarrow 0$, these sums converge to the exact integral.
 
-* If $x_i^* = (x_{i-1} + x_i)/2$ for all $i$, then $S$ is called the middle Reimann Sum.
-
-* There are other Riemann Sums such as the upper and lower Riemann (Darboux) sums.  But we won't discuss them here.  They are useful for prove mathemtical theories but less useful in numerical analysis.
-
-* In the limit $\Delta x_i \rightarrow 0$, the Riemann Sums converge to the integral.
+Below, we visualize each type of Riemann sum for $f(x) = e^x$ on a coarse grid over the interval $[0, 1]$.
 
 ```{code-cell} ipython3
-# Graphically, this is the left Reimann Sum
+# Define a coarse grid for visualization
+X = np.linspace(0, 1, 9)
+Y = f(X)
 
-X = np.linspace(0, 1, 9) # define a coarse grid for the sum
-Y = f(X)                 # sample function f on the grid
-
+# Plot Left Riemann Sum
 plt.plot(x, y)
 plt.scatter(X[:-1], Y[:-1], color='r')
 plt.fill_between(X, Y, step='post', color='r', alpha=0.33)
+plt.title('Left Riemann Sum for $f(x) = e^x$')
+plt.show()
 ```
 
 ```{code-cell} ipython3
-# And this is the right Reimann Sum
-
+# Plot Right Riemann Sum
 plt.plot(x, y)
 plt.scatter(X[1:], Y[1:], color='r')
 plt.fill_between(X, Y, step='pre', color='r', alpha=0.33)
+plt.title('Right Riemann Sum for $f(x) = e^x$')
+plt.show()
 ```
 
 ```{code-cell} ipython3
-# And this is the middle Reimann Sum
-
-X = np.linspace(0, 1, 9)
-X = 0.5 * (X[:-1] + X[1:])
-Y = f(X)
+# Plot Middle Riemann Sum
+X_mid = 0.5 * (X[:-1] + X[1:])
+Y_mid = f(X_mid)
 
 plt.plot(x, y)
-plt.scatter(X, Y, color='r')
-plt.fill_between(np.concatenate([[0], X, [1]]),
-                 np.concatenate([Y[:1], Y, Y[-1:]]),
+plt.scatter(X_mid, Y_mid, color='r')
+plt.fill_between(np.concatenate([[0], X_mid, [1]]),
+                 np.concatenate([Y_mid[:1], Y_mid, Y_mid[-1:]]),
                  step='mid', color='r', alpha=0.33)
+plt.title('Middle Riemann Sum for $f(x) = e^x$')
+plt.show()
 ```
 
-```{code-cell} ipython3
-# We can easily compute the Riemann sums numerically!
-#
-# Here's the left Riemann sum.
+### Computing Riemann Sums
 
+Let's now compute each Riemann sum numerically and compare it with the exact solution.
+
+```{code-cell} ipython3
+# Left Riemann Sum calculation
 N = 8
 D = 1 / N
-X = [D * i for i in range(N)]
-S = np.sum(f(X) * D)
+X_left = [D * i for i in range(N)]
+S_left = np.sum(f(X_left) * D)
 
-print('Left Riemann Sum:', S)
+print('Left Riemann Sum:', S_left)
 
-# And we can compare it with the true answer
-
+# Exact solution
 I = f(1) - f(0)
 print('Analytical solution:', I)
 
-# The difference is
-aerr = abs(I - S)
-print('Absolute error:', aerr)
-
-rerr = abs((I - S)/I)
-print(f'Relative error: {100 * rerr:.2f} %')
+# Error analysis
+aerr_left = abs(I - S_left)
+rerr_left = abs((I - S_left) / I)
+print('Absolute error:', aerr_left)
+print(f'Relative error: {100 * rerr_left:.2f} %')
 ```
 
 ```{code-cell} ipython3
-# Let's try to implement the right Riemann sum.
+# Right Riemann Sum calculation
+X_right = [D * (i + 1) for i in range(N)]
+S_right = np.sum(f(X_right) * D)
 
-N = 8
-D = 1 / N
-X = [D * (i+1) for i in range(N)] # note the (i+1) here
-S = np.sum(f(X) * D)
+print('Right Riemann Sum:', S_right)
 
-print('Right Riemann Sum:', S)
+# Error analysis
+aerr_right = abs(I - S_right)
+rerr_right = abs((I - S_right) / I)
+print('Absolute error:', aerr_right)
+print(f'Relative error: {100 * rerr_right:.2f} %')
 ```
 
 ```{code-cell} ipython3
-# And we can compare it with the true answer
+# Middle Riemann Sum calculation
+X_mid = [D * (i + 0.5) for i in range(N)]
+S_mid = np.sum(f(X_mid) * D)
 
-I = f(1) - f(0)
-print('Analytical solution:', I)
+print('Middle Riemann Sum:', S_mid)
+
+# Error analysis
+aerr_mid = abs(I - S_mid)
+rerr_mid = abs((I - S_mid) / I)
+print('Absolute error:', aerr_mid)
+print(f'Relative error: {100 * rerr_mid:.2f} %')
 ```
 
-```{code-cell} ipython3
-# The difference is
-aerr = abs(I - S)
-print('Absolute error:', aerr)
-
-rerr = abs((I - S)/I)
-print(f'Relative error: {100 * rerr:.2f} %')
-```
-
-```{code-cell} ipython3
-# Let's also implement the middle Riemann sum.
-
-N = 8
-D = 1 / N
-X = [D * (i+0.5) for i in range(N)] # note the (i+0.5) here
-S = np.sum(f(X) * D)
-
-print('Middle Riemann Sum:', S)
-```
-
-```{code-cell} ipython3
-# And we can compare it with the true answer
-
-I = f(1) - f(0)
-print('Analytical solution:', I)
-```
-
-```{code-cell} ipython3
-# The difference is
-aerr = abs(I - S)
-print('Absolute error:', aerr)
-
-rerr = abs((I - S)/I)
-print(f'Relative error: {100 * rerr:.2f} %')
-```
-
-* For this particular case, the middle Riemann sum gives us much accurate solution!
-
-* This may be clear from the figures already.
-
-* However, if we refine the step size, clearly the errors in the left and right Riemann sums will reduce as well.
-
-* How does the error depend on the step size?
+By calculating and visualizing the left, right, and middle Riemann sums, we see how each approximation compares to the exact integral.
+The middle Riemann sum often provides a more accurate result, demonstrating that even small changes in the method can impact accuracy.
+This understanding of Riemann sums lays the groundwork for more advanced numerical integration techniques that we will explore next.
 
 ```{code-cell} ipython3
 # Let's define a function with different parameters
