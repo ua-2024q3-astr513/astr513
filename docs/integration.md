@@ -326,20 +326,25 @@ As we move forward, we will adopt the notation and methods used in Numerical Rec
 
 +++
 
-## Trapezoidal Rule:
+In general, we observe that:
+* For the left and right Riemann sums, doubling the number of sampling points halves the error. This is an example of **first-order convergence**.
+* For the middle Riemann sum, doubling the number of sampling points reduces the error by a factor of four, indicating **second-order convergence**.
 
-* We will now stick with the "vertex" formulation, i.e. $x_i = a + i \Delta x$.
++++
 
-* Instead of considering the middle Riemann sum, we will use the following approximation.
+### Trapezoidal Rule
 
-  $\int_{x_0}^{x_1} f(x) dx =
-  h \left[\frac{1}{2} f_0 + \frac{1}{2} f_1\right] + \mathcal{O}(h^3 f'')$
+To improve our numerical integration, we will transition from the Riemann sum approach to the **trapezoidal rule**.
+From now on, we'll adopt a "vertex" formulation for points, where $x_i = a + i \Delta x$ and $\Delta x = (b - a)/N$.
 
-* This is called the trapezoidal rule.
-
-* The error term $\mathcal{O}(\ )$ reprsents that the true answer differs from the estimate by an amount that is proportional to $h^3$ and $f''$.
-
-* If $f$ is linear, i.e., $f'' = 0$, then the trapezoidal representation is be extract.
+The trapezoidal rule approximates the area under a curve by treating each segment as a trapezoid.
+For a single interval $[x_0, x_1]$, we approximate:
+\begin{align}
+\int_{x_0}^{x_1} f(x) \, dx \approx h \left( \frac{1}{2} f(x_0) + \frac{1}{2} f(x_1) \right) + \mathcal{O}(h^3 f'')
+\end{align}
+where $h = x_1 - x_0$.
+This error term indicates that the true value differs by an amount proportional to $h^3$ and $f''$, making it second-order accurate.
+If $f$ is linear (i.e., $f'' = 0$), the trapezoidal approximation is exact.
 
 ```{code-cell} ipython3
 # Test with different functions, this is a quarter circle
@@ -353,94 +358,101 @@ plt.fill_between(X, g(X), color='r', alpha=0.33)
 ```
 
 ```{code-cell} ipython3
-# We can how program the trapezoidal rule and test it
-
+# Trapezoidal rule implementation
 def trapezoidal(f, N=8, a=0, b=1):
     X, D = np.linspace(a, b, N+1, retstep=True)
-    return np.sum(f(X[1:])+f(X[:-1])) * 0.5 * D
+    return np.sum(f(X[1:]) + f(X[:-1])) * 0.5 * D
 
-# And compute the Riemann sums using the different methods
+# Compare errors of middle Riemann sum and trapezoidal rule
 err_m = [abs(RiemannSum(g, N, t='m') - 2 / np.pi) for N in Ns]
-err_t = [abs(trapezoidal(g, N)       - 2 / np.pi) for N in Ns]
+err_t = [abs(trapezoidal(g, N) - 2 / np.pi) for N in Ns]
 
-plt.loglog(Ns, err_m, 'o-',  color='g', label='middle')
-plt.loglog(Ns, err_t, '+:',  color='r', label='trapezoidal')
-plt.xlabel('Number of sampling points')
-plt.ylabel('Absolute errors')
+plt.loglog(Ns, err_m, 'o-',  color='g', label='Middle Riemann Sum')
+plt.loglog(Ns, err_t, '+:',  color='r', label='Trapezoidal Rule')
+plt.xlabel('Number of Sampling Points')
+plt.ylabel('Absolute Error')
 plt.legend()
+plt.title('Error Comparison of Middle Riemann Sum and Trapezoidal Rule')
+plt.show()
 ```
 
-## Simpson’s Rule
+### Simpson's Rule
 
-* Given that the trapezoidal rule is extact for lienar functions, i.e., first order polynomials, one natural question is if we can construct a rule that is exact for second order polynomials.
+The trapezoidal rule is exact for linear functions.
+Naturally, we may wonder if there's a method exact for quadratic functions.
+This leads us to Simpson's Rule.
 
-* It turns out that we can.  The result is called the Simpson's rule:
-
-  $\int_{x_0}^{x_2} f(x) dx =
-  h \left[\frac{1}{3} f_0 + \frac{4}{3} f_1 + \frac{1}{3} f_2\right] + \mathcal{O}(h^5 f^{(4)})$
-
-* Note that this formulate integrate up to $x_2$.
-
-* If we want to integrate to $x_1$ instead, this formulate increase the number of function evaluation.
-
-* The error term $\mathcal{O}(\ )$ suggests a much rapider convegent rate. Note: we are using second-order functions but expect fourth-order convergence!
+Simpson's rule approximates the integral over two intervals $[x_0, x_2]$ by fitting a quadratic polynomial.
+This yields:
+\begin{align}
+\int_{x_0}^{x_2} f(x) \, dx \approx h \left( \frac{1}{3} f(x_0) + \frac{4}{3} f(x_1) + \frac{1}{3} f(x_2) \right) + \mathcal{O}(h^5 f^{(4)})
+\end{align}
+where $h = \frac{x_2 - x_0}{2}$ and $x_1 = \frac{x_0 + x_2}{2}$.
+This error term indicates that Simpson's Rule is fourth-order accurate---even when using quadratic approximations, we achieve convergence as though we were using fourth-degree terms.
 
 ```{code-cell} ipython3
-# We can how program the Simpson rule and test it
-
-def Simpson(f, N=8, a=0, b=1):
+# Simpson's rule implementation
+def simpson(f, N=8, a=0, b=1):
     X, D = np.linspace(a, b, N+1, retstep=True)
     S = 0
-    for i in range(N//2):
-        l = X[2*i]
-        m = X[2*i+1]
-        r = X[2*i+2]
-        S += D * (f(l) + 4*f(m) + f(r)) / 3
+    for i in range(N // 2):
+        l = X[2 * i]
+        m = X[2 * i + 1]
+        r = X[2 * i + 2]
+        S += D * (f(l) + 4 * f(m) + f(r)) / 3
     return S
 
-# And compute the Riemann sums using the different methods
-err_m = [abs(RiemannSum(g, N, t='m') - 2 / np.pi) for N in Ns]
-err_t = [abs(trapezoidal(g, N)       - 2 / np.pi) for N in Ns]
-err_S = [abs(Simpson(g, N)           - 2 / np.pi) for N in Ns]
+# Compare errors of middle Riemann, trapezoidal, and Simpson's rule
+err_S = [abs(simpson(g, N) - 2 / np.pi) for N in Ns]
 
-plt.loglog(Ns, err_m, 'o-',  color='g', label='middle')
-plt.loglog(Ns, err_t, '+:',  color='r', label='trapezoidal')
-plt.loglog(Ns, err_S, 'x:',  color='b', label='Simpson')
-
-plt.xlabel('Number of sampling points')
-plt.ylabel('Absolute errors')
+plt.loglog(Ns, err_m, 'o-',  color='g', label='Middle Riemann Sum')
+plt.loglog(Ns, err_t, '+:',  color='r', label='Trapezoidal Rule')
+plt.loglog(Ns, err_S, 'x:',  color='b', label="Simpson's Rule")
+plt.xlabel('Number of Sampling Points')
+plt.ylabel('Absolute Error')
 plt.legend()
+plt.title('Error Comparison of Middle Riemann, Trapezoidal, and Simpson’s Rules')
+plt.show()
 ```
 
-```{code-cell} ipython3
-# We can even generalize it to the Bode's rule
+### Bode's Rule
 
-def Bode(f, N=8, a=0, b=1):
+Simpson's rule is exact for quadratic polynomials, but what if we want a rule that is exact for quartic polynomials?
+Bode's Rule addresses this, using a polynomial fit across four intervals to achieve even higher accuracy.
+
+Bode's rule integrates over four intervals, providing an approximation that is exact for polynomials up to degree four:
+\begin{align}
+\int_{x_0}^{x_4} f(x) , dx \approx h \left( \frac{14}{45} f(x_0) + \frac{64}{45} f(x_1) + \frac{24}{45} f(x_2) + \frac{64}{45} f(x_3) + \frac{14}{45} f(x_4) \right) + \mathcal{O}(h^7 f^{(6)})
+\end{align}
+where $h = (x_4 - x_0)/4$.
+This method is sixth-order accurate, meaning it converges more quickly than Simpson's Rule for smooth functions.
+
+```{code-cell} ipython3
+# Bode's rule implementation
+def bode(f, N=8, a=0, b=1):
     X, D = np.linspace(a, b, N+1, retstep=True)
     S = 0
-    for i in range(N//4):
-        x0 = X[4*i]
-        x1 = X[4*i+1]
-        x2 = X[4*i+2]
-        x3 = X[4*i+3]
-        x4 = X[4*i+4]
-        S += D * (14*f(x0) + 64*f(x1) + 24*f(x2) + 64*f(x3) + 14*f(x4)) / 45
+    for i in range(N // 4):
+        x0 = X[4 * i]
+        x1 = X[4 * i + 1]
+        x2 = X[4 * i + 2]
+        x3 = X[4 * i + 3]
+        x4 = X[4 * i + 4]
+        S += D * (14 * f(x0) + 64 * f(x1) + 24 * f(x2) + 64 * f(x3) + 14 * f(x4)) / 45
     return S
 
-# And compute the Riemann sums using the different methods
-err_m = [abs(RiemannSum(g, N, t='m') - 2 / np.pi) for N in Ns]
-err_t = [abs(trapezoidal(g, N)       - 2 / np.pi) for N in Ns]
-err_S = [abs(Simpson(g, N)           - 2 / np.pi) for N in Ns]
-err_B = [abs(Bode(g, N)              - 2 / np.pi) for N in Ns]
+# Compare errors of middle Riemann, trapezoidal, Simpson's, and Bode's rule
+err_B = [abs(bode(g, N) - 2 / np.pi) for N in Ns]
 
-plt.loglog(Ns, err_m, 'o-',  color='g', label='middle')
-plt.loglog(Ns, err_t, '+:',  color='r', label='trapezoidal')
-plt.loglog(Ns, err_S, 'x:',  color='b', label='Simpson')
-plt.loglog(Ns, err_B, 'o:',  color='k', label='Bode')
-
-plt.xlabel('Number of sampling points')
-plt.ylabel('Absolute errors')
+plt.loglog(Ns, err_m, 'o-',  color='g', label='Middle Riemann Sum')
+plt.loglog(Ns, err_t, '+:',  color='r', label='Trapezoidal Rule')
+plt.loglog(Ns, err_S, 'x:',  color='b', label="Simpson's Rule")
+plt.loglog(Ns, err_B, 'o:',  color='k', label="Bode's Rule")
+plt.xlabel('Number of Sampling Points')
+plt.ylabel('Absolute Error')
 plt.legend()
+plt.title('Error Comparison of Middle Riemann, Trapezoidal, Simpson’s, and Bode’s Rules')
+plt.show()
 ```
 
 ## Using Scipy and Sympy
