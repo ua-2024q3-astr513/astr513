@@ -197,95 +197,90 @@ By calculating and visualizing the left, right, and middle Riemann sums, we see 
 The middle Riemann sum often provides a more accurate result, demonstrating that even small changes in the method can impact accuracy.
 This understanding of Riemann sums lays the groundwork for more advanced numerical integration techniques that we will explore next.
 
++++
+
+### Convergence of Riemann Sums
+
+In numerical integration, convergence describes how closely a numerical approximation approaches the exact value of an integral as the number of sample points increases.
+To illustrate convergence, we'll analyze the errors in different types of Riemann sums (left, right, and middle) as we increase the number of sampling points.
+
+To streamline our calculations, let's define a function `RiemannSum()` that allows us to compute the Riemann sum for any function $f$ using different sample points (left, right, or middle) and varying the number of intervals.
+
 ```{code-cell} ipython3
-# Let's define a function with different parameters
-# to compute the different types of Riemann Sum.
-
+# General function for Riemann sum calculation
 def RiemannSum(f, N=8, a=0, b=1, t='mid'):
-    """Integrate function `f` from `a` to `b` using `N` points.
+    """Compute Riemann sum for function `f` from `a` to `b` using `N` points.
 
-    `t` is type, it can be `mid`, `left`, or `right`.
+    Parameters:
+    - `t`: type of Riemann sum, can be `mid` (middle), `left`, or `right`.
     """
-    D = (b-a) / N
+    D = (b - a) / N  # Step size
     if t[0] == 'l':
-        X = [D*(i    ) + a for i in range(N)]
+        X = [D * i + a for i in range(N)]
     elif t[0] == 'r':
-        X = [D*(i+1  ) + a for i in range(N)]
+        X = [D * (i + 1) + a for i in range(N)]
     else:
-        X = [D*(i+0.5) + a for i in range(N)]
+        X = [D * (i + 0.5) + a for i in range(N)]
     return np.sum(f(np.array(X))) * D
 ```
 
-```{code-cell} ipython3
-# Let's now define a different numbers of grid points.
+We'll use varying numbers of sampling points $N$ and compute the absolute error for each Riemann sum type compared to the true integral value.
+Below, we test this with the function $f(x) = e^x$.
 
+```{code-cell} ipython3
+# Define range of sampling points
 Ns = [8, 16, 32, 64, 128, 256, 512, 1024]
 
-# And compute the Riemann sums using the different methods
+# True value of the integral for comparison
+I = np.exp(1) - 1
+
+# Calculate errors for left, middle, and right Riemann sums
 err_l = [abs(RiemannSum(f, N, t='l') - I) for N in Ns]
 err_m = [abs(RiemannSum(f, N, t='m') - I) for N in Ns]
 err_r = [abs(RiemannSum(f, N, t='r') - I) for N in Ns]
 
-# It is cool that the error in the middle Riemann sum, even with
-# only 8 points, is compariable to the left and right Riemann sums
-# using ~ 100 points!
-# It is even more impressive that when we use ~ 1000 points in the
-# middle Riemann sum, the error is just ~ 1e-7!
-plt.loglog(Ns, err_l, '+--', color='r', label='left')
-plt.loglog(Ns, err_m, 'o-',  color='g', label='middle')
-plt.loglog(Ns, err_r, 'x:',  color='b', label='right')
-plt.xlabel('Number of sampling points')
-plt.ylabel('Absolute errors')
+# Plotting the convergence results
+plt.loglog(Ns, err_l, '+--', color='r', label='Left Riemann Sum')
+plt.loglog(Ns, err_m, 'o-',  color='g', label='Middle Riemann Sum')
+plt.loglog(Ns, err_r, 'x:',  color='b', label='Right Riemann Sum')
+plt.xlabel('Number of Sampling Points')
+plt.ylabel('Absolute Error')
 plt.legend()
+plt.title('Convergence of Riemann Sums for $f(x) = e^x$')
+plt.show()
 ```
 
-* It is cool that the error in the middle Riemann sum, even with only 8 points, is comparable to the left and right Riemann sums using ~ 100 points!
+Observing the plot, we note that the error in the middle Riemann sum decreases more rapidly than the errors for the left and right sums.
+Even with fewer points, the middle Riemann sum achieves comparable accuracy to the left and right sums with significantly more points.
 
-* It is even more impressive that when we use ~ 1000 points in the middle Riemann sum, the error is just ~ 1e-7!
++++
 
-* Is this generically true?
+### Testing Convergence with Different Functions
 
-* We may create the same convergence plots for different functions.
+To determine if this trend holds generally, let’s repeat the convergence test with different functions: a half-cycle of $\sin(x)$ and a quarter circle $\sqrt{1 - x^2}$.
 
 ```{code-cell} ipython3
-# Test with different functions, this is half cycle of sin()
-
+# Define a half-cycle of sin(x)
 def g(x):
     return np.sin(x * np.pi / 2)
 
-X = np.linspace(0, 1, 11)
-X = 0.5 * (X[:-1] + X[1:])
-Y = g(X)
-
-plt.plot(x, g(x))
-plt.scatter(X, Y, color='r')
-plt.fill_between(np.concatenate([[0], X, [1]]),
-                 np.concatenate([Y[:1], Y, Y[-1:]]),
-                 step='mid', color='r', alpha=0.33)
-```
-
-```{code-cell} ipython3
-# And compute the Riemann sums using the different methods
+# Calculate errors for each Riemann sum type
 err_l = [abs(RiemannSum(g, N, t='l') - 2 / np.pi) for N in Ns]
 err_m = [abs(RiemannSum(g, N, t='m') - 2 / np.pi) for N in Ns]
 err_r = [abs(RiemannSum(g, N, t='r') - 2 / np.pi) for N in Ns]
 
-# It is cool that the error in the middle Riemann sum, even with
-# only 8 points, is compariable to the left and right Riemann sums
-# using ~ 100 points!
-# It is even more impressive that when we use ~ 1000 points in the
-# middle Riemann sum, the error is just ~ 1e-7!
-plt.loglog(Ns, err_l, '+--', color='r', label='left')
-plt.loglog(Ns, err_m, 'o-',  color='g', label='middle')
-plt.loglog(Ns, err_r, 'x:',  color='b', label='right')
-plt.xlabel('Number of sampling points')
-plt.ylabel('Absolute errors')
+# Plotting the convergence results
+plt.loglog(Ns, err_l, '+--', color='r', label='Left Riemann Sum')
+plt.loglog(Ns, err_m, 'o-',  color='g', label='Middle Riemann Sum')
+plt.loglog(Ns, err_r, 'x:',  color='b', label='Right Riemann Sum')
+plt.xlabel('Number of Sampling Points')
+plt.ylabel('Absolute Error')
 plt.legend()
+plt.title(r'Convergence of Riemann Sums for $g(x) = \sin(\pi x / 2)$')
+plt.show()
 ```
 
 ```{code-cell} ipython3
-# Test with different functions, this is a quarter circle
-
 def h(x):
     return np.sqrt(1 - x * x)
 
@@ -302,35 +297,32 @@ plt.gca().set_aspect('equal')
 ```
 
 ```{code-cell} ipython3
-# And compute the Riemann sums using the different methods
-err_l = [abs(RiemannSum(h, N, t='l') - np.pi/4) for N in Ns]
-err_m = [abs(RiemannSum(h, N, t='m') - np.pi/4) for N in Ns]
-err_r = [abs(RiemannSum(h, N, t='r') - np.pi/4) for N in Ns]
+# Define a quarter circle function
+def h(x):
+    return np.sqrt(1 - x**2)
 
-# It is cool that the error in the middle Riemann sum, even with
-# only 8 points, is compariable to the left and right Riemann sums
-# using ~ 100 points!
-# It is even more impressive that when we use ~ 1000 points in the
-# middle Riemann sum, the error is just ~ 1e-7!
-plt.loglog(Ns, err_l, '+--', color='r', label='left')
-plt.loglog(Ns, err_m, 'o-',  color='g', label='middle')
-plt.loglog(Ns, err_r, 'x:',  color='b', label='right')
-plt.xlabel('Number of sampling points')
-plt.ylabel('Absolute errors')
+# Calculate errors for each Riemann sum type
+err_l = [abs(RiemannSum(h, N, t='l') - np.pi / 4) for N in Ns]
+err_m = [abs(RiemannSum(h, N, t='m') - np.pi / 4) for N in Ns]
+err_r = [abs(RiemannSum(h, N, t='r') - np.pi / 4) for N in Ns]
+
+# Plotting the convergence results
+plt.loglog(Ns, err_l, '+--', color='r', label='Left Riemann Sum')
+plt.loglog(Ns, err_m, 'o-',  color='g', label='Middle Riemann Sum')
+plt.loglog(Ns, err_r, 'x:',  color='b', label='Right Riemann Sum')
+plt.xlabel('Number of Sampling Points')
+plt.ylabel('Absolute Error')
 plt.legend()
+plt.title(r'Convergence of Riemann Sums for $h(x) = \sqrt{1 - x^2}$')
+plt.show()
 ```
 
-* Although the detailed errors are different for different curves, the general trends are the same.
+Although the specific error values vary across different functions, the general trends in convergence remain consistent.
+Doubling the number of sampling points, or equivalently halving the step size, reduces the error in the left and right Riemann sums by roughly half.
+By comparison, the middle Riemann sum achieves a fourfold reduction in error for each doubling of sampling points, indicating a faster rate of convergence.
+This suggests that, overall, the middle Riemann sum converges more rapidly than the left and right sums.
 
-  * When we increase the number of sampling points by 2, or decrease the size of the step by 2, left and right Riemann sums cuts the error by 1/2.
-
-  * When we increase the number of sampling points by 2, or decrease the size of the step by 2, middle Riemann sums cuts the error by 1/4!
-
-* In general, we say the middle Riemann sum converges faster than the left and right Riemann sums.
-
-* However, using the different Riemann sum to discuss numerical integration, while it is formally correct, it is difficult to generalize.  This is espeically true for the middle Riemann sum that requires a different set of sampling points.
-
-* Starting in the next slide, we will use the notation used in the numerical recipes.
+As we move forward, we will adopt the notation and methods used in Numerical Recipes. These approaches will provide greater flexibility and accuracy, enabling us to tackle more complex integration problems more effectively.
 
 +++
 
