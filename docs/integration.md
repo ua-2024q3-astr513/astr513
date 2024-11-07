@@ -229,7 +229,7 @@ Below, we test this with the function $f(x) = e^x$.
 
 ```{code-cell} ipython3
 # Define range of sampling points
-Ns = [8, 16, 32, 64, 128, 256, 512, 1024]
+Ns = np.array([8, 16, 32, 64, 128, 256, 512, 1024])
 
 # True value of the integral for comparison
 I = np.exp(1) - 1
@@ -242,7 +242,9 @@ err_r = [abs(RiemannSum(f, N, t='r') - I) for N in Ns]
 # Plotting the convergence results
 plt.loglog(Ns, err_l, '+--', color='r', label='Left Riemann Sum')
 plt.loglog(Ns, err_m, 'o-',  color='g', label='Middle Riemann Sum')
-plt.loglog(Ns, err_r, 'x:',  color='b', label='Right Riemann Sum')
+plt.loglog(Ns, err_r, 'x--', color='b', label='Right Riemann Sum')
+plt.loglog(Ns, Ns**(-1.0), ':', lw=0.5, label=r'$N^{-1}$')
+plt.loglog(Ns, Ns**(-2.0), ':', lw=0.5, label=r'$N^{-2}$')
 plt.xlabel('Number of Sampling Points')
 plt.ylabel('Absolute Error')
 plt.legend()
@@ -272,7 +274,9 @@ err_r = [abs(RiemannSum(g, N, t='r') - 2 / np.pi) for N in Ns]
 # Plotting the convergence results
 plt.loglog(Ns, err_l, '+--', color='r', label='Left Riemann Sum')
 plt.loglog(Ns, err_m, 'o-',  color='g', label='Middle Riemann Sum')
-plt.loglog(Ns, err_r, 'x:',  color='b', label='Right Riemann Sum')
+plt.loglog(Ns, err_r, 'x--', color='b', label='Right Riemann Sum')
+plt.loglog(Ns, Ns**(-1.0), ':', lw=0.5, label=r'$N^{-1}$')
+plt.loglog(Ns, Ns**(-2.0), ':', lw=0.5, label=r'$N^{-2}$')
 plt.xlabel('Number of Sampling Points')
 plt.ylabel('Absolute Error')
 plt.legend()
@@ -309,7 +313,9 @@ err_r = [abs(RiemannSum(h, N, t='r') - np.pi / 4) for N in Ns]
 # Plotting the convergence results
 plt.loglog(Ns, err_l, '+--', color='r', label='Left Riemann Sum')
 plt.loglog(Ns, err_m, 'o-',  color='g', label='Middle Riemann Sum')
-plt.loglog(Ns, err_r, 'x:',  color='b', label='Right Riemann Sum')
+plt.loglog(Ns, err_r, 'x--', color='b', label='Right Riemann Sum')
+plt.loglog(Ns, Ns**(-1.0), ':', lw=0.5, label=r'$N^{-1}$')
+plt.loglog(Ns, Ns**(-2.0), ':', lw=0.5, label=r'$N^{-2}$')
 plt.xlabel('Number of Sampling Points')
 plt.ylabel('Absolute Error')
 plt.legend()
@@ -331,6 +337,8 @@ In general, we observe that:
 * For the middle Riemann sum, doubling the number of sampling points reduces the error by a factor of four, indicating **second-order convergence**.
 
 +++
+
+## Classical Formulas for Equally Spaced Abscissas
 
 ### Trapezoidal Rule
 
@@ -367,8 +375,9 @@ def trapezoidal(f, N=8, a=0, b=1):
 err_m = [abs(RiemannSum(g, N, t='m') - 2 / np.pi) for N in Ns]
 err_t = [abs(trapezoidal(g, N) - 2 / np.pi) for N in Ns]
 
-plt.loglog(Ns, err_m, 'o-',  color='g', label='Middle Riemann Sum')
-plt.loglog(Ns, err_t, '+:',  color='r', label='Trapezoidal Rule')
+plt.loglog(Ns, err_m, 'o--', color='g', label='Middle Riemann Sum')
+plt.loglog(Ns, err_t, '+-',  color='r', label='Trapezoidal Rule')
+plt.loglog(Ns, Ns**(-2.0), ':', lw=0.5, label=r'$N^{-2}$')
 plt.xlabel('Number of Sampling Points')
 plt.ylabel('Absolute Error')
 plt.legend()
@@ -405,9 +414,11 @@ def simpson(f, N=8, a=0, b=1):
 # Compare errors of middle Riemann, trapezoidal, and Simpson's rule
 err_S = [abs(simpson(g, N) - 2 / np.pi) for N in Ns]
 
-plt.loglog(Ns, err_m, 'o-',  color='g', label='Middle Riemann Sum')
-plt.loglog(Ns, err_t, '+:',  color='r', label='Trapezoidal Rule')
-plt.loglog(Ns, err_S, 'x:',  color='b', label="Simpson's Rule")
+plt.loglog(Ns, err_m, 'o--', color='g', label='Middle Riemann Sum')
+plt.loglog(Ns, err_t, '+--', color='r', label='Trapezoidal Rule')
+plt.loglog(Ns, err_S, 'x-',  color='b', label="Simpson's Rule")
+plt.loglog(Ns, Ns**(-2.0), ':', lw=0.5, label=r'$N^{-2}$')
+plt.loglog(Ns, Ns**(-4.0), ':', lw=0.5, label=r'$N^{-4}$')
 plt.xlabel('Number of Sampling Points')
 plt.ylabel('Absolute Error')
 plt.legend()
@@ -444,10 +455,13 @@ def bode(f, N=8, a=0, b=1):
 # Compare errors of middle Riemann, trapezoidal, Simpson's, and Bode's rule
 err_B = [abs(bode(g, N) - 2 / np.pi) for N in Ns]
 
-plt.loglog(Ns, err_m, 'o-',  color='g', label='Middle Riemann Sum')
-plt.loglog(Ns, err_t, '+:',  color='r', label='Trapezoidal Rule')
-plt.loglog(Ns, err_S, 'x:',  color='b', label="Simpson's Rule")
-plt.loglog(Ns, err_B, 'o:',  color='k', label="Bode's Rule")
+plt.loglog(Ns, err_m, 'o--',  color='g',  label='Middle Riemann Sum')
+plt.loglog(Ns, err_t, '+--',  color='r',  label='Trapezoidal Rule')
+plt.loglog(Ns, err_S, 'x--',  color='b',  label="Simpson's Rule")
+plt.loglog(Ns, err_B, 'o-',   color='k',  label="Bode's Rule")
+plt.loglog(Ns, Ns**(-2.0), ':', lw=0.5, label=r'$N^{-2}$')
+plt.loglog(Ns, Ns**(-4.0), ':', lw=0.5, label=r'$N^{-4}$')
+plt.loglog(Ns, Ns**(-6.0), ':', lw=0.5, label=r'$N^{-6}$')
 plt.xlabel('Number of Sampling Points')
 plt.ylabel('Absolute Error')
 plt.legend()
