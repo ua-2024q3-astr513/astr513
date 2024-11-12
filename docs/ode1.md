@@ -58,14 +58,28 @@ Consider the following two types of differential equations, which differ in thei
 
 +++
 
-The first type of ODE, where $f(t)$ depends only on $t$, can be solved by direct integration.
+The first type of differential equation, where $f(t)$ depends only on $t$, can be solved by direct integration.
 This is because we can integrate $f(t)$ with respect to $t$ to find $x(t)$:
-\begin{ailgn}
+\begin{align}
 x(t) = x(t_0) + \int_{t_0}^t f(t') \, dt'
 \end{align}
 This approach is feasible when $f(t)$ is a function that can be integrated analytically.
 In cases where this is not possible, numerical integration techniques, such as the trapezoidal rule or Simpson's rule, can be used to approximate the solution.
 We covered these numerical integration techniques in an earlier lecture on "[Numerical Integration of Functions](integration.md)".
+
++++
+
+The second type of differential equation, where $f(x, t)$ depends on both $x$ and $t$, is more complicated.
+We cannot solve this type by direct integration because $x$, the function we are trying to find, is also part of the expression on the RHS. For example, attempting to directly integrate is not feasible since $x$ is unknown within the integral itself.
+In other words, we do not know $x$ at intermediate points between $t_0$ and $t$, so we cannot compute the integral without first determining $x(t)$ at these points.
+
+This is where numerical methods for ODEs become essential.
+Instead of solving for $x(t)$ in one go, we use numerical methods to approximate the solution by advancing in small increments over the interval of interest.
+This way, we iteratively approximate $x(t)$ at discrete points in time, allowing us to handle equations where direct integration is not possible.
+
+Since many real-world systems fall into the second category of differential equations, where the dependence on  $x$ and $t$ is nonlinear, numerical methods are widely used in scientific computing.
+These methods break down the problem into manageable steps and enable us to approximate solutions even when analytic solutions do not exist or are difficult to obtain.
+Numerical methods not only provide practical solutions to ODEs but also allow for flexibility in modeling a wide range of phenomena, such as chaotic systems, non-linear oscillations, and biological systems with interacting populations.
 
 ```{code-cell} ipython3
 
