@@ -27,7 +27,7 @@ covers the "comoputation" part of the course, including:
 | Oct 21--Oct 25 | [](data.md)                             | [](FT.md)                                  |
 | Oct 28--Nov  1 | [](derive.md)                           | [](interpolate.md)                         |
 | Nov  4--Nov  8 | [](opt.md)                              | [](integration.md)                         |
-| Nov 11--Nov 15 | *Veterans Day (no class)*               | ODE integration I: introduction            |
+| Nov 11--Nov 15 | *Veterans Day (no class)*               | [](ode1.md)                                |
 | Nov 18--Nov 22 | ODE integration II: Runge-Kutta methods | ODE integration III: symplectic integrator |
 | Nov 25--Nov 29 | Numerical PDE I: introduction           | Numerical PDE II: finite difference        |
 | Dec  2--Dec  6 | Numerical PDE III: finite volume        | Numerical PDE IV: spectral methods         |
