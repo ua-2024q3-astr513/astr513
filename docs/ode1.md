@@ -211,3 +211,122 @@ plt.xlabel('N')
 plt.ylabel(r'$\text{err} = max|x_\text{numeric} - x|$')
 plt.legend()
 ```
+
+### System of ODEs
+
+In computational astrophysics, we often encounter systems governed by Newton's laws:
+\begin{align}
+m \frac{d^2 x}{dt^2} = f(x, t)
+\end{align}
+
+This equation is a second-order ordinary differential equation because it involves the second derivative of $x$ with respect to $t$.
+However, it is often more practical to convert second-order ODEs into a system of first-order ODEs.
+To do this, we introduce a new variable, $v = dx/dt$, representing the velocity of the object.
+This substitution allows us to rewrite the second-order ODE as two coupled first-order equations:
+\begin{align} 
+\frac{dx}{dt} &= v\\
+\frac{dv}{dt} &= \frac{1}{m}f(x, t)
+\end{align}
+
+This formulation provides a convenient framework for numerical methods, which are generally well-suited to solving systems of first-order ODEs.
+To further simplify, we can express these equations in vector notation by defining $Y = [x, v]^t$ and $F = [v, f/m]^t$. The system then becomes:
+\begin{align}
+\frac{dY}{dt} = F(Y, t).
+\end{align}
+
+This vector form emphasizes the structure of the system and enables us to apply general numerical techniques to solve both equations simultaneously.
+
++++
+
+To illustrate this approach, let's consider a classic example: the simple pendulum under gravity.
+The motion of a pendulum of length $l$, swinging under gravity $g$, can be described by the second-order equation:
+\begin{align}
+\frac{d^2\theta}{dt^2} + \frac{g}{l} \sin\theta = 0
+\end{align}
+
+Here, $\theta(t)$ is the angle of the pendulum with the vertical, and the term $\sin \theta$ introduces nonlinearity, which makes the equation challenging to solve analytically.
+Converting this equation into a system of first-order ODEs allows us to handle it more effectively with numerical methods.
+We define $\Omega = \frac{d\theta}{dt}$, the angular velocity, leading to the following system:
+\begin{align}
+\frac{d\theta(t)}{dt} &= \Omega(t)\\
+\frac{d\Omega(t)}{dt} &= - \frac{g}{l}\sin\theta(t)
+\end{align}
+
+In vector notation, we represent the system as:
+\begin{align}
+\frac{dY(t)}{dt} = F(Y, t)
+\end{align}
+where 
+\begin{align}
+Y &= \begin{bmatrix} \theta(t) \\ \Omega(t) \end{bmatrix}\\
+F(Y, t) &= \begin{bmatrix} \Omega(t) \\ -\frac{g}{l} \sin \theta(t) \end{bmatrix}
+\end{align}
+
++++
+
+In ordre to first compare numerical solution with analytical solutions, we can simplify the pendulum problem further by assuming small oscillations, where the angle $\theta$ is small enough that $\sin \theta \approx \theta$.
+This approximation linearizes the equation of motion, reducing the system to a simple harmonic oscillator.
+In this approximation, the equation of motion becomes:
+\begin{align}
+\frac{d^2 \theta}{dt^2} + \frac{g}{l} \theta = 0
+\end{align}
+As a result, the system of ODEs becomes:
+\begin{align}
+Y &= \begin{bmatrix} \theta(t) \\ \Omega(t) \end{bmatrix}\\
+F(Y, t) &= \begin{bmatrix} \Omega(t) \\ -\frac{g}{l} \theta(t) \end{bmatrix}
+\end{align}
+
+```{code-cell} ipython3
+# Let's first plot the analytical solution
+
+Tp     = np.linspace(0, 10, 1001)
+Thetap = 0.01 * np.sin(Tp)
+
+plt.plot(Tp, Thetap)
+```
+
+```{code-cell} ipython3
+# Thanks to operator overriding,
+# our forward Euler method is almost ready to solve system of ODEs
+
+def forwardEuler(f, x, t, dt, n):
+    T = np.array(t)
+    X = np.array(x)
+    for i in range(n):
+        t += dt
+        x += np.array(f(*x)) * dt
+        T = np.append( T, t )
+        X = np.vstack((X, x))
+    return T, X
+```
+
+```{code-cell} ipython3
+# Compare the analytical and numerical solutions
+
+def f(theta, omega):
+    return omega, -theta
+
+T, X = forwardEuler(f, (0, 0.01), 0, 0.01, 1000)
+
+Theta = X[:,0]
+Omega = X[:,1]
+
+plt.plot(Tp, Thetap)
+plt.plot(T,  Theta)
+```
+
+```{code-cell} ipython3
+# Again, we can study the convergence of the numerical method
+
+def error(N=100):
+    T, X = forwardEuler(f, (0, 0.01), 0, 10/N, N)
+    Theta  = X[:,0]
+    Thetap = 0.01 * np.sin(T)
+    return np.max(abs(Theta - Thetap))
+
+N = np.array([64, 128, 256, 512, 1024])
+E = np.array([error(n) for n in N])
+
+plt.loglog(N, 0.5/N)
+plt.loglog(N, E, 'o:')
+```
