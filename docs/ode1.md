@@ -127,6 +127,87 @@ x_{n+1} = x_n + f(x_n, t_n) \Delta t
 It is thus a step-by-step approach that proceeds by evaluating $f(x, t)$ at each time point and then advancing to the next point.
 It is an explicit method in 1st order.
 
-```{code-cell} ipython3
++++
 
+### Example
+
+Let's consider solving the simpmle differential equation:
+\begin{align}
+\frac{dx}{dt} = \lambda x(t)
+\end{align}
+
+This equation has solution
+\begin{align}
+x(t) = \exp[\lambda(t-t_0)]
+\end{align}
+
+If we choose $\lambda = 1$ and $x(0) = 1$, the solutoin reduces to $x(t) = \exp(t)$.
+
+```{code-cell} ipython3
+# Let's visualize the solution:
+
+import numpy as np
+from matplotlib import pyplot as plt
+
+Tp = np.linspace(0, 2, 2001)
+Xp = np.exp(Tp)
+
+plt.plot(Tp, Xp)
+```
+
+```{code-cell} ipython3
+# Let's implement Euler's method, with history
+
+def forwardEuler(f, x, t, dt, n):
+    T = [t]
+    X = [x]
+    for i in range(n):
+        t += dt
+        x += f(x) * dt
+        T.append(t)
+        X.append(x)
+    return T, X
+```
+
+```{code-cell} ipython3
+# Let's test Euler's method
+
+def f(x):
+    return x
+
+T, X = forwardEuler(f, 1, 0, 0.1, 20)
+
+plt.plot(Tp, Xp)
+plt.plot(T,  X, 'o-')
+plt.xlabel('t')
+plt.ylabel('x')
+```
+
+```{code-cell} ipython3
+# The accuracy should increase when we use a small step
+
+T, X = forwardEuler(f, 1, 0, 0.01, 200)
+
+plt.plot(Tp, Xp)
+plt.plot(T,  X)
+plt.xlabel('t')
+plt.ylabel('x')
+```
+
+```{code-cell} ipython3
+# As always, we can study the convergence of the numerical method
+
+def error(N=200):
+    T, X = forwardEuler(f, 1, 0, 2/N, N)
+    Xp = np.exp(T)
+    return np.max(abs(X - Xp))
+
+N = np.array([64, 128, 256, 512, 1024])
+E = np.array([error(n) for n in N])
+
+plt.loglog(N, 16/N, label='1/N')
+plt.loglog(N, E, 'o:', label='Forward Euler')
+plt.xlabel('N')
+plt.ylabel(r'$\text{err} = max|x_\text{numeric} - x|$')
+plt.legend()
 ```
