@@ -98,27 +98,35 @@ However, as we will see below, it is usually not recommanded in pratical calcula
 
 ### Forward (Explicit) Euler Method
 
-There are two simple ways to derive Euler's method.
+There are three simple ways to derive Euler's method.
 
-We recall the definition of a deriviative:
+The easiest way is simply hold $x$ fixed in $f(x, t)$ and apply the left Reimann sum.
+The left Reimann sum is first order in step size by approximating $f(x, t)$ as a constant.
+In this sense, holding $x$ is somewhat "self-consistent" in terms of approximation order.
+
+Second, we recall the definition of a deriviative:
 \begin{align}
-  f(x, t) = x'(t) = \frac{dx}{dt} = \lim_{\Delta t\rightarrow 0}\frac{x(t + \Delta t) - x(t)}{\Delta h}.
+  f(x, t) = \frac{dx}{dt} = \lim_{\Delta t\rightarrow 0}\frac{x(t + \Delta t) - x(t)}{\Delta h}.
 \end{align}
-If we simply remove the limit and keep the "finite difference", then it is trivial to show
+If we simply remove the limit and keep the "finite difference" part, then it is trivial to show
 \begin{align}
   x(t + \Delta t) &\approx x(t) + f(x(t), t)\Delta t.
 \end{align}
-Which is nothing but the forward Euler method.
-While very intuitive, this derivation does not formally show the order of the Euler method.
+Which is nothing but again the forward Euler method.
+While very intuitive, the above two derivations do not formally show the order of the Euler method.
 
 We may also consider a numerical approximation to the solution of an ODE.
 We approximate the solution at time $t_{n+1} = t_n + \Delta t$ by using the Taylor expansion:
 \begin{align}
 x(t_{n+1}) = x(t_n) + f(x(t_n), t_n) \Delta t + \mathcal{O}(\Delta t^2)
 \end{align}
-Neglecting the higher-order terms in the expansion, we obtain the basic Forward Euler Method formula:
+Neglecting the higher-order terms in the expansion, we obtain once again the Forward Euler Method:
 \begin{align}
 x_{n+1} = x_n + f(x_n, t_n) \Delta t
 \end{align}
-The Forward Euler method is thus a step-by-step approach that proceeds by evaluating $f(x, t)$ at each time point and then advancing to the next point.
+It is thus a step-by-step approach that proceeds by evaluating $f(x, t)$ at each time point and then advancing to the next point.
 It is an explicit method in 1st order.
+
+```{code-cell} ipython3
+
+```
