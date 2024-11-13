@@ -264,7 +264,9 @@ F(Y, t) &= \begin{bmatrix} \Omega(t) \\ -\frac{g}{l} \sin \theta(t) \end{bmatrix
 
 +++
 
-In ordre to first compare numerical solution with analytical solutions, we can simplify the pendulum problem further by assuming small oscillations, where the angle $\theta$ is small enough that $\sin \theta \approx \theta$.
+In later part of the lecture, we will try to solve this problem.
+But to derive and compare different numerical methods, let's first reduce the problem to something that has analytical solutions.
+Specifically, we can simplify the pendulum problem further by assuming small oscillations, where the angle $\theta$ is small enough that $\sin \theta \approx \theta$.
 This approximation linearizes the equation of motion, reducing the system to a simple harmonic oscillator.
 In this approximation, the equation of motion becomes:
 \begin{align}
@@ -327,6 +329,100 @@ def error(N=100):
 N = np.array([64, 128, 256, 512, 1024])
 E = np.array([error(n) for n in N])
 
-plt.loglog(N, 0.5/N)
-plt.loglog(N, E, 'o:')
+plt.loglog(N, 0.5/N, label='1/N')
+plt.loglog(N, E, 'o:', label='Forward Euler')
+plt.xlabel('N')
+plt.ylabel(r'$\text{err} = max|x_\text{numeric} - x|$')
+plt.legend()
+```
+
+### Can We Improve the Method?
+
+The Forward Euler method is only first-order accurate, meaning its error decreases linearly with the step size $\Delta t$.
+While it is simple to implement, this method's convergence rate is limited, and achieving higher accuracy requires very small steps, which can become computationally expensive.
+This naturally raises the question: can we improve the convergence rate of our numerical solution, reducing the error more rapidly as we use smaller steps?
+To explore this, we can draw inspiration from our previous work on numerical integration.
+In that context, we observed that the midpoint (or central) Riemann sum converges faster than the left or right Riemann sums.
+This suggests that a midpoint approach may also provide advantages in solving ODEs.
+
++++
+
+### A Midpoint Method
+
+One possible improvement is to propose a midpoint method that attempts to evaluate the function $f$ at the midpoint between steps.
+Mathematically, this approach can be expressed as:
+\begin{align}
+X_{n+1} = X_n + f(X_{n+1/2}, t_{n+1/2}) \Delta t
+\end{align}
+However, a significant obstacle arises: the midpoint value $f_{n+1/2} \equiv f(X_{n+1/2}, t_{n+1/2})$ is unknown at step $n$.
+We need to know the value of $X$ at the midpoint $t_{n+1/2}$ to use this method, but this value cannot be calculated without already knowing the future values of $X$.
+This issue makes a straightforward midpoint method impractical for generic ODEs, where $f$ depends on both $X$ and $t$.
+
+An exception occurs if $f$ depends only on $t$, as in $\frac{dx}{dt} = f(t)$;
+in such cases, a true midpoint method is feasible, which is nothing but out middle Reimann sum.
+However, for most ODEs, including those where $f$ depends on $X$, a different approach is necessary.
+
++++
+
+### A Simple Idea: The Second-Order Runge-Kutta Method
+
+To work around this issue, we can approximate the midpoint value instead of calculating it exactly.
+It suffices to find an approximate solution for $X$ at the half-step, which we denote as $Y_{n+1/2}$.
+One way to do this is to use the Forward Euler method to compute an estimated value at the midpoint.
+Specifically, we can approximate $X$ at $t_{n+1/2}$ as:
+\begin{align}
+\tilde{X}_{n+1/2} = X_n + f(X_n, t_n) \frac{\Delta t}{2}
+\end{align}
+Using this half-step approximation, we then proceed with a full step to find $X_{n+1}$ by evaluating $f$ at the midpoint:
+\begin{align}
+X_{n+1} = X_n + f(\tilde{X}_{n+1/2}, t_{n+1/2}) \Delta t
+\end{align}
+This approach, known as the second-order Runge-Kutta method, provides a way to incorporate midpoint information, achieving second-order accuracy.
+The second-order Runge-Kutta method improves convergence by leveraging an approximate midpoint, resulting in a more accurate solution than the first-order Euler method without requiring a prohibitively small step size.
+
+```{code-cell} ipython3
+def RK2(f, x, t, dt, n):
+    T = np.array(t)
+    X = np.array(x)
+    
+    for i in range(n):
+        k1 = dt * np.array(f(*(x         )))
+        k2 = dt * np.array(f(*(x + 0.5*k1)))
+        
+        t += dt
+        x += k2
+        
+        T = np.append( T, t)
+        X = np.vstack((X, x))
+        
+    return T, X
+```
+
+```{code-cell} ipython3
+N=64
+
+T, X = RK2(f, (0, 0.01), 0, 10/N, N)
+
+plt.plot(T, 0.01*np.sin(T))
+plt.plot(T, X[:,0], 'o')
+```
+
+```{code-cell} ipython3
+def error2(N=100):
+    T, X = RK2(f, (0, 0.01), 0, 10/N, N)
+    Theta  = X[:,0]
+    Thetap = 0.01 * np.sin(T)
+    return np.max(abs(Theta - Thetap))
+
+N = np.array([64, 128, 256, 512, 1024])
+E2 = np.array([error2(n) for n in N])
+
+print(E2[-1])
+
+plt.loglog(N, 1/N**2,  label='1/N^2')
+plt.loglog(N, E, 'o:', label='Forward Euler')
+plt.loglog(N, E2,'o-', label='RK2')
+plt.xlabel('N')
+plt.ylabel(r'$\text{err} = max|x_\text{numeric} - x|$')
+plt.legend()
 ```
