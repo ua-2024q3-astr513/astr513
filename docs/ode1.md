@@ -426,3 +426,110 @@ plt.xlabel('N')
 plt.ylabel(r'$\text{err} = max|x_\text{numeric} - x|$')
 plt.legend()
 ```
+
+The convergence plot clearly demonstrates that RK2 achieves second-order accuracy.
+This means that the error decreases quadratically with the step size $\Delta t$.
+For example, using 1024 points for the integration not only doubles the computational cost compared to using 512 points but also improves the accuracy of the solution by approximately 250 times.
+This significant increase in accuracy suggests that higher-order methods offer substantial benefits, especially for problems requiring high precision.
+Naturally, this brings us to the question: can we improve the accuracy even further than what RK2 provides?
+
++++
+
+### Observation and Proposal
+
+In the second-order Runge-Kutta method (RK2), the midpoint value $X_n + \frac{1}{2}k_1$ is obtained using a simple approximation derived from the Forward Euler method.
+Specifically, we first calculate $k_1$ as:
+\begin{align}
+k_1 = \Delta t \, f(X_n, t_n)
+\end{align}
+and then use this to approximate $k_2$:
+\begin{align}
+k_2 = \Delta t \, f\left(X_n + \frac{1}{2}k_1, t_n + \frac{1}{2} \Delta t\right)
+\end{align}
+This approach provides a basic estimate for the midpoint.
+However, we can improve this estimate by refining our approximation of the midpoint using another application of the Forward Euler estimate.
+We calculate $k_3$ as follows:
+\begin{align}
+k_3 = \Delta t \, f\left(X_n + \frac{1}{2}k_2, t_n + \frac{1}{2} \Delta t\right)
+\end{align}
+Finally, to complete the full step with this improved midpoint estimate, we compute $k_4$:
+\begin{align}
+k_4 = \Delta t \, f(X_n + k_3, t_n + \Delta t)
+\end{align}
+
++++
+
+The values $k_1$, $k_2$, $k_3$, and $k_4$ each provide estimates of how $X$ will change over one step, though they carry different error terms.
+By combining these terms carefully, we can construct a higher-order method that effectively cancels out some of the error components.
+This technique, when implemented correctly, yields an even more accurate approximation than any single $k$-estimate alone, allowing us to achieve the accuracy of a fourth-order Runge-Kutta method (RK4).
+
++++
+
+### Fourth-Order Runge-Kutta Method
+
+The classical fourth-order Runge-Kutta method (RK4) is a widely used technique for numerically solving ordinary differential equations with high accuracy.
+This method calculates four intermediate values at each time step, combining them to achieve fourth-order accuracy.
+The process begins by computing four slopes, $k_1$, $k_2$, $k_3$, and $k_4$, which represent different estimates of the derivative over the interval:
+\begin{align}
+k_1 &= \Delta t \, f(X_n, t_n) \\
+k_2 &= \Delta t \, f\left(X_n + \frac{1}{2}k_1, t_n + \frac{1}{2}\Delta t\right) \\
+k_3 &= \Delta t \, f\left(X_n + \frac{1}{2}k_2, t_n + \frac{1}{2}\Delta t\right) \\
+k_4 &= \Delta t \, f\left(X_n + k_3, t_n + \Delta t\right)
+\end{align}
+Once these intermediate values are calculated, they are combined to update $X$ at the next step.
+The weighted average of these values, with coefficients that cancel higher-order error terms, gives the final update:
+\begin{align}
+X_{n+1} = X_n + \frac{1}{6}k_1 + \frac{1}{3}k_2 + \frac{1}{3}k_3 + \frac{1}{6}k_4 + \mathcal{O}(\Delta t^5)
+\end{align}
+This formula allows the RK4 method to achieve fourth-order accuracy, meaning that the error scales with $\mathcal{O}(\Delta t^5)$.
+This high level of accuracy makes RK4 one of the most popular methods for solving differential equations in scientific and engineering applications.
+
+```{code-cell} ipython3
+def RK4(f, x, t, dt, n):
+    T = np.array(t)
+    X = np.array(x)
+    
+    for i in range(n):
+        k1 = dt * np.array(f(*(x         )))
+        k2 = dt * np.array(f(*(x + 0.5*k1)))
+        k3 = dt * np.array(f(*(x + 0.5*k2)))
+        k4 = dt * np.array(f(*(x +     k3)))
+        
+        t += dt
+        x += k1/6 + k2/3 + k3/3 + k4/6
+        
+        T = np.append( T, t)
+        X = np.vstack((X, x))
+        
+    return T, X
+```
+
+```{code-cell} ipython3
+N=64
+
+T, X = RK4(f, (0, 0.01), 0, 10/N, N)
+
+plt.plot(T, 0.01*np.sin(T))
+plt.plot(T, X[:,0], 'o')
+```
+
+```{code-cell} ipython3
+def error3(N=100):
+    T, X = RK4(f, (0, 0.01), 0, 10/N, N)
+    Theta  = X[:,0]
+    Thetap = 0.01 * np.sin(T)
+    return np.max(abs(Theta - Thetap))
+
+N = np.array([64, 128, 256, 512, 1024])
+E3 = np.array([error3(n) for n in N])
+
+print(E3[-1])
+
+plt.loglog(N, 1/N**4,   label='1/N^4')
+plt.loglog(N, E, 'o:',  label='Forward Euler')
+plt.loglog(N, E2,'o--', label='RK2')
+plt.loglog(N, E3,'o-',  label='RK4')
+plt.xlabel('N')
+plt.ylabel(r'$\text{err} = max|x_\text{numeric} - x|$')
+plt.legend()
+```
