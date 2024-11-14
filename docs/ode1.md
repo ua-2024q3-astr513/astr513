@@ -533,3 +533,63 @@ plt.xlabel('N')
 plt.ylabel(r'$\text{err} = max|x_\text{numeric} - x|$')
 plt.legend()
 ```
+
+## Complete gravity pendulum problem
+
+With a highly accurate ODE integrator like RK4, we are now equipped to solve the complete gravity pendulum problem without needing to make simplifying assumptions.
+
+```{code-cell} ipython3
+# With a high accurate ODE integrator, we can solve for the full gravity pendulum problem:
+
+def f(theta, omega):
+    return omega, -np.sin(theta)
+
+N  = 1000
+v0 = 0.1
+T, X = RK4(f, (0, v0), 0, 10/N, N)
+
+Theta = X[:,0]
+Omega = X[:,1]
+
+plt.plot(T, v0 * np.sin(T))
+plt.plot(T, Theta)
+```
+
+```{code-cell} ipython3
+# When the initial velocity is no longer small, the simple harmonic oscillator approximation is no longer valid.
+
+N  = 1000
+v0 = 1
+T, X = RK4(f, (0, v0), 0, 10/N, N)
+
+Theta = X[:,0]
+Omega = X[:,1]
+
+plt.plot(T, v0 * np.sin(T))
+plt.plot(T, Theta)
+```
+
+```{code-cell} ipython3
+# When the initial velocity is large enough, the solution is not periodic.  What's going on?
+
+N  = 1000
+v0 = 2
+T, X = RK4(f, (0, v0), 0, 10/N, N)
+
+Theta = X[:,0]
+Omega = X[:,1]
+
+plt.plot(T, v0 * np.sin(T))
+plt.plot(T, Theta)
+```
+
+## Final Comments
+
+Using the insights we developed while exploring numerical integrators, we introduced the fourth-order Runge-Kutta (RK4) method as a powerful and effective approach for solving ordinary differential equations.
+The classical RK4 method is not only highly accurate but also robust and relatively simple to implement, making it a reliable "workhorse" for ODE integration across many applications.
+
+When paired with advanced techniques such as adaptive time-stepping and dense output, RK4 becomes even more versatile, extending its usefulness to a wide range of complex problems.
+However, while RK4 is broadly effective, it’s important to remember that there are many other ODE integrators available, each with strengths suited to specific types of equations.
+For certain problems—especially those involving stiffness or requiring highly efficient, precise computations—other methods may offer better performance.
+
+For further study and a deeper dive into alternative methods, consult resources like [Numerical Recipes](http://s3.amazonaws.com/nrbook.com/book_C210.html) for additional options and implementation guidance.
