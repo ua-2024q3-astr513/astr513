@@ -106,7 +106,7 @@ In this sense, holding $x$ is somewhat "self-consistent" in terms of approximati
 
 Second, we recall the definition of a deriviative:
 \begin{align}
-  f(x, t) = \frac{dx}{dt} = \lim_{\Delta t\rightarrow 0}\frac{x(t + \Delta t) - x(t)}{\Delta h}.
+  f(x, t) = \frac{dx}{dt} = \lim_{\Delta t\rightarrow 0}\frac{x(t + \Delta t) - x(t)}{\Delta t}.
 \end{align}
 If we simply remove the limit and keep the "finite difference" part, then it is trivial to show
 \begin{align}
@@ -381,6 +381,24 @@ This approach, known as the second-order Runge-Kutta method, provides a way to i
 The second-order Runge-Kutta method improves convergence by leveraging an approximate midpoint, resulting in a more accurate solution than the first-order Euler method without requiring a prohibitively small step size.
 
 ```{code-cell} ipython3
+def Euler2(f, x, t, dt, n):
+    T = np.array(t)
+    X = np.array(x)
+    
+    for i in range(n):
+        k1 = dt * np.array(f(*(x )))
+        xh = x + 0.5*k1
+        k2 = dt * np.array(f(*(xh)))
+        t += dt
+        x  = xh + 0.5*k2
+        
+        T = np.append( T, t)
+        X = np.vstack((X, x))
+        
+    return T, X
+```
+
+```{code-cell} ipython3
 def RK2(f, x, t, dt, n):
     T = np.array(t)
     X = np.array(x)
@@ -401,10 +419,27 @@ def RK2(f, x, t, dt, n):
 ```{code-cell} ipython3
 N=64
 
+T, X = Euler2(f, (0, 0.01), 0, 10/N, N)
+
+plt.plot(T, 0.01*np.sin(T))
+plt.plot(T, X[:,0], 'o')
+```
+
+```{code-cell} ipython3
+N=64
+
 T, X = RK2(f, (0, 0.01), 0, 10/N, N)
 
 plt.plot(T, 0.01*np.sin(T))
 plt.plot(T, X[:,0], 'o')
+```
+
+```{code-cell} ipython3
+def errorEuler2(N=100):
+    T, X = Euler2(f, (0, 0.01), 0, 10/N, N)
+    Theta  = X[:,0]
+    Thetap = 0.01 * np.sin(T)
+    return np.max(abs(Theta - Thetap))
 ```
 
 ```{code-cell} ipython3
@@ -416,12 +451,14 @@ def error2(N=100):
 
 N = np.array([64, 128, 256, 512, 1024])
 E2 = np.array([error2(n) for n in N])
+E22 = np.array([errorEuler2(n) for n in N])
 
 print(E2[-1])
 
 plt.loglog(N, 1/N**2,  label='1/N^2')
 plt.loglog(N, E, 'o:', label='Forward Euler')
 plt.loglog(N, E2,'o-', label='RK2')
+plt.loglog(N, E22,'o-', label='Euler2')
 plt.xlabel('N')
 plt.ylabel(r'$\text{err} = max|x_\text{numeric} - x|$')
 plt.legend()
@@ -573,8 +610,8 @@ plt.plot(T, Theta)
 # When the initial velocity is large enough, the solution is not periodic.  What's going on?
 
 N  = 1000
-v0 = 2
-T, X = RK4(f, (0, v0), 0, 10/N, N)
+v0 = 2.1
+T, X = RK4(f, (0, v0), 0, 10/N,  10 * N)
 
 Theta = X[:,0]
 Omega = X[:,1]
