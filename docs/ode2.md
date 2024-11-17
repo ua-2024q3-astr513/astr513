@@ -66,18 +66,19 @@ Let's revisit its stability properties using the linear test equation.
 
 The forward Euler update formula can be rewritten as:
 \begin{align}
-x_{n+1} = x_n + \Delta t \cdot f(x_n, t_n) = x_n + \Delta t \cdot \lambda x_n = (1 + z) x_n
+x_{n+1} = x_n + \Delta t \cdot f(x_n, t_n) = (1 + \lambda\Delta t) x_n.
 \end{align}
-where $z = \lambda \Delta t$.
 
 The amplification factor is therefore
 \begin{align}
-R(z) = 1 + z.
+R(z) = 1 + \lambda\Delta t.
 \end{align}
 The stability condition is
 \begin{align}
-|R(z)| = |1 + z| \leq 1.
+|R(z)| = |1 + \lambda\Delta t| \leq 1.
 \end{align}
+
+Graphically, the stability region is a circle in the complex plane centered at $(-1, 0)$ with a radius of 1, as shown in the following figure.
 
 ```{code-cell} ipython3
 import numpy as np
@@ -106,4 +107,12 @@ plt.gca().set_aspect('equal')
 import matplotlib.patches as mpatches
 blue_patch = mpatches.Patch(color='blue', label='Forward Euler')
 plt.legend(handles=[blue_patch])
+```
+
+Assuming $\lambda > 0 \in \mathbb{R}$.
+As the forward Euler method requires $\Delta t > 0$, the forward Euler is **unconditionally unstable**.
+Although we have used forward Euler to solve $dx/dt = \lambda x$ earlier, the error of the solution is unbounded and forward Euler is actually not useful in solving this problem!
+
+```{code-cell} ipython3
+
 ```
