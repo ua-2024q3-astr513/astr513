@@ -100,6 +100,7 @@ The perform of the numerical scheme, nevertheless, depends on the number of oepr
 ```{code-cell} ipython3
 import numpy as np
 from matplotlib import pyplot as plt
+import matplotlib.patches as mpatches
 ```
 
 ```{code-cell} ipython3
@@ -237,9 +238,6 @@ The stability condition is
 Graphically, the stability region is a circle in the complex plane centered at $(-1, 0)$ with a radius of 1, as shown in the following figure.
 
 ```{code-cell} ipython3
-import numpy as np
-import matplotlib.pyplot as plt
-
 # Define the grid for the complex plane
 Re = np.linspace(-3, 3, 601)
 Im = np.linspace(-2, 2, 401)
@@ -247,12 +245,11 @@ Re, Im = np.meshgrid(Re, Im)
 Z = Re + 1j * Im
 
 # Forward Euler stability condition |1 + Z| <= 1
-Euler_stable = np.abs(1 + Z) <= 1
+abs_R_fE = np.abs(1 + Z)
 
 # Plotting
 plt.figure(figsize=(8, 6))
-plt.contour(Re, Im, Euler_stable , levels=[0.5],
-            colors='blue', linestyles='-')
+plt.contourf(Re, Im, abs_R_fE, levels=[0, 1], colors=['red'])
 
 plt.title('Stability Regions for Euler Method')
 plt.xlabel(r'Re($\lambda \Delta t$)')
@@ -261,7 +258,7 @@ plt.gca().set_aspect('equal')
 
 ## Adding legend manually
 import matplotlib.patches as mpatches
-blue_patch = mpatches.Patch(color='blue', label='Forward Euler')
+blue_patch = mpatches.Patch(color='red', label='Forward Euler')
 plt.legend(handles=[blue_patch])
 ```
 
@@ -300,3 +297,62 @@ Hence,
 \end{align}
 which canno be satisfied.
 The forward Euler method is therefore again unconditional unstable.
+
++++
+
+Similar, we may compute the stability regions for different numerical schemes.
+Given a numerical scheme with order $n$ should agree with the analytical solution in its Taylor series up to order $n$, we have:
+
+```{code-cell} ipython3
+# Define the grid for the complex plane
+Re = np.linspace(-5, 3, 600)  # Real axis from -5 to 3
+Im = np.linspace(-3, 3, 600)  # Imaginary axis from -3 to 3
+Re, Im = np.meshgrid(Re, Im)
+Z = Re + 1j * Im  # Complex grid
+
+def R_fE(z):
+    """Stability function for forward Euler"""
+    return 1 + z
+
+def R_bE(z):
+    """Stability function for backward Euler"""
+    return 1 - z
+
+def R_RK2(z):
+    """Stability function for RK2 (Heun's method)"""
+    return 1 + z + 0.5 * z**2
+
+def R_RK4(z):
+    """Stability function for RK4 (classical Runge-Kutta)"""
+    return 1 + z + 0.5 * z**2 + (1/6) * z**3 + (1/24) * z**4
+
+# Compute |R(z)| for each method
+abs_R_fE  = np.abs(R_fE(Z))
+abs_R_bE  = np.abs(R_bE(Z))
+abs_R_RK2 = np.abs(R_RK2(Z))
+abs_R_RK4 = np.abs(R_RK4(Z))
+
+# Define a list of methods and their corresponding data
+methods = {
+    'forward Euler' :abs_R_fE,
+    'backward Euler':abs_R_bE,
+    'RK2'           :abs_R_RK2,
+    'RK4'           :abs_R_RK4,
+}
+
+plt.figure(figsize=(8, 6))
+
+# Plot stability regions for each method
+patches = []
+for c, (title, abs_R) in enumerate(list(methods.items())[::-1]):
+    # Contour where |R(z)| = 1
+    plt.contourf(Re, Im, abs_R, levels=[0, 1], colors=[f'C{c}'])
+    patches.append(mpatches.Patch(color=f'C{c}', label=title))
+
+plt.xlabel(r'Re($\lambda \Delta t$)')
+plt.ylabel(r'Im($\lambda \Delta t$)')
+plt.gca().set_aspect('equal')
+
+## Adding legend manually
+plt.legend(handles=patches)
+```
