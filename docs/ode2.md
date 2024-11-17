@@ -58,3 +58,52 @@ For the numerical method to be stable, the magnitude of the amplification factor
 |R(z)| \leq 1
 \end{align}
 This **stability condition** ensures that errors do not grow exponentially with each step.
+
++++
+
+In [ODE I](ode1.md), we introduced the Forward Euler method as the simplest explicit numerical integrator for solving ODEs.
+Let's revisit its stability properties using the linear test equation.
+
+The forward Euler update formula can be rewritten as:
+\begin{align}
+x_{n+1} = x_n + \Delta t \cdot f(x_n, t_n) = x_n + \Delta t \cdot \lambda x_n = (1 + z) x_n
+\end{align}
+where $z = \lambda \Delta t$.
+
+The amplification factor is therefore
+\begin{align}
+R(z) = 1 + z.
+\end{align}
+The stability condition is
+\begin{align}
+|R(z)| = |1 + z| \leq 1.
+\end{align}
+
+```{code-cell} ipython3
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Define the grid for the complex plane
+Re = np.linspace(-3, 3, 601)
+Im = np.linspace(-2, 2, 401)
+Re, Im = np.meshgrid(Re, Im)
+Z = Re + 1j * Im
+
+# Forward Euler stability condition |1 + Z| <= 1
+Euler_stable = np.abs(1 + Z) <= 1
+
+# Plotting
+plt.figure(figsize=(8, 6))
+plt.contour(Re, Im, Euler_stable , levels=[0.5],
+            colors='blue', linestyles='-')
+
+plt.title('Stability Regions for Euler Method')
+plt.xlabel(r'Re($\lambda \Delta t$)')
+plt.ylabel(r'Im($\lambda \Delta t$)')
+plt.gca().set_aspect('equal')
+
+## Adding legend manually
+import matplotlib.patches as mpatches
+blue_patch = mpatches.Patch(color='blue', label='Forward Euler')
+plt.legend(handles=[blue_patch])
+```
