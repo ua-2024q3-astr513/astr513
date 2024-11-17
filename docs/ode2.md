@@ -97,7 +97,80 @@ This is Wilhelm Kutta (1901)'s "3/8 method".
 This suggests that Runge-Kutta methods are really a "family", where many different choices can be used to construct numerical schemes with the same order.
 The perform of the numerical scheme, nevertheless, depends on the number of oeprations as well as the properties of the ODEs being solved.
 
-+++
+```{code-cell} ipython3
+import numpy as np
+from matplotlib import pyplot as plt
+```
+
+```{code-cell} ipython3
+def RK4(f, x, t, dt, n):
+    T = np.array(t)
+    X = np.array(x)
+    
+    for i in range(n):
+        k1 = dt * np.array(f(*(x         )))
+        k2 = dt * np.array(f(*(x + 0.5*k1)))
+        k3 = dt * np.array(f(*(x + 0.5*k2)))
+        k4 = dt * np.array(f(*(x +     k3)))
+        
+        t += dt
+        x += k1/6 + k2/3 + k3/3 + k4/6
+        
+        T = np.append( T, t)
+        X = np.vstack((X, x))
+        
+    return T, X
+```
+
+```{code-cell} ipython3
+def RK38(f, x, t, dt, n):
+    T = np.array(t)
+    X = np.array(x)
+    
+    for i in range(n):
+        k1 = dt * np.array(f(*(x             )))
+        k2 = dt * np.array(f(*(x +       k1/3)))
+        k3 = dt * np.array(f(*(x +    k2-k1/3)))
+        k4 = dt * np.array(f(*(x + k3-k2+k1  )))
+        
+        t += dt
+        x += (k1 + 3*k2 + 3*k3 + k4)/8
+        
+        T = np.append( T, t)
+        X = np.vstack((X, x))
+        
+    return T, X
+```
+
+```{code-cell} ipython3
+def f(theta, omega):
+    return omega, -theta
+```
+
+```{code-cell} ipython3
+def error_RK4(N=100):
+    T, X = RK4(f, (0, 0.01), 0, 10/N, N)
+    Theta  = X[:,0]
+    Thetap = 0.01 * np.sin(T)
+    return np.max(abs(Theta - Thetap))
+
+def error_RK38(N=100):
+    T, X = RK38(f, (0, 0.01), 0, 10/N, N)
+    Theta  = X[:,0]
+    Thetap = 0.01 * np.sin(T)
+    return np.max(abs(Theta - Thetap))
+
+N     = np.array([64, 128, 256, 512, 1024])
+ERK4  = np.array([error_RK4(n)  for n in N])
+ERK38 = np.array([error_RK38(n) for n in N])
+
+plt.loglog(N, 1/N**4,      label='1/N^4')
+plt.loglog(N, ERK4,  'o-', label='RK4')
+plt.loglog(N, ERK38, 'o:', label='RK38')
+plt.xlabel('N')
+plt.ylabel(r'$\text{err} = max|x_\text{numeric} - x|$')
+plt.legend()
+```
 
 ## Numerical Stability of Integrators
 
