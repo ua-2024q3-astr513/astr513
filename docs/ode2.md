@@ -16,6 +16,27 @@ kernelspec:
 
 +++
 
+## Derivation of the Classical 4th-order Runge-Kutta Method
+
+In the last lecture, we learned the very popular and robust classical 4th-order Runge-Kutta method.
+Here, we will try to derive it.
+Recalling we want to solve an ODE:
+\begin{align}
+\frac{dx}{dt} = f(x)
+\end{align}
+The solution $x(t)$ evaluated at $t_{n+1} = (n+1) \Delta t$ can be written in terms of $x(t)$ evaluated at $t_n$ in Taylor series.
+I.e.,
+\begin{align}
+x_{n+1} = x_n + x'_n \Delta t + \frac{1}{2}x''_n \Delta t + \frac{1}{3!} x'''_n \Delta t^3 + \frac{1}{4!} x''''_n \Delta t^4 + \cdots
+\end{align}
+Here, we use $x_n \equiv x(t_n) \equiv x(n \Delta t)$.
+Substituting the ODE into the Taylor series, we obtain
+\begin{align}
+x_{n+1} = x_n + f_n \Delta t + \frac{1}{2}f'_n \Delta t + \frac{1}{3!} f''_n \Delta t^3 + \frac{1}{4!} f'''_n \Delta t^4 + \cdots
+\end{align}
+
++++
+
 ## Numerical Stability of Integrators
 
 Numerical Stability in the context of ODE solvers refers to the ability of a numerical method to control the growth of errors introduced during the iterative process of approximation.
