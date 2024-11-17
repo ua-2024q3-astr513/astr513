@@ -37,6 +37,55 @@ x_{n+1} = x_n + f_n \Delta t + \frac{1}{2}f'_n \Delta t + \frac{1}{3!} f''_n \De
 
 +++
 
+To construct Runge-Kutta method, we consider a formulation
+\begin{align}
+x_{n+1} = x_n + a_1 \Delta_1 x_n + a_2 \Delta_2 x_n + \cdots + a_s \Delta_s x_n
+\end{align}
+for some $s$, where
+\begin{align}
+\Delta_1 x_n &\equiv f(x(t_n)) \Delta t \\
+\Delta_2 x_n &\equiv f(x(t_n + b_2 \Delta t)) \Delta t = (f_n + f'_n b_2 \Delta t + \frac{1}{2} f''_n b_2^2 \Delta t^2 + \cdots)\Delta t\\
+\cdots \\
+\Delta_s x_n &\equiv f(x(t_n + b_s \Delta t)) \Delta t = (f_n + f'_n b_s \Delta t + \frac{1}{2} f''_n b_s^2 \Delta t^2 + \cdots)\Delta t
+\end{align}
+
++++
+
+Substitute, we obtain
+\begin{align}
+x_{n+1} = x_n 
+&+ a_1 f_n \Delta t \\
+&+ a_2 (f_n \Delta t + f'_n b_2 \Delta t^2 + \frac{1}{2} f''_n b_2^2 \Delta t^3 + \cdots) \\
+&+ \cdots \\
+&+ a_s (f_n \Delta t + f'_n b_s \Delta t^2 + \frac{1}{2} f''_n b_s^2 \Delta t^3 + \cdots)
+\end{align}
+
+For 4th-order scheme, collecting the terms and require all terms up to $\Delta t^4$ match, we obtain the conditions
+\begin{align}
+a_1       + a_2       + a_3       + a_4       &=       1     \\
+            a_2 b_2   + a_3 b_3   + a_4 b_4   &= \frac{1}{2} \\
+            a_2 b_2^2 + a_3 b_3^2 + a_4 b_4^2 &= \frac{1}{3} \\
+            a_2 b_2^3 + a_3 b_3^3 + a_4 b_4^3 &= \frac{1}{4}
+\end{align}
+
++++
+
+For the classical 4th-order Runge-Kutta scheme, we have already decided $b_1 = 0$, $b_2 = b_3 = 1/2$, and $b_4 = 1$.
+Therefore, the system of coefficients read:
+\begin{align}
+a_1       + a_2       + a_3       + a_4 &=       1     \\
+\frac{1}{2} a_2 + \frac{1}{2} a_3 + a_4 &= \frac{1}{2} \\
+\frac{1}{4} a_2 + \frac{1}{4} a_3 + a_4 &= \frac{1}{3} \\
+\frac{1}{8} a_2 + \frac{1}{8} a_3 + a_4 &= \frac{1}{4}
+\end{align}
+It is then easy to verify that 
+\begin{align}
+(a_1, a_2, a_3, a_4) = \left(\frac{1}{6},\frac{1}{3},\frac{1}{3},\frac{1}{6}\right)
+\end{align}
+is the solution.
+
++++
+
 ## Numerical Stability of Integrators
 
 Numerical Stability in the context of ODE solvers refers to the ability of a numerical method to control the growth of errors introduced during the iterative process of approximation.
