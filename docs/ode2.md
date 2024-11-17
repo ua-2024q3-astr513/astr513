@@ -13,3 +13,19 @@ kernelspec:
 ---
 
 # Integration of Ordinary Differential Equations. II
+
++++
+
+## Numerical Stability of Integrators
+
+Numerical Stability in the context of ODE solvers refers to the ability of a numerical method to control the growth of errors introduced during the iterative process of approximation.
+A method is stable if the numerical errors do not amplify uncontrollably as computations proceed.
+* Definition: A numerical method is stable for a given problem if the errors (from truncation or round-off) do not grow exponentially with time steps.
+* Importance: Stability ensures that the numerical solution behaves similarly to the true solution, especially over long integration intervals.
+
+Stability is a different concept than accuracy.
+* Stability: Concerns the boundedness of errors over time.
+* Accuracy: Pertains to how closely the numerical solution approximates the exact solution.
+
+A method can be stable but not necessarily accurate, and vice versa.
+However, both properties are requried for reliable numerical solutions.
