@@ -86,6 +86,19 @@ is the solution.
 
 +++
 
+Note that, if one choose $b_1 = 0$, $b_2 = 1/3$, $b_3 = 2/3$, and $b_4 = 1$, then the solutoin is 
+\begin{align}
+(a_1, a_2, a_3, a_4) = \left(\frac{1}{8},\frac{3}{8},\frac{3}{8},\frac{1}{8}\right).
+\end{align}
+This is Wilhelm Kutta (1901)'s "3/8 method".
+
++++
+
+This suggests that Runge-Kutta methods are really a "family", where many different choices can be used to construct numerical schemes with the same order.
+The perform of the numerical scheme, nevertheless, depends on the number of oeprations as well as the properties of the ODEs being solved.
+
++++
+
 ## Numerical Stability of Integrators
 
 Numerical Stability in the context of ODE solvers refers to the ability of a numerical method to control the growth of errors introduced during the iterative process of approximation.
