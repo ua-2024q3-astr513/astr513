@@ -113,6 +113,34 @@ Assuming $\lambda > 0 \in \mathbb{R}$.
 As the forward Euler method requires $\Delta t > 0$, the forward Euler is **unconditionally unstable**.
 Although we have used forward Euler to solve $dx/dt = \lambda x$ earlier, the error of the solution is unbounded and forward Euler is actually not useful in solving this problem!
 
-```{code-cell} ipython3
++++
 
-```
+### Stability Analysis Using Simple Harmonic Oscillator
+
+From the previous lecture [ODE I](ode1.md), we also solved the simple harmonic oscillator:
+\begin{align}
+\frac{d}{dt}\begin{bmatrix} \theta(t) \\ \Omega(t) \end{bmatrix} = 
+\begin{bmatrix} \Omega(t) \\ -\frac{g}{l} \theta(t) \end{bmatrix} = 
+\begin{bmatrix} 0 & 1 \\ -\frac{g}{l} & 0 \end{bmatrix} 
+\begin{bmatrix} \theta(t) \\ \Omega(t) \end{bmatrix}
+\end{align}
+using the forward Euler method:
+\begin{align}
+\begin{bmatrix} \theta_{n+1} \\ \Omega_{n+1} \end{bmatrix} = 
+\begin{bmatrix} \theta_{n} \\ \Omega_{n} \end{bmatrix} +
+\begin{bmatrix} 0 & 1 \\ -\frac{g}{l} & 0 \end{bmatrix} 
+\begin{bmatrix} \theta_{n} \\ \Omega_{n} \end{bmatrix} = 
+\begin{bmatrix} 1 & \Delta t \\ -\frac{g}{l}\Delta t & 1 \end{bmatrix} 
+\begin{bmatrix} \theta_{n} \\ \Omega_{n} \end{bmatrix}
+\end{align}
+The "amplification factor" is no longer a scalar but a matrix.
+The stability condition $|R| \le 1$ become
+\begin{align}
+\det \begin{bmatrix} 1 & \Delta t \\ -\frac{g}{l}\Delta t & 1 \end{bmatrix} \le 1.
+\end{align}
+Hence,
+\begin{align}
+\frac{g}{l}\Delta t^2 \le 0
+\end{align}
+which canno be satisfied.
+The forward Euler method is therefore again unconditional unstable.
