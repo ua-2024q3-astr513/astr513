@@ -29,3 +29,32 @@ Stability is a different concept than accuracy.
 
 A method can be stable but not necessarily accurate, and vice versa.
 However, both properties are requried for reliable numerical solutions.
+
++++
+
+### Stability Analysis Using the Linear Test Equation
+
+To analyze the stability of numerical integrators, we commonly use a linear test equation from last lecture:
+\begin{align}
+\frac{dx}{dt} = \lambda x
+\end{align}
+where $\lambda \in \mathbb{C}$.
+The exact solution is:
+\begin{align}
+x(t) = x_0 e^{\lambda t}.
+\end{align}
+
++++
+
+Consider a one-step numerical method applied to the test equation.
+The update can generally be expressed as:
+\begin{align}
+x_{n+1} = R(z) x_n
+\end{align}
+where $R(z)$ is the amplification factor and $z = \lambda \Delta t$ is the stability parameter.
+
+For the numerical method to be stable, the magnitude of the amplification factor must satisfy:
+\begin{align}
+|R(z)| \leq 1
+\end{align}
+This **stability condition** ensures that errors do not grow exponentially with each step.
