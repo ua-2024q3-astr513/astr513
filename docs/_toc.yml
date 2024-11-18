@@ -11,3 +11,4 @@ chapters:
 - file: opt
 - file: integration
 - file: ode1
+- file: ode2
