@@ -173,6 +173,45 @@ plt.ylabel(r'$\text{err} = max|x_\text{numeric} - x|$')
 plt.legend()
 ```
 
+## The Double Pendulum Problem
+
+The double pendulum is a well known example of a non-linear, chaotic system in classical mechanics.
+It consists of a pendulum with another pendulum attached to its end, resulting in a system with two degrees of freedom.
+This configuration leads to highly complex and sensitive-dependent dynamics, making the double pendulum an excellent subject for studying chaos theory and non-linear dynamics.
+Because it is not possible to construct analytical solutions, it is also a great example to numerical integrators.
+
+![Double pendulum](https://upload.wikimedia.org/wikipedia/commons/c/c9/Double-compound-pendulum-dimensioned.svg)
+
++++
+
+To setup the equations of motion, we assume:
+
+* The two arms of the pendulums have the same length $l$.
+
+* The mass of each arm is $m$.
+
+* The angle between the first and second pendulums, with respect to the vertical axis, are denoted by $\theta_1$ and $\theta_2$.
+
+Newton's second law suggests that we will need to solve a system of two second-order ordinary differential equations (ODEs).
+Using the methods we learn in the lecture, we can cast the problem into a system of four first-order ODEs.
+\begin{align}
+\frac{d\theta_1}{dt} &=
+\frac{6}{m l^2}\frac{2 p_1 - 3 \cos(\theta_1 - \theta_2) p_2}{16 - 9 \cos^2(\theta_1 - \theta_2)}\\
+\frac{d\theta_2}{dt} &=
+\frac{6}{m l^2}\frac{8 p_2 - 3 \cos(\theta_1 - \theta_2) p_1}{16 - 9 \cos^2(\theta_1 - \theta_2)}\\
+\frac{dp_1}{dt} &=
+-\frac{1}{2} m l^2 \left(\frac{d\theta_1}{dt} \frac{d\theta_2}{dt}\sin(\theta_1 - \theta_2) +
+                           3\frac{g}{l}\sin\theta_1\right)\\
+\frac{dp_2}{dt} &=
+-\frac{1}{2} m l^2 \left(-\frac{d\theta_1}{dt} \frac{d\theta_2}{dt}\sin(\theta_1 - \theta_2) +
+                            \frac{g}{l}\sin\theta_2\right)
+\end{align}
+where $p_1$ and $p_2$ are called the generalized momenta.
+(There might be typos in the equation.
+Please [double check](https://en.wikipedia.org/wiki/Double_pendulum).)
+
++++
+
 ## Numerical Stability of Integrators
 
 Numerical Stability in the context of ODE solvers refers to the ability of a numerical method to control the growth of errors introduced during the iterative process of approximation.
