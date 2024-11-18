@@ -231,13 +231,59 @@ def f(th1, th2, p1, p2):
 
 ```{code-cell} ipython3
 T = 100
-N = 10_000
+N = 1000
 T, X = RK4(f, (np.pi/2, np.pi/2, 0.0, 0.0), 0, T/N, N)
 ```
 
 ```{code-cell} ipython3
 plt.plot(T, X[:,0])
 plt.plot(T, X[:,1])
+```
+
+We may improve the visualization and create a movie:
+
+```{code-cell} ipython3
+%%capture
+
+# Step 6. Improve the visualization
+
+from matplotlib import animation
+from IPython.display import HTML
+
+fig = plt.figure(figsize=(8,8))
+ax  = plt.axes(xlim=(-2.5, 2.5), ylim=(-2.5, 2.5))
+ax.set_aspect('equal')
+
+line, = ax.plot([], [], 'o-', lw=2)
+
+def init():
+    line.set_data([], [])
+    return line,
+
+def animate(i):
+    th1 = X[i,0]
+    th2 = X[i,1]
+    
+    x1 =   np.sin(th1)
+    y1 = - np.cos(th1)
+    
+    x2 =   np.sin(th2)
+    y2 = - np.cos(th2)
+    
+    line.set_data([0, x1, x1+x2], [0, y1, y1+y2])
+    return line,
+
+anim = animation.FuncAnimation(fig, animate, init_func=init, frames=N, interval=20, blit=True)
+```
+
+```{code-cell} ipython3
+# Uncommon the following when run locally 
+#HTML(anim.to_html5_video())
+```
+
+```{code-cell} ipython3
+# Uncommon the following when run locally 
+#anim.save('double_pendulum.mp4', fps=30, extra_args=['-vcodec', 'libx264'])
 ```
 
 ## Numerical Stability of Integrators
