@@ -287,7 +287,7 @@ anim = animation.FuncAnimation(fig, animate, init_func=init, frames=N, interval=
 ```
 
 However, because the problem is so non-linear, the solution changes significantly not just when we change the initial conditions, but also change the time step.
-How do we know if the time step is chosen propertly?
+How do we know if the time step is chosen properly?
 How do we know if the solution is accurate enough?
 
 ```{code-cell} ipython3
@@ -297,6 +297,38 @@ for i, n in enumerate([1000,2000,4000,8000,16000]):
     plt.plot(T, X[:,1], '--', color=f'C{i}')
 plt.legend()
 ```
+
+## Adaptive Stepsize Control
+
+The double pendulum problem demostrate the challenges posed by highly non-linear and chaotic systems, where even small variations in initial conditions or time step sizes can lead to drastically different outcomes.
+This sensitivity highlights the critical importance of selecting an appropriate time step when numerically solving such complex systems.
+To determine whether a chosen time step is suitable, one must assess whether it sufficiently captures the rapid changes and intricate dynamics inherent to the system without introducing significant numerical errors.
+Additionally, ensuring the solution's accuracy necessitates implementing mechanisms that can evaluate and control these errors effectively.
+Adaptive time step control emerges as a vital strategy in this context, as it dynamically adjusts the integration step based on real-time error estimates.
+By doing so, it maintains the balance between computational efficiency and the precision required to accurately model the chaotic behavior of systems like the double pendulum, thereby addressing both the proper selection of time steps and the assurance of solution accuracy.
+
++++
+
+### Error Estimate
+
+It is obvious that there are multiple ways to advance an ODE system with $2\Delta t$:
+1. Step the ODE system with a single step $\Delta t' = 2\Delta t$.
+2. Step the ODE system with two steps, each step is $\Delta t$.
+The error of these two approaches are different.
+For a 4th-order algorithm, they are:
+\begin{align}
+x(t + 2\Delta t) &= x_1 + (2\Delta t)^5 \phi + \mathcal{O}(\Delta t^6) + \dots \\
+x(t + 2\Delta t) &= x_2 +  2\Delta t^5  \phi + \mathcal{O}(\Delta t^6) + \dots
+\end{align}
+where, to order $\Delta t^5$, the value $\phi$ remains constant over the step.
+
+The difference between the two numerical estimates is a convenient indicator of truncation error,
+\begin{align}
+\Delta = x_2 - x_1.
+\end{align}
+It is this difference that we shall endeavor to keep to a desired degree of accuracy, neither too large nor too small. We do this by adjusting $\Delta t$.
+
++++
 
 ## Numerical Stability of Integrators
 
