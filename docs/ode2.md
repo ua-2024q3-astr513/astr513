@@ -286,6 +286,12 @@ anim = animation.FuncAnimation(fig, animate, init_func=init, frames=N, interval=
 #anim.save('double_pendulum.mp4', fps=30, extra_args=['-vcodec', 'libx264'])
 ```
 
+However, because the problem is so non-linear, the solution changes significantly not just when we change the initial conditions, but also change the time step.
+How do we know if the time step is chosen propertly?
+How do we know if the solution is accurate enough?
+
++++
+
 ## Numerical Stability of Integrators
 
 Numerical Stability in the context of ODE solvers refers to the ability of a numerical method to control the growth of errors introduced during the iterative process of approximation.
