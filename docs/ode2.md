@@ -210,7 +210,35 @@ where $p_1$ and $p_2$ are called the generalized momenta.
 (There might be typos in the equation.
 Please [double check](https://en.wikipedia.org/wiki/Double_pendulum).)
 
-+++
+```{code-cell} ipython3
+def f(th1, th2, p1, p2):
+    m  = 1
+    l  = 1
+    g  = 1
+    
+    u1 = m * l * l
+    u2 = g / l
+    f  = 6 / (u1 * (16 - 9 * np.cos(th1 - th2)**2))
+    
+    dth1 = f * (2 * p1 - 3 * np.cos(th1 - th2) * p2)
+    dth2 = f * (8 * p2 - 3 * np.cos(th1 - th2) * p1)
+    
+    dp1  = - 0.5 * u1 * (  dth1 * dth2 * np.sin(th1 - th2) + 3 * u2 * np.sin(th1))
+    dp2  = - 0.5 * u1 * (- dth1 * dth2 * np.sin(th1 - th2) +     u2 * np.sin(th2))
+    
+    return dth1, dth2, dp1, dp2
+```
+
+```{code-cell} ipython3
+T = 100
+N = 10_000
+T, X = RK4(f, (np.pi/2, np.pi/2, 0.0, 0.0), 0, T/N, N)
+```
+
+```{code-cell} ipython3
+plt.plot(T, X[:,0])
+plt.plot(T, X[:,1])
+```
 
 ## Numerical Stability of Integrators
 
