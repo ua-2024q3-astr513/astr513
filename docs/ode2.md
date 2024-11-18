@@ -144,19 +144,19 @@ def RK38(f, x, t, dt, n):
 ```
 
 ```{code-cell} ipython3
-def f(theta, omega):
+def f_sh(theta, omega):
     return omega, -theta
 ```
 
 ```{code-cell} ipython3
 def error_RK4(N=100):
-    T, X = RK4(f, (0, 0.01), 0, 10/N, N)
+    T, X = RK4(f_sh, (0, 0.01), 0, 10/N, N)
     Theta  = X[:,0]
     Thetap = 0.01 * np.sin(T)
     return np.max(abs(Theta - Thetap))
 
 def error_RK38(N=100):
-    T, X = RK38(f, (0, 0.01), 0, 10/N, N)
+    T, X = RK38(f_sh, (0, 0.01), 0, 10/N, N)
     Theta  = X[:,0]
     Thetap = 0.01 * np.sin(T)
     return np.max(abs(Theta - Thetap))
@@ -211,7 +211,7 @@ where $p_1$ and $p_2$ are called the generalized momenta.
 Please [double check](https://en.wikipedia.org/wiki/Double_pendulum).)
 
 ```{code-cell} ipython3
-def f(th1, th2, p1, p2):
+def f_dp(th1, th2, p1, p2):
     m  = 1
     l  = 1
     g  = 1
@@ -232,7 +232,7 @@ def f(th1, th2, p1, p2):
 ```{code-cell} ipython3
 T = 100
 N = 1000
-T, X = RK4(f, (np.pi/2, np.pi/2, 0.0, 0.0), 0, T/N, N)
+T, X = RK4(f_dp, (np.pi/2, np.pi/2, 0.0, 0.0), 0, T/N, N)
 ```
 
 ```{code-cell} ipython3
@@ -292,7 +292,7 @@ How do we know if the solution is accurate enough?
 
 ```{code-cell} ipython3
 for i, n in enumerate([1000,2000,4000,8000,16000]):
-    T, X = RK4(f, (np.pi/2, np.pi/2, 0.0, 0.0), 0, 100/n, n)
+    T, X = RK4(f_dp, (np.pi/2, np.pi/2, 0.0, 0.0), 0, 100/n, n)
     plt.plot(T, X[:,0], '-',  color=f'C{i}', label=f'n={n}')
     plt.plot(T, X[:,1], '--', color=f'C{i}')
 plt.legend()
@@ -477,15 +477,43 @@ def DP45(f, x, t, T, dt, atol, rtol):
     return np.array(Ts), np.array(Xs)
 ```
 
-We can now apply it to the ODEs:
+We can now apply it to the ODEs.
+
+Applying to the simple harmonic oscillator, we may specifically ask for the accuracy:
 
 ```{code-cell} ipython3
-for i, atol in enumerate([1e-1,1e-2,1e-3,1e-4]):
-    T, X = DP45(f, (np.pi/2, np.pi/2, 0.0, 0.0), 0, 10, 0.1, atol, 0)
-    plt.plot(T, X[:,0], '.-',  color=f'C{i}', label=f'atol={atol}')
-    plt.plot(T, X[:,1], '.--', color=f'C{i}')
+def error_DP45(tol):
+    T, X = DP45(f_sh, (0, 0.01), 0, 10, 0.1, tol, tol)
+    Theta  = X[:,0]
+    Thetap = 0.01 * np.sin(T)
+    return np.max(abs(Theta - Thetap))
+
+EDP45 = np.array([error_DP45(tol) for tol in 2.0**(-22-4*np.arange(5))])
+
+plt.loglog(N, 1/N**4,      label='1/N^4')
+plt.loglog(N, ERK4,  'o-', label='RK4')
+plt.loglog(N, ERK38, 'o:', label='RK38')
+plt.loglog(N, EDP45, 'o--', label='RK38')
+plt.xlabel('N')
+plt.ylabel(r'$\text{err} = max|x_\text{numeric} - x|$')
 plt.legend()
 ```
+
+For non-linear problems, we can compare different accuracies:
+
+```{code-cell} ipython3
+for i, atol in enumerate([1e-3,1e-6,1e-9,1e-12]):
+    T, X = DP45(f_dp, (np.pi/2, np.pi/2, 0.0, 0.0), 0, 10, 0.1, atol, 0)
+    plt.plot(T[::10], X[::10,0], '.-',  color=f'C{i}', label=f'atol={atol}')
+    plt.plot(T[::10], X[::10,1], '.--', color=f'C{i}')
+plt.legend()
+```
+
+Up to this point, we have explored the advanced concepts of Adaptive Step Size Control in Runge-Kutta methods, focusing on the Dormand–Prince (DP) method.
+We began by understanding the significance of embedded Runge-Kutta formulas, which enable simultaneous computation of solutions of different orders for effective error estimation.
+This foundation allowed us to implement a PI controller that dynamically adjusts the integration step size based on local error estimates, ensuring that the numerical solution remains within desired accuracy bounds while optimizing computational efficiency.
+
++++
 
 ## Numerical Stability of Integrators
 
