@@ -488,6 +488,7 @@ def error_DP45(tol):
     Thetap = 0.01 * np.sin(T)
     return np.max(abs(Theta - Thetap))
 
+N     = np.array([64, 128, 256, 512, 1024])
 EDP45 = np.array([error_DP45(tol) for tol in 2.0**(-22-4*np.arange(5))])
 
 plt.loglog(N, 1/N**4,      label='1/N^4')
