@@ -330,6 +330,163 @@ It is this difference that we shall endeavor to keep to a desired degree of accu
 
 +++
 
+It might also occur to you that, ignoring terms of order $\Delta t^6$ and higher, we can
+solve the two equations to improve our numerical estimate of the true
+solution $x(t + 2 \Delta t)$, namely,
+\begin{align}
+x(t + 2\Delta t) = x_2 + \frac{\Delta}{15} + \mathcal{O}(\Delta t^6)
+\end{align}
+This estimate is accurate to fifth order, one order higher than the original Runge-Kutta steps.
+This is nothing but Richardson extrapolation.
+
+However, we can't have our cake and eat it too.
+The above equation may be fifth-order accurate, but we have no way of monitoring its truncation error. Higher order is not always higher accuracy!
+
++++
+
+### Embedded Runge-Kutta Formulas: The Dormand–Prince Method
+
+Step doubling is a simple adaptive step method.
+However, it is now mostly replaced by a more efficient stepsize adjustment algorithm based on embedded Runge-Kutta formulas, originally invented by Merson and popularized in a method of Fehlberg.
+
+An interesting fact about Runge-Kutta formulas is that for orders $M$ higher than four, more than $M$ function evaluations are required.
+This accounts for the popularity of the classical fourth-order method: It seems to give the most bang for the buck. However, Fehlberg discovered a fifth-order method with six function evaluations where another combination of the six functions gives a fourth-order method.
+
+The difference between the two estimates of $y(x + \Delta t)$ can then be used as an estimate of the truncation error to adjust the stepsize.
+Since Fehlberg's original formula, many other embedded Runge-Kutta formulas have been found.
+
++++
+
+The Dormand–Prince method is a 5th-order Runge-Kutta method with an embedded 4th-order solution.
+This pairing enables accurate error estimation, which is essential for adaptive step size control.
+The DP method is particularly favored for its robustness and efficiency, making it a staple in many numerical computing libraries, including MATLAB's ode45.
+
+The Dormand–Prince method is characterized by its specific set of coefficients, which dictate how intermediate slopes are calculated and combined to produce the final solution estimates.
+These coefficients are meticulously chosen to minimize error and optimize computational performance.
+
++++
+
+The general form of a fifth-order Runge-Kutta formula is
+\begin{align}
+k_1 &= \Delta t f(x_n, t_n)\\
+k_2 &= \Delta t f(x_n + a_{21}k_1, t_n + c_2 \Delta t)\\
+\cdots\\
+k_6 &= \Delta t f(x_n + a_{61}k_1 + \cdots + a_{65}k_5, t_n + c_6 \Delta t)\\
+x_{n+1} &= x_n + b_1 k_1 + b_2 k_2 + \cdots + b_6 k_6 + \mathcal{O}(\Delta t^6)
+\end{align}
+
+The Dormand–Prince method employs a set of coefficients $a$, $b$, and $c$ to compute intermediate stages and combine them into higher and lower-order solutions.
+Below are the coefficients for the DP method:
+
+```{code-cell} ipython3
+a = [
+    [],
+    [1/5],
+    [3/40, 9/40],
+    [44/45, -56/15, 32/9],
+    [19372/6561, -25360/2187, 64448/6561, -212/729],
+    [9017/3168, -355/33, 46732/5247, 49/176, -5103/18656],
+    [35/384, 0, 500/1113, 125/192, -2187/6784, 11/84],
+]
+b_high = [35/384, 0, 500/1113, 125/192, -2187/6784, 11/84, 0] # Fifth-order accurate solution estimate
+b_low  = [5179/57600, 0, 7571/16695, 393/640, -92097/339200, 187/2100, 1/40] # Fourth-order accurate solution estimate
+c = [0, 1/5, 3/10, 4/5, 8/9, 1, 1]
+```
+
+A DP45 step is therefore
+
+```{code-cell} ipython3
+def DP45_step(f, x, t, dt):
+        # Compute intermediate k1 to k7
+    k1 = np.array(f(*x))
+    k2 = np.array(f(*(x + dt*(a[1][0]*k1))))
+    k3 = np.array(f(*(x + dt*(a[2][0]*k1 + a[2][1]*k2))))
+    k4 = np.array(f(*(x + dt*(a[3][0]*k1 + a[3][1]*k2 + a[3][2]*k3))))
+    k5 = np.array(f(*(x + dt*(a[4][0]*k1 + a[4][1]*k2 + a[4][2]*k3 + a[4][3]*k4))))
+    k6 = np.array(f(*(x + dt*(a[5][0]*k1 + a[5][1]*k2 + a[5][2]*k3 + a[5][3]*k4 + a[5][4]*k5))))
+    k7 = np.array(f(*(x + dt*(a[6][0]*k1 + a[6][1]*k2 + a[6][2]*k3 + a[6][3]*k4 + a[6][4]*k5 + a[6][5]*k6))))
+    
+    ks = [k1, k2, k3, k4, k5, k6, k7]
+    
+    # Compute high and low order estimates
+    x_high = x + dt * np.dot(b_high, ks)
+    x_low  = x + dt * np.dot(b_low,  ks)
+
+    return x_high, x_low, ks
+```
+
+# Proportional-Integral Step Size Control
+
+Once we have an embedded Runge-Kutta method like Dormand–Prince in place, the next step is to implement a mechanism to adjust the step size based on the estimated local error.
+The PI (Proportional-Integral) controller is a widely-used strategy for this purpose, combining proportional and integral components to achieve stable and efficient step size adjustments.
+
+The PI controller adjusts the step size $\Delta t$ based on the current error $E$ and past errors.
+The objective is to maintain the error within specified tolerances while preventing drastic changes in step size that could lead to instability or inefficiency.
+
+The general formula for updating the step size is:
+\begin{align}
+h_{\text{new}} = h \cdot \min\left(\text{fac}{\text{max}}, \max\left(\text{fac}{\text{min}}, \text{fac} \cdot \left(\frac{\text{tol}}{E}\right)^{\alpha}\right)\right)
+\end{align}
+where $\text{fac}$ is a scaling factor (typically around 0.9) to provide a safety margin;
+$\text{fac}{\text{min}}$ and $\text{fac}{\text{max}}$ set the minimum and maximum allowable step size multipliers to prevent excessive changes; and
+$\alpha$ is an exponent that determines the responsiveness of the step size adjustment.
+
+```{code-cell} ipython3
+def dt_update(dt, error, tol, fac=0.9, fac_min=0.1, fac_max=4.0, alpha=0.2):
+    if error == 0:
+        s = fac_max
+    else:
+        s = fac * (tol / error) ** alpha
+    s = min(fac_max, max(fac_min, s))
+    dt_new = dt * s
+    return dt_new
+```
+
+Combining the single embedded step and the step controller, we obtain the DP45 algorithm:
+
+```{code-cell} ipython3
+def DP45(f, x, t, T, dt, atol, rtol):
+
+    Ts = [t]
+    Xs = [np.array(x)]
+
+    while t < T:
+        if t + dt > T:
+            dt = T - t  # Adjust step size to end exactly at tf
+
+        # Perform a single Dormand–Prince step
+        x_high, x_low, _ = DP45_step(f, x, t, dt)
+
+        # Compute the error estimate
+        error = np.linalg.norm(x_high - x_low, ord=np.inf)
+
+        # Compute the tolerance
+        tol = atol + rtol * np.linalg.norm(x_high, ord=np.inf)
+
+        # Check if the step is acceptable
+        if error <= tol:
+            # Accept the step
+            t += dt
+            x = x_high
+            Ts.append(t)
+            Xs.append(x)
+
+        # Compute the new step size
+        dt = dt_update(dt, error, tol)
+
+    return np.array(Ts), np.array(Xs)
+```
+
+We can now apply it to the ODEs:
+
+```{code-cell} ipython3
+for i, atol in enumerate([1e-1,1e-2,1e-3,1e-4]):
+    T, X = DP45(f, (np.pi/2, np.pi/2, 0.0, 0.0), 0, 10, 0.1, atol, 0)
+    plt.plot(T, X[:,0], '.-',  color=f'C{i}', label=f'atol={atol}')
+    plt.plot(T, X[:,1], '.--', color=f'C{i}')
+plt.legend()
+```
+
 ## Numerical Stability of Integrators
 
 Numerical Stability in the context of ODE solvers refers to the ability of a numerical method to control the growth of errors introduced during the iterative process of approximation.
