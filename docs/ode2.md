@@ -290,7 +290,13 @@ However, because the problem is so non-linear, the solution changes significantl
 How do we know if the time step is chosen propertly?
 How do we know if the solution is accurate enough?
 
-+++
+```{code-cell} ipython3
+for i, n in enumerate([1000,2000,4000,8000,16000]):
+    T, X = RK4(f, (np.pi/2, np.pi/2, 0.0, 0.0), 0, 100/n, n)
+    plt.plot(T, X[:,0], '-',  color=f'C{i}', label=f'n={n}')
+    plt.plot(T, X[:,1], '--', color=f'C{i}')
+plt.legend()
+```
 
 ## Numerical Stability of Integrators
 
