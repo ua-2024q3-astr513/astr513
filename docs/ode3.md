@@ -18,67 +18,81 @@ kernelspec:
 
 ## Numerical Stability of Integrators
 
-Numerical Stability in the context of ODE solvers refers to the ability of a numerical method to control the growth of errors introduced during the iterative process of approximation.
-A method is stable if the numerical errors do not amplify uncontrollably as computations proceed.
-* Definition: A numerical method is stable for a given problem if the errors (from truncation or round-off) do not grow exponentially with time steps.
-* Importance: Stability ensures that the numerical solution behaves similarly to the true solution, especially over long integration intervals.
-
-Stability is a different concept than accuracy.
-* Stability: Concerns the boundedness of errors over time.
-* Accuracy: Pertains to how closely the numerical solution approximates the exact solution.
-
-A method can be stable but not necessarily accurate, and vice versa.
-However, both properties are requried for reliable numerical solutions.
+Numerical Stability in the context of Ordinary Differential Equation (ODE) solvers refers to the ability of a numerical method to control the growth of errors introduced during the iterative process of approximation.
+A method is considered stable if the numerical errors do not amplify uncontrollably as computations proceed.
+This concept is crucial for ensuring that the numerical solution remains meaningful and behaves similarly to the true solution, especially over long integration intervals.
 
 +++
 
-### Stability Analysis Using the Linear Test Equation
+### Definition and Importance
 
-To analyze the stability of numerical integrators, we commonly use a linear test equation from last lecture:
+A numerical method is stable for a given problem if the errors---whether from truncation or round-off---do not grow exponentially with each time step.
+Stability ensures that the numerical solution does not diverge from the true solution due to the accumulation of numerical errors.
+This is particularly important in long-term simulations where even small errors can accumulate to produce significant deviations from the true behavior of the system.
+
++++
+
+### Stability vs. Accuracy
+
+It's essential to distinguish between stability and accuracy:
+* Stability: Pertains to the boundedness of errors over time.
+  A stable method ensures that errors remain controlled and do not grow exponentially, preventing the solution from becoming meaningless.
+* Accuracy: Refers to how closely the numerical solution approximates the exact solution.
+  An accurate method minimizes the difference between the numerical and true solutions.
+
+A method can be stable but not accurate, meaning it controls error growth but doesn't closely follow the exact solution.
+Conversely, a method can be accurate but unstable, producing precise results initially but diverging over time due to uncontrolled error growth.
+For reliable numerical solutions, both stability and accuracy are required.
+
++++
+
+### Stability Regions for Explicit Methods
+
+To analyze the stability of numerical integrators, we commonly use the linear test equation introduced in previous lectures:
 \begin{align}
 \frac{dx}{dt} = \lambda x
 \end{align}
 where $\lambda \in \mathbb{C}$.
-The exact solution is:
+The exact solution to this ODE is:
 \begin{align}
 x(t) = x_0 e^{\lambda t}.
 \end{align}
+For a numerical method to be stable when applied to this equation, it must ensure that the numerical errors do not grow exponentially.
+This is evaluated using the concept of the **stability region**.
 
 +++
 
-Consider a one-step numerical method applied to the test equation.
-The update can generally be expressed as:
-\begin{align}
-x_{n+1} = R(z) x_n
-\end{align}
-where $R(z)$ is the amplification factor and $z = \lambda \Delta t$ is the stability parameter.
+### Forward Euler Method Stability
 
-For the numerical method to be stable, the magnitude of the amplification factor must satisfy:
+In [ODE I](ode1.md), we learned that the Forward Euler method is the simplest explicit numerical integrator for solving ODEs.
+Its update formula for the linear test equation is derived as follows:
+
+Starting with the Forward Euler update:
+\begin{align}
+x_{n+1} = x_n + \Delta t \cdot f(x_n, t_n)
+\end{align}
+For the linear test equation $f(x, t) = \lambda x$, this becomes:
+\begin{align}
+x_{n+1} = x_n + \Delta t \cdot \lambda x_n = (1 + \lambda \Delta t) x_n
+\end{align}
+Here, the amplification factor $R(z)$ is defined as:
+\begin{align}
+R(z) = 1 + z \quad \text{where} \quad z = \lambda \Delta t
+\end{align}
+The stability condition requires that:
 \begin{align}
 |R(z)| \leq 1
 \end{align}
-This **stability condition** ensures that errors do not grow exponentially with each step.
+Substituting the amplification factor:
+\begin{align}
+|1 + z| \leq 1
+\end{align}
+This condition defines the stability region for the Forward Euler method.
 
 +++
 
-In [ODE I](ode1.md), we introduced the Forward Euler method as the simplest explicit numerical integrator for solving ODEs.
-Let's revisit its stability properties using the linear test equation.
-
-The forward Euler update formula can be rewritten as:
-\begin{align}
-x_{n+1} = x_n + \Delta t \cdot f(x_n, t_n) = (1 + \lambda\Delta t) x_n.
-\end{align}
-
-The amplification factor is therefore
-\begin{align}
-R(z) = 1 + \lambda\Delta t.
-\end{align}
-The stability condition is
-\begin{align}
-|R(z)| = |1 + \lambda\Delta t| \leq 1.
-\end{align}
-
-Graphically, the stability region is a circle in the complex plane centered at $(-1, 0)$ with a radius of 1, as shown in the following figure.
+To better understand the stability regions, we can visualize them in the complex plane.
+The stability region for Forward Euler is a circle centered at $(-1, 0)$ with a radius of 1.
 
 ```{code-cell} ipython3
 import numpy as np
@@ -99,20 +113,28 @@ abs_R_fE = np.abs(1 + Z)
 plt.figure(figsize=(8, 6))
 plt.contourf(Re, Im, abs_R_fE, levels=[0, 1], colors=['red'])
 
-plt.title('Stability Regions for Euler Method')
+plt.title('Stability Region for Forward Euler Method')
 plt.xlabel(r'Re($\lambda \Delta t$)')
 plt.ylabel(r'Im($\lambda \Delta t$)')
 plt.gca().set_aspect('equal')
 
-## Adding legend manually
+# Adding legend manually
 import matplotlib.patches as mpatches
 blue_patch = mpatches.Patch(color='red', label='Forward Euler')
 plt.legend(handles=[blue_patch])
 ```
 
-Assuming $\lambda > 0 \in \mathbb{R}$.
-As the forward Euler method requires $\Delta t > 0$, the forward Euler is **unconditionally unstable**.
-Although we have used forward Euler to solve $dx/dt = \lambda x$ earlier, the error of the solution is unbounded and forward Euler is actually not useful in solving this problem!
+The stability region plot leads to:
+* The Forward Euler method is conditionally stable, meaning it is only stable within a specific region of the complex plane.
+* Specifically, it is stable for values of $\lambda \Delta t$ that lie within the circle centered at $(-1, 0)$ with a radius of 1.
+* For real positive $\lambda$ (i.e., $\lambda > 0$), the Forward Euler method becomes **unconditionally unstable** because such values fall outside the stability region.
+  This implies that even with small time steps, the method cannot control error growth for these cases.
+
++++
+
+The implication is:
+* When dealing with ODEs where $\lambda > 0$, especially in stiff equations, the Forward Euler method may lead to solutions that diverge from the true behavior due to uncontrolled error amplification.
+* This limitation necessitates the use of more stable methods, such as implicit integrators, which will be discussed in subsequent sections.
 
 +++
 
