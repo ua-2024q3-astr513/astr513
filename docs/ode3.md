@@ -559,7 +559,27 @@ for idx, title in enumerate(methods.keys()):
 plt.legend(handles=patches)
 ```
 
-Let's implement the Implicit Midpoint Method for the same stiff ODE and compare it with the Backward Euler method.
+Both the Backward Euler Method and the Implicit Midpoint Method are A-stable, meaning they are stable for all $\lambda \Delta t$ with $\text{Re}(\lambda) \leq 0$.
+This property makes them highly suitable for solving stiff ODEs, where explicit methods like Forward Euler fail to maintain stability without extremely small time steps.
+
+Comparison with Explicit Methods:
+* Forward Euler:
+  * Stability Region: Limited to a circle centered at (-1, 0) with radius 1.
+  * Conditionally Stable: Only stable within this specific region.
+* RK2 and RK4:
+  * Stability Regions: Larger than Forward Euler but still bounded.
+  * Conditionally Stable: Not A-stable, limiting their applicability to certain types of ODEs.
+* Backward Euler and Implicit Midpoint:
+  * Stability Regions: Cover the entire left half of the complex plane.
+  * A-Stable: Remain stable for all $\lambda \Delta t$ with $\text{Re}(\lambda) \leq 0$.
+
+Implications:
+* Implicit methods like Backward Euler and Implicit Midpoint are indispensable for solving stiff ODEs, where explicit methods would require impractically small time steps to maintain stability.
+* The trade-off is computational complexity, as implicit methods require solving nonlinear equations at each time step, which can be computationally intensive for large or complex systems.
+
++++
+
+With these advantages, let's implement the Implicit Midpoint Method for the same stiff ODE and compare it with the Backward Euler method.
 
 ```{code-cell} ipython3
 # Implicit Midpoint Method
@@ -609,8 +629,4 @@ plt.xlabel('Time t')
 plt.ylabel('x(t)')
 plt.legend()
 plt.grid(True)
-```
-
-```{code-cell} ipython3
-
 ```
