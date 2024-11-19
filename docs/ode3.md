@@ -193,7 +193,7 @@ These stability functions indicate how each method propagates errors over time s
 
 ```{code-cell} ipython3
 def R_RK2(z):
-    """Stability function for RK2 (Heun's method)"""
+    """Stability function for RK2"""
     return 1 + z + 0.5 * z**2
 
 def R_RK4(z):
@@ -206,8 +206,8 @@ abs_R_RK4 = np.abs(R_RK4(Z))
 
 # Define a list of methods and their corresponding data
 methods = {
-    'Forward Euler': abs_R_fE,
-    'RK2 (Heun\'s)': abs_R_RK2,
+    'Forward Euler':   abs_R_fE,
+    'RK2 ':            abs_R_RK2,
     'RK4 (Classical)': abs_R_RK4,
 }
 
@@ -299,6 +299,84 @@ The main reasons to use implicit methods include:
 
 Understanding the distinction between implicit and explicit methods is fundamental for selecting the appropriate numerical integrator based on the characteristics of the ODE being solved.
 
-```{code-cell} ipython3
++++
 
+### Backward Euler Method
+
+The Backward Euler method is one of the simplest implicit methods.
+It offers enhanced stability properties compared to its explicit counterpart, making it suitable for stiff ODEs.
+
+Given an ODE:
+\begin{align}
+\frac{dx}{dt} = f(x, t), \quad x(t_0) = x_0
+\end{align}
+The Backward Euler update formula is derived by evaluating the derivative at the next time step $t_{n+1} = t_n + \Delta t$:
+\begin{align}
+x_{n+1} = x_n + \Delta t \cdot f(x_{n+1}, t_{n+1})
+\end{align}
+Unlike explicit methods, $x_{n+1}$ appears on both sides of the equation, necessitating the solution of this equation at each time step.
+
++++
+
+### Stability Analysis
+
+Using the linear test equation $\frac{dx}{dt} = \lambda x$, where $\lambda \in \mathbb{C}$, the Backward Euler update becomes:
+\begin{align}
+x_{n+1} = x_n + \Delta t \cdot \lambda x_{n+1}
+\end{align}
+Solving for $x_{n+1}$:
+\begin{align}
+x_{n+1} = \frac{x_n}{1 - \lambda \Delta t}
+\end{align}
+The amplification factor $R(z)$ is therefore:
+\begin{align}
+R(z) = \frac{1}{1 - z} \quad \text{where} \quad z = \lambda \Delta t
+\end{align}
+
+The stability condition requires:
+\begin{align}
+|R(z)| = \left| \frac{1}{1 - z} \right| \leq 1
+\end{align}
+For the method to be stable, the above condition must hold.
+Analyzing this:
+* A-Stability: A numerical method is A-stable if it is stable for all $\lambda \Delta t$ with $\text{Re}(\lambda) \leq 0$.
+  The Backward Euler method satisfies this condition, making it A-stable.
+* Implications for Stiff ODEs: The A-stability of the Backward Euler method allows it to handle stiff ODEs effectively, enabling larger time steps without sacrificing stability.
+
+```{code-cell} ipython3
+def R_bE(z):
+    """Stability function for backward Euler"""
+    return 1 / (1 - z)
+
+# Compute |R(z)| for each method
+abs_R_bE = np.abs(R_bE(Z))
+
+# Define a list of methods and their corresponding data
+methods = {
+    'Forward Euler':   abs_R_fE,
+    'Backward Euler':  abs_R_bE,
+    'RK2':             abs_R_RK2,
+    'RK4 (Classical)': abs_R_RK4,
+}
+
+plt.figure(figsize=(10, 8))
+
+# Plot stability regions for each method
+colors = ['red', 'yellow', 'green', 'blue']
+for idx, (title, abs_R) in enumerate(methods.items()):
+    # Contour where |R(z)| = 1
+    plt.contour(Re, Im, abs_R, levels=[1], colors=colors[idx], linewidths=2, linestyles='-')
+    # Fill the stability region
+    plt.contourf(Re, Im, abs_R, levels=[0, 1], colors=[colors[idx]], alpha=0.1)
+
+plt.title('Stability Regions for Forward Euler, RK2, and RK4 Methods')
+plt.xlabel(r'Re($\lambda \Delta t$)')
+plt.ylabel(r'Im($\lambda \Delta t$)')
+plt.gca().set_aspect('equal')
+
+# Adding legend manually
+patches = []
+for idx, title in enumerate(methods.keys()):
+    patches.append(mpatches.Patch(color=colors[idx], label=title))
+plt.legend(handles=patches)
 ```
