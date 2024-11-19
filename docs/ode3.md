@@ -97,12 +97,13 @@ The stability region for Forward Euler is a circle centered at $(-1, 0)$ with a 
 ```{code-cell} ipython3
 import numpy as np
 from matplotlib import pyplot as plt
+import matplotlib.patches as mpatches
 ```
 
 ```{code-cell} ipython3
 # Define the grid for the complex plane
 Re = np.linspace(-3, 3, 601)
-Im = np.linspace(-2, 2, 401)
+Im = np.linspace(-3, 3, 601)
 Re, Im = np.meshgrid(Re, Im)
 Z = Re + 1j * Im
 
@@ -170,24 +171,27 @@ The forward Euler method is therefore again unconditional unstable.
 
 +++
 
-Similar, we may compute the stability regions for different numerical schemes.
-Given a numerical scheme with order $n$ should agree with the analytical solution in its Taylor series up to order $n$, we have:
+### Stability Regions for RK2 and RK4 Methods
+
+Beyond the Forward Euler method, higher-order explicit Runge-Kutta (RK) methods like RK2 and RK4 offer improved accuracy while maintaining conditional stability.
+However, their stability regions differ from that of the Forward Euler method, allowing for larger regions of stability in the complex plane.
+Understanding these stability regions is essential for selecting appropriate numerical methods based on the problem's characteristics.
+
+* RK2 Stability Function:
+  For the classical RK2 method (Heun’s method), the stability function is given by:
+  \begin{align}
+  R_{\text{RK2}}(z) = 1 + z + \frac{1}{2} z^2
+  \end{align}
+
+* RK4 Stability Function:
+  For the classical RK4 method, the stability function is more complex:
+  \begin{align}
+  R_{\text{RK4}}(z) = 1 + z + \frac{1}{2} z^2 + \frac{1}{6} z^3 + \frac{1}{24} z^4
+  \end{align}
+
+These stability functions indicate how each method propagates errors over time steps, affecting the overall stability of the numerical solution.
 
 ```{code-cell} ipython3
-# Define the grid for the complex plane
-Re = np.linspace(-5, 3, 600)  # Real axis from -5 to 3
-Im = np.linspace(-3, 3, 600)  # Imaginary axis from -3 to 3
-Re, Im = np.meshgrid(Re, Im)
-Z = Re + 1j * Im  # Complex grid
-
-def R_fE(z):
-    """Stability function for forward Euler"""
-    return 1 + z
-
-def R_bE(z):
-    """Stability function for backward Euler"""
-    return 1 - z
-
 def R_RK2(z):
     """Stability function for RK2 (Heun's method)"""
     return 1 + z + 0.5 * z**2
@@ -197,32 +201,56 @@ def R_RK4(z):
     return 1 + z + 0.5 * z**2 + (1/6) * z**3 + (1/24) * z**4
 
 # Compute |R(z)| for each method
-abs_R_fE  = np.abs(R_fE(Z))
-abs_R_bE  = np.abs(R_bE(Z))
 abs_R_RK2 = np.abs(R_RK2(Z))
 abs_R_RK4 = np.abs(R_RK4(Z))
 
 # Define a list of methods and their corresponding data
 methods = {
-    'forward Euler' :abs_R_fE,
-    'backward Euler':abs_R_bE,
-    'RK2'           :abs_R_RK2,
-    'RK4'           :abs_R_RK4,
+    'Forward Euler': abs_R_fE,
+    'RK2 (Heun\'s)': abs_R_RK2,
+    'RK4 (Classical)': abs_R_RK4,
 }
 
-plt.figure(figsize=(8, 6))
+plt.figure(figsize=(10, 8))
 
 # Plot stability regions for each method
-patches = []
-for c, (title, abs_R) in enumerate(list(methods.items())[::-1]):
+colors = ['red', 'green', 'blue']
+for idx, (title, abs_R) in enumerate(methods.items()):
     # Contour where |R(z)| = 1
-    plt.contourf(Re, Im, abs_R, levels=[0, 1], colors=[f'C{c}'])
-    patches.append(mpatches.Patch(color=f'C{c}', label=title))
+    plt.contour(Re, Im, abs_R, levels=[1], colors=colors[idx], linewidths=2, linestyles='-')
+    # Fill the stability region
+    plt.contourf(Re, Im, abs_R, levels=[0, 1], colors=[colors[idx]], alpha=0.1)
 
+plt.title('Stability Regions for Forward Euler, RK2, and RK4 Methods')
 plt.xlabel(r'Re($\lambda \Delta t$)')
 plt.ylabel(r'Im($\lambda \Delta t$)')
 plt.gca().set_aspect('equal')
 
-## Adding legend manually
+# Adding legend manually
+patches = []
+for idx, title in enumerate(methods.keys()):
+    patches.append(mpatches.Patch(color=colors[idx], label=title))
 plt.legend(handles=patches)
 ```
+
+The above plot suggests:
+* RK2 (Green):
+  * Stability Region: Larger than Forward Euler but still bounded.
+  * Extended Stability: Allows for slightly larger time steps while maintaining stability.
+* RK4 (Classical) (Blue):
+  * Stability Region: Even larger than RK2, encompassing a more extensive area in the complex plane.
+  * Greater Stability: Facilitates larger time steps compared to Forward Euler and RK2.
+
++++
+
+Some key observations include:
+* Order vs. Stability: Higher-order methods like RK2 and RK4 generally have larger stability regions compared to lower-order methods like Forward Euler.
+  This allows them to take larger time steps while maintaining stability.
+* Still Conditionally Stable: Despite their larger stability regions, RK2 and RK4 are still conditionally stable.
+  They are not A-stable, meaning they cannot remain stable for all values of  $\lambda \Delta t$ in the left half of the complex plane.
+
++++
+
+In terms of trade-offs:
+* Forward Euler: Simple and easy to implement but has a very limited stability region.
+* RK2 and RK4: More complex and computationally intensive due to additional stages but offer better stability and accuracy.
