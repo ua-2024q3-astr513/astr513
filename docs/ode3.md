@@ -380,3 +380,98 @@ for idx, title in enumerate(methods.keys()):
     patches.append(mpatches.Patch(color=colors[idx], label=title))
 plt.legend(handles=patches)
 ```
+
+Implementing the Backward Euler method involves solving the implicit equation at each time step.
+The approach varies depending on whether the ODE is linear or nonlinear.
+
+* Linear ODEs: If $f(x, t)$ is linear in $x$, the implicit equation can often be solved directly without iterative methods.
+  For example, for $dx/dt = \lambda x$:
+  \begin{align}
+  x_{n+1} = (1 - \lambda \Delta t)^{-1} x_n.
+  \end{align}
+  Using matrix inverse, the above formulation even works for system of linear ODEs.
+
+* Nonlinear ODEs: If $f(x, t)$ is nonlinear, solving for $x_{n+1}$ typically requires iterative methods such as the [Newton-Raphson method](opt.md).
+  Python's fsolve from the scipy.optimize library can be used for this purpose.
+
++++
+
+### Stiff ODEs
+
+Let's implement the Backward Euler method for a simple linear ODE and compare it with the Forward Euler method.
+
+Consider the ODE:
+\begin{align}
+\frac{dx}{dt} = -1000x + 3000 - 2000e^{-t}, \quad x(0) = 0
+\end{align}
+The exact solution is:
+\begin{align}
+x(t) = 3 - 0.998 e^{-1000t} - 2.002 e^{-t}
+\end{align}
+This ODE is stiff because it contains terms with vastly different decay rates ($e^{-1000t}$ vs. $e^{-t}$).
+
+```{code-cell} ipython3
+from scipy.optimize import fsolve
+
+# Define the exact solution for comparison
+def exact_solution(t):
+    return 3 - 0.998 * np.exp(-1000 * t) - 2.002 * np.exp(-t)
+
+# Define the stiff ODE
+def stiff_ode(x, t):
+    return -1000 * x + 3000 - 2000 * np.exp(-t)
+
+# Forward Euler Method (for comparison)
+def forward_euler(f, x0, t0, tf, dt):
+    T = np.arange(t0, tf + dt, dt)
+    X = [x0]
+    
+    for i in range(1, len(T)):
+        t = T[i-1]
+        X.append(X[i-1] + dt * f(X[i-1], t))
+    
+    return T, X
+
+# Backward Euler Method
+def backward_euler(f, x0, t0, tf, dt):
+    T = np.arange(t0, tf + dt, dt)
+    X = [x0]
+    
+    for i in range(1, len(T)):
+        t = T[i]
+        # Define the implicit equation: x_next = x_current + dt * f(x_next, t_next)
+        func = lambda x: x - X[i-1] - dt * f(x, t)
+        # Initial guess: Forward Euler estimate
+        x0 = X[i-1] + dt * f(X[i-1], t)
+        # Solve for x_next using Newton-Raphson (fsolve)
+        x = fsolve(func, x0)[0]
+        X.append(x)
+    
+    return T, X
+
+# Parameters
+x0 = 0
+t0 = 0
+tf = 0.01 # Short time to observe stiffness effects
+dt = 0.002
+
+# Solve using Forward Euler
+T_fE, X_fE = forward_euler(stiff_ode, x0, t0, tf, dt)
+
+# Solve using Backward Euler
+T_bE, X_bE = backward_euler(stiff_ode, x0, t0, tf, dt)
+
+# Exact solution
+T = np.linspace(t0, tf, 1000)
+X = exact_solution(T)
+
+# Plotting
+plt.figure(figsize=(10, 6))
+plt.plot(T,    X,    'k-',  label='Exact Solution')
+plt.plot(T_fE, X_fE, 'r-o', label='Forward Euler')
+plt.plot(T_bE, X_bE, 'b-o', label='Backward Euler')
+plt.xlabel('Time t')
+plt.ylabel('x(t)')
+plt.legend()
+plt.grid(True)
+```
