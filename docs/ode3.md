@@ -521,20 +521,20 @@ R(z) = \left|\frac{2 + z}{2 - z}\right|
 \end{align}
 
 ```{code-cell} ipython3
-def R_mp(z):
-    """Stability function for backward Euler"""
+def R_im(z):
+    """Stability function for implicit mid-point"""
     return (2 + z) / (2 - z)
 
 # Compute |R(z)| for each method
-abs_R_mp = np.abs(R_mp(Z))
+abs_R_im = np.abs(R_im(Z))
 
 # Define a list of methods and their corresponding data
 methods = {
-    'Forward Euler':   abs_R_fE,
-    'Backward Euler':  abs_R_bE,
-    'RK2':             abs_R_RK2,
-    'mid-point':       abs_R_mp,
-    'RK4 (Classical)': abs_R_RK4,
+    'Forward Euler':      abs_R_fE,
+    'Backward Euler':     abs_R_bE,
+    'RK2':                abs_R_RK2,
+    'implicit mid-point': abs_R_im,
+    'RK4 (Classical)':    abs_R_RK4,
 }
 
 plt.figure(figsize=(10, 8))
@@ -557,4 +557,60 @@ patches = []
 for idx, title in enumerate(methods.keys()):
     patches.append(mpatches.Patch(color=colors[idx], label=title))
 plt.legend(handles=patches)
+```
+
+Let's implement the Implicit Midpoint Method for the same stiff ODE and compare it with the Backward Euler method.
+
+```{code-cell} ipython3
+# Implicit Midpoint Method
+def implicit_midpoint(f, x0, t0, tf, dt):
+    T = np.arange(t0, tf + dt, dt)
+    X = [x0]
+    
+    for i in range(1, len(T)):
+        t_mid = T[i-1] + dt / 2
+        
+        # Define the implicit equation: x_next = x_current + dt * f((x_current + x_next)/2, t_mid)
+        func = lambda x: x - X[i-1] - dt * f((X[i-1] + x)/2, t_mid)
+        # Initial guess: forward Euler estimate
+        x0 = X[i-1] + dt * f(X[i-1], T[i-1])
+        # Solve for x_next using Newton-Raphson (fsolve)
+        x = fsolve(func, x0)[0]
+        X.append(x)
+    
+    return T, X
+
+# Parameters
+x0 = 0
+t0 = 0
+tf = 0.01 # Short time to observe stiffness effects
+dt = 0.002
+
+# Solve using Forward Euler
+T_fE, X_fE = forward_euler(stiff_ode, x0, t0, tf, dt)
+
+# Solve using Backward Euler
+T_bE, X_bE = backward_euler(stiff_ode, x0, t0, tf, dt)
+
+# Solve using Implicit Midpoint Method
+T_im, X_im = implicit_midpoint(stiff_ode, x0, t0, tf, dt)
+
+# Exact solution
+T = np.linspace(t0, tf, 1000)
+X = exact_solution(T)
+
+# Plotting
+plt.figure(figsize=(10, 6))
+plt.plot(T,    X,    'k-',  label='Exact Solution')
+plt.plot(T_fE, X_fE, 'r-o', label='Forward Euler')
+plt.plot(T_bE, X_bE, 'b-o', label='Backward Euler')
+plt.plot(T_im, X_im, 'g-o', label='Implicit Midpoint')
+plt.xlabel('Time t')
+plt.ylabel('x(t)')
+plt.legend()
+plt.grid(True)
+```
+
+```{code-cell} ipython3
+
 ```
