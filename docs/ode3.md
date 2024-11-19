@@ -475,3 +475,86 @@ plt.ylabel('x(t)')
 plt.legend()
 plt.grid(True)
 ```
+
+From the plot, we observe:
+* Forward Euler Method:
+  * Behavior: Exhibits rapid oscillations and diverges from the exact solution, highlighting instability.
+  * Reason: The Forward Euler method is unstable for stiff ODEs, as the required stability condition imposes prohibitively small time steps.
+* Backward Euler Method:
+  * Behavior: Accurately follows the exact solution without oscillations, demonstrating stability even with relatively larger time steps.
+  * Reason: The implicit formulation dampens the effects of stiff terms, maintaining stability.
+
++++
+
+### Implicit Midpoint Method
+
+The Implicit Midpoint Method is another implicit integrator that offers second-order accuracy and possesses symplectic properties, making it suitable for certain classes of ODEs, particularly those arising from Hamiltonian systems.
+
+Given an ODE:
+\begin{align}
+\frac{dx}{dt} = f(x, t), \quad x(t_0) = x_0
+\end{align}
+The Implicit Midpoint Method updates the solution as follows:
+\begin{align}
+x_{n+1} = x_n + \Delta t \cdot f\left( \frac{x_n + x_{n+1}}{2}, t_n + \frac{\Delta t}{2} \right)
+\end{align}
+
+This method evaluates the derivative at the midpoint between the current and next states, enhancing its accuracy compared to the Backward Euler method.
+
++++
+
+### Stability Properties
+
+Similar to the Backward Euler method, the Implicit Midpoint Method is A-stable, meaning it remains stable for all $\lambda \Delta t$ with $\text{Re}(\lambda) \leq 0$.
+Additionally, the Implicit Midpoint Method is symplectic, making it particularly valuable for preserving the geometric properties of Hamiltonian systems over long simulations.
+
+To obtain the stability region, we use the test problem:
+\begin{align}
+x_{n+1} &= x_n + \Delta t\cdot\lambda \left(\frac{x_{n+1} + x_n}{2}\right) \\
+\left(1 - \frac{\Delta t\cdot\lambda}{2}\right) x_{n+1} &=
+\left(1 + \frac{\Delta t\cdot\lambda}{2}\right) x_n \\
+x_{n+1} &= \frac{1 + \Delta t\cdot\lambda/2}{1 + \Delta t\cdot\lambda/2} x_n
+\end{align}
+Therefore, the amplification factor is
+\begin{align}
+R(z) = \left|\frac{2 + z}{2 - z}\right|
+\end{align}
+
+```{code-cell} ipython3
+def R_mp(z):
+    """Stability function for backward Euler"""
+    return (2 + z) / (2 - z)
+
+# Compute |R(z)| for each method
+abs_R_mp = np.abs(R_mp(Z))
+
+# Define a list of methods and their corresponding data
+methods = {
+    'Forward Euler':   abs_R_fE,
+    'Backward Euler':  abs_R_bE,
+    'RK2':             abs_R_RK2,
+    'mid-point':       abs_R_mp,
+    'RK4 (Classical)': abs_R_RK4,
+}
+
+plt.figure(figsize=(10, 8))
+
+# Plot stability regions for each method
+colors = ['red', 'yellow', 'green', 'cyan', 'blue']
+for idx, (title, abs_R) in enumerate(methods.items()):
+    # Contour where |R(z)| = 1
+    plt.contour(Re, Im, abs_R, levels=[1], colors=colors[idx], linewidths=2, linestyles='-')
+    # Fill the stability region
+    plt.contourf(Re, Im, abs_R, levels=[0, 1], colors=[colors[idx]], alpha=0.1)
+
+plt.title('Stability Regions for Forward Euler, RK2, and RK4 Methods')
+plt.xlabel(r'Re($\lambda \Delta t$)')
+plt.ylabel(r'Im($\lambda \Delta t$)')
+plt.gca().set_aspect('equal')
+
+# Adding legend manually
+patches = []
+for idx, title in enumerate(methods.keys()):
+    patches.append(mpatches.Patch(color=colors[idx], label=title))
+plt.legend(handles=patches)
+```
