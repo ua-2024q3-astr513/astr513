@@ -865,3 +865,12 @@ f_{n+1} &= \frac{\partial V}{\partial q}(q_{n+1}), \\
 p_{n+1} &= p_n + \frac{1}{2} (f_n + f_{n+1}) \Delta t.
 \end{align}
 However, in this synchronized form, the time-step $\Delta t$ must be constant to maintain stability.
+
+The synchronised form can be re-arranged to the 'kick-drift-kick' form
+\begin{align}
+p_{n+1/2} &= p_n       + \frac{1}{2} f_n       \Delta t, \\
+q_{n+1}   &= q_n       + \frac{1}{m} p_{n+1/2} \Delta t, \\
+p_{n+1}   &= p_{n+1/2} + \frac{1}{2} f_{n+1}   \Delta t.
+\end{align}
+which is primarily used where variable time-steps are required.
+The separation of the acceleration calculation onto the beginning and end of a step means that if time resolution is increased by a factor of two $\Delta t\rightarrow \Delta t/2$, then only one extra (computationally expensive) acceleration calculation is required.
