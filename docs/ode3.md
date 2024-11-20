@@ -828,3 +828,40 @@ plt.ylabel('Position q(t)')
 plt.legend()
 plt.grid(True)
 ```
+
+From the above plot, we observe:
+* Forward Euler Method:
+  * Behavior: Deviates significantly from the exact solution over time, exhibiting growing oscillations.
+  * Reason: Non-symplectic nature causes energy to accumulate or dissipate artificially.
+* Symplectic Euler Method:
+  * Behavior: Maintains bounded energy errors, resulting in stable, oscillatory trajectories that closely follow the exact solution.
+  * Reason: Preservation of the symplectic structure ensures that energy errors do not systematically drift.
+
++++
+
+### Leapfrog/Verlet Integration
+
+The Leapfrog Integration method is another popular symplectic integrator renowned for its simplicity and excellent energy conservation properties. The method is known by different names in different disciplines.
+In particular, it is similar to the velocity Verlet method, which is a variant of Verlet integration.
+Leapfrog integration is equivalent to updating positions $x(t)$ and velocities $v(t)={\dot {x}}(t)$ at different interleaved time points, staggered in such a way that they "leapfrog" over each other.
+It is widely used in molecular dynamics simulations and celestial mechanics.
+
+Leapfrog integration is a second-order method, in contrast to Euler integration, which is only first-order, yet requires the same number of function evaluations per step.
+Unlike Euler integration, it is stable for oscillatory motion, as long as the time-step $\Delta t$ is constant, and $\Delta t < 2/\omega$.
+
++++
+
+The leapfrog method has multiple form.
+The most standard form updates positions and velocities in a staggered manner:
+\begin{align}
+p_{n+1/2} &= p_{n-1/2} - \frac{\partial V}{\partial q}(q_n)\,\Delta t,\\
+q_{n+1}   &= q_{n}     + \frac{1}{m} p_{n+1/2}             \,\Delta t.
+\end{align}
+
+These equations can be expressed in a form that gives velocity at integer steps as well:
+\begin{align}
+q_{n+1} &= q_n + \frac{1}{m}p_n \Delta t + \frac{1}{2m} f_n \Delta t^2, \\
+f_{n+1} &= \frac{\partial V}{\partial q}(q_{n+1}), \\
+p_{n+1} &= p_n + \frac{1}{2} (f_n + f_{n+1}) \Delta t.
+\end{align}
+However, in this synchronized form, the time-step $\Delta t$ must be constant to maintain stability.
