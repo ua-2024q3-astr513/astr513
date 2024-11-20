@@ -425,18 +425,18 @@ def stiff_ode(x, t):
 def forward_euler(f, x0, t0, tf, dt):
     T = np.arange(t0, tf + dt, dt)
     X = [x0]
-    
+
     for i in range(1, len(T)):
         t = T[i-1]
         X.append(X[i-1] + dt * f(X[i-1], t))
-    
+
     return T, X
 
 # Backward Euler Method
 def backward_euler(f, x0, t0, tf, dt):
     T = np.arange(t0, tf + dt, dt)
     X = [x0]
-    
+
     for i in range(1, len(T)):
         t = T[i]
         # Define the implicit equation: x_next = x_current + dt * f(x_next, t_next)
@@ -446,7 +446,7 @@ def backward_euler(f, x0, t0, tf, dt):
         # Solve for x_next using Newton-Raphson (fsolve)
         x = fsolve(func, x0)[0]
         X.append(x)
-    
+
     return T, X
 
 # Parameters
@@ -586,10 +586,10 @@ With these advantages, let's implement the Implicit Midpoint Method for the same
 def implicit_midpoint(f, x0, t0, tf, dt):
     T = np.arange(t0, tf + dt, dt)
     X = [x0]
-    
+
     for i in range(1, len(T)):
         t_mid = T[i-1] + dt / 2
-        
+
         # Define the implicit equation: x_next = x_current + dt * f((x_current + x_next)/2, t_mid)
         func = lambda x: x - X[i-1] - dt * f((X[i-1] + x)/2, t_mid)
         # Initial guess: forward Euler estimate
@@ -597,7 +597,7 @@ def implicit_midpoint(f, x0, t0, tf, dt):
         # Solve for x_next using Newton-Raphson (fsolve)
         x = fsolve(func, x0)[0]
         X.append(x)
-    
+
     return T, X
 
 # Parameters
@@ -687,7 +687,7 @@ Hamiltonian systems are characterized by several fundamental conservation laws, 
   This is a manifestation of Noether's theorem, linking symmetries in the Hamiltonian to conserved quantities.
 
 * Phase-Space Volume Preservation:
-  Hamiltonian flows preserve the volume in phase space, a property known as Liouville's theorem. 
+  Hamiltonian flows preserve the volume in phase space, a property known as Liouville's theorem.
   Mathematically, the divergence of the Hamiltonian vector field is zero:
   \begin{align}
   \nabla \cdot \left( \frac{\partial H}{\partial p}, -\frac{\partial H}{\partial q} \right) = 0
@@ -701,11 +701,11 @@ Hamiltonian systems are characterized by several fundamental conservation laws, 
 Traditional numerical integrators, such as the Forward Euler or Runge-Kutta methods, may not preserve the geometric properties of Hamiltonian systems, leading to the gradual drift of conserved quantities like energy.
 Symplectic integrators are designed to preserve the symplectic structure of Hamiltonian flows, ensuring that key invariants remain conserved over long-term simulations.
 
-* Energy Conservation: 
+* Energy Conservation:
   While symplectic integrators do not exactly conserve energy, they exhibit a bounded energy error that oscillates around the true energy value without systematic drift.
   This contrasts with non-symplectic methods, where energy errors can accumulate, leading to unrealistic solutions over time.
 
-* Long-Term Stability in Simulations: 
+* Long-Term Stability in Simulations:
   By preserving the symplectic structure, these integrators maintain the qualitative behavior of the system, such as bounded orbits in celestial mechanics or stable oscillations in mechanical systems.
   This stability is crucial for simulations that span extended periods, where non-symplectic methods would fail to provide reliable results.
 
@@ -714,13 +714,117 @@ Symplectic integrators are designed to preserve the symplectic structure of Hami
 ### Properties of Symplectic Methods
 
 Symplectic integrators possess several properties that make them particularly suitable for Hamiltonian systems.
-* Time-Reversibility: 
+* Time-Reversibility:
   Many symplectic methods are time-reversible, meaning that reversing the direction of time in the numerical integration process returns the system to its original state.
   This property enhances the stability and accuracy of the integrator, especially in systems where time-reversal symmetry is inherent.
-* Phase-Space Volume Preservation: 
+* Phase-Space Volume Preservation:
   Symplectic integrators inherently preserve the phase-space volume, aligning with Liouville's theorem.
   This preservation ensures that the statistical properties of the system remain intact throughout the simulation.
 * Implicit vs. Explicit Symplectic Methods
   * Symplectic Euler (Implicit and Explicit Variants): The Symplectic Euler method comes in both implicit and explicit forms.
     The implicit variant offers better stability properties but requires solving equations at each step, while the explicit variant is simpler but less stable.
   * Verlet Integration: A widely used symplectic integrator in molecular dynamics and celestial simulations, known for its simplicity, second-order accuracy, and excellent energy conservation properties.
+
++++
+
+### Symplectic Euler Method
+
+The Symplectic Euler method updates the coordinates and momenta in a staggered fashion, ensuring the preservation of the symplectic structure.
+
+There are two variants of the Symplectic Euler method:
+
+1. Implicit Symplectic Euler:
+   \begin{align}
+   p_{n+1} &= p_n - \Delta t \cdot \frac{\partial V}{\partial q}(q_{n+1}) \\
+   q_{n+1} &= q_n + \Delta t \cdot \frac{p_{n+1}}{m}
+   \end{align}
+
+2. Explicit Symplectic Euler:
+   \begin{align}
+   q_{n+1} &= q_n + \Delta t \cdot \frac{p_n}{m} \\
+   p_{n+1} &= p_n - \Delta t \cdot \frac{\partial V}{\partial q}(q_n)
+   \end{align}
+
+As the formulation suggests, they are both first-order accurate in time.
+Nevertheless, compared to forward or even backward Euler methods, they preserve the symplectic structure, ensuring bounded energy errors.
+They also offers better stability compared to non-symplectic explicit methods.
+
++++
+
+Consider the simple harmonic oscillator:
+\begin{align}
+\frac{dq}{dt} = \frac{p}{m}, \quad \frac{dp}{dt} = -k q
+\end{align}
+where $q$ is the position, $p$ is the momentum, $m$ is the mass, and $k$ is the spring constant.
+
+```{code-cell} ipython3
+import numpy as np
+from matplotlib import pyplot as plt
+import matplotlib.patches as mpatches
+
+# Define the exact solution for comparison
+def exact_solution(q0, p0, t0, tf, dt, m=1, k=1):
+    omega = np.sqrt(k / m)
+
+    T = np.arange(t0, tf + dt, dt)
+    Q = q0 * np.cos(omega * T) + (p0 / (m * omega)) * np.sin(omega * T)
+    P = -m * omega * q0 * np.sin(omega * T) + p0 * np.cos(omega * T)
+
+    return T, Q, P
+
+# Forward Euler Method (for comparison)
+def forward_euler(q0, p0, t0, tf, dt, m=1, k=1):
+    T = np.arange(t0, tf + dt, dt)
+    Q = np.zeros(len(T))
+    P = np.zeros(len(T))
+
+    Q[0] = q0
+    P[0] = p0
+    for i in range(1, len(T)):
+        Q[i] = Q[i-1] + dt * (P[i-1] / m)
+        P[i] = P[i-1] - dt * (k * Q[i-1])
+
+    return T, Q, P
+
+# Symplectic Euler Method (Explicit Variant)
+def symplectic_euler(q0, p0, t0, tf, dt, m=1, k=1):
+    T = np.arange(t0, tf + dt, dt)
+    Q = np.zeros(len(T))
+    P = np.zeros(len(T))
+
+    Q[0] = q0
+    P[0] = p0
+    for i in range(1, len(T)):
+        Q[i] = Q[i-1] + dt * (P[i-1] / m)
+        P[i] = P[i-1] - dt * (k * Q[i])
+
+    return T, Q, P
+
+# Parameters
+m  =  1.0 # mass
+k  =  1.0 # spring constant
+q0 =  1.0 # initial position
+p0 =  0.0 # initial momentum
+t0 =  0.0
+tf = 10.0
+dt =  0.1
+
+# Solve using Forward Euler
+T_fE, Q_fE, P_fE = forward_euler(q0, p0, t0, tf, dt)
+
+# Solve using Symplectic Euler
+T_sE, Q_sE, P_sE = symplectic_euler(q0, p0, t0, tf, dt)
+
+# Exact solution
+T, Q, P = exact_solution(q0, p0, t0, tf, dt/100)
+
+# Plotting
+plt.figure(figsize=(12, 6))
+plt.plot(T,    Q,    'k-',  label='Exact Solution')
+plt.plot(T_fE, Q_fE, 'r--', label='Forward Euler')
+plt.plot(T_sE, Q_sE, 'b-o', label='Symplectic Euler')
+plt.xlabel('Time t')
+plt.ylabel('Position q(t)')
+plt.legend()
+plt.grid(True)
+```
