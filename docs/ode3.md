@@ -829,6 +829,22 @@ plt.legend()
 plt.grid(True)
 ```
 
+It is also useful to look at the total energy:
+
+```{code-cell} ipython3
+def energy(Q, P, m=1, k=1):
+    return P*P/(2*m) + Q*Q*(k/2)
+
+plt.figure(figsize=(12, 6))
+plt.plot(T,    energy(Q, P),       'k-',  label='Exact Solution')
+plt.plot(T_fE, energy(Q_fE, P_fE), 'r--', label='Forward Euler')
+plt.plot(T_sE, energy(Q_sE, P_sE), 'b-o', label='Symplectic Euler')
+plt.xlabel('Time t')
+plt.ylabel('Position q(t)')
+plt.legend()
+plt.grid(True)
+```
+
 From the above plot, we observe:
 * Forward Euler Method:
   * Behavior: Deviates significantly from the exact solution over time, exhibiting growing oscillations.
@@ -920,6 +936,18 @@ plt.legend()
 plt.grid(True)
 ```
 
+```{code-cell} ipython3
+plt.figure(figsize=(12, 6))
+plt.plot(T,    energy(Q, P),       'k-',  label='Exact Solution')
+plt.plot(T_fE, energy(Q_fE, P_fE), 'r--', label='Forward Euler')
+plt.plot(T_sE, energy(Q_sE, P_sE), 'b-o', label='Symplectic Euler')
+plt.plot(T_lf, energy(Q_lf, P_lf), 'g-o', label='Leapfrog')
+plt.xlabel('Time t')
+plt.ylabel('Position q(t)')
+plt.legend()
+plt.grid(True)
+```
+
 Compared to forward Euler or even symplectic Euler, the leapfrog solution closely follows the exact solution with minimal deviation, demonstrating superior accuracy and stability.
 
 +++
@@ -942,7 +970,7 @@ H(q, p) = \frac{p^2}{2m} + V(q)
 \end{align}
 Thus,
 \begin{align}
-\frac{dq}{dt} = \frac{p}{m}, \quad \frac{dp}{dt} = -V{\prime}(q)
+\frac{dq}{dt} = \frac{p}{m}, \quad \frac{dp}{dt} = -V'(q)
 \end{align}
 
 Explicit Symplectic Euler Update:
@@ -952,7 +980,7 @@ Explicit Symplectic Euler Update:
    \end{align}
 2. Update Momentum:
    \begin{align}
-   p_{n+1} = p_n - \Delta t \cdot V{\prime}(q_n)
+   p_{n+1} = p_n - \Delta t \cdot V'(q_n)
    \end{align}
 
 A numerical integrator is symplectic if its update map preserves the symplectic two-form $\omega = dq \wedge dp$.
