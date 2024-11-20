@@ -415,7 +415,7 @@ def DP45_step(f, x, t, dt):
     return x_high, x_low, ks
 ```
 
-# Proportional-Integral Step Size Control
+### Proportional-Integral Step Size Control
 
 Once we have an embedded Runge-Kutta method like Dormand–Prince in place, the next step is to implement a mechanism to adjust the step size based on the estimated local error.
 The PI (Proportional-Integral) controller is a widely-used strategy for this purpose, combining proportional and integral components to achieve stable and efficient step size adjustments.
