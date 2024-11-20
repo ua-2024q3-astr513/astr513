@@ -874,3 +874,50 @@ p_{n+1}   &= p_{n+1/2} + \frac{1}{2} f_{n+1}   \Delta t.
 \end{align}
 which is primarily used where variable time-steps are required.
 The separation of the acceleration calculation onto the beginning and end of a step means that if time resolution is increased by a factor of two $\Delta t\rightarrow \Delta t/2$, then only one extra (computationally expensive) acceleration calculation is required.
+
++++
+
+The leapfrog method is second-order accuracy, hence more accurate than first-order methods like Symplectic Euler.
+It preserves the symplectic structure, ensuring bounded energy errors.
+It is also time-reversible, ensuring stable and accurate long-term simulations.
+
+```{code-cell} ipython3
+# Velocity Verlet Method
+def leapfrog(q0, p0, t0, tf, dt, m=1, k=1):
+    T = np.arange(t0, tf + dt, dt)
+    Q = np.zeros(len(T))
+    P = np.zeros(len(T))
+    F = np.zeros(len(T))
+    Q[0] = q0
+    P[0] = p0
+    F[0] = - k * q0
+
+    for i in range(1, len(T)):
+        # Update position
+        Q[i] = Q[i-1] + (1/m) * P[i-1] * dt + (0.5/m) * F[i-1] * dt*dt
+        # Compute new acceleration
+        F[i] = - k * Q[i]
+        # Update velocity
+        P[i] = P[i-1] + 0.5 * (F[i-1] + F[i]) * dt
+
+    return T, Q, P
+
+# Initial momentum
+p0 = 0.0
+
+# Solve using Velocity Verlet
+T_lf, Q_lf, P_lf = leapfrog(q0, p0, t0, tf, dt)
+
+# Plotting
+plt.figure(figsize=(12, 6))
+plt.plot(T,    Q,    'k-',  label='Exact Solution')
+plt.plot(T_fE, Q_fE, 'r--', label='Forward Euler')
+plt.plot(T_sE, Q_sE, 'b-o', label='Symplectic Euler')
+plt.plot(T_lf, Q_lf, 'g-o', label='Leapfrog')
+plt.xlabel('Time t')
+plt.ylabel('Position q(t)')
+plt.legend()
+plt.grid(True)
+```
+
+Compared to forward Euler or even symplectic Euler, the leapfrog solution closely follows the exact solution with minimal deviation, demonstrating superior accuracy and stability.
