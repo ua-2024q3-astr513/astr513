@@ -921,3 +921,59 @@ plt.grid(True)
 ```
 
 Compared to forward Euler or even symplectic Euler, the leapfrog solution closely follows the exact solution with minimal deviation, demonstrating superior accuracy and stability.
+
++++
+
+### Derivation and Preservation of Symplectic Structure
+
+Understanding why symplectic integrators preserve the symplectic structure involves delving into their mathematical foundation.
+A symplectic integrator preserves the symplectic two-form, a geometric property of Hamiltonian systems that encodes the conservation laws and phase-space volume preservation.
+
+Let's derive the Explicit Symplectic Euler method and demonstrate its symplectic nature.
+
+Given Hamilton's equations:
+\begin{align}
+\frac{dq}{dt} = \frac{\partial H}{\partial p}, \quad \frac{dp}{dt} = -\frac{\partial H}{\partial q}
+\end{align}
+
+For simplicity, consider the Hamiltonian:
+\begin{align}
+H(q, p) = \frac{p^2}{2m} + V(q)
+\end{align}
+Thus,
+\begin{align}
+\frac{dq}{dt} = \frac{p}{m}, \quad \frac{dp}{dt} = -V{\prime}(q)
+\end{align}
+
+Explicit Symplectic Euler Update:
+1. Update Position:
+   \begin{align}
+   q_{n+1} = q_n + \Delta t \cdot \frac{p_n}{m}
+   \end{align}
+2. Update Momentum:
+   \begin{align}
+   p_{n+1} = p_n - \Delta t \cdot V{\prime}(q_n)
+   \end{align}
+
+A numerical integrator is symplectic if its update map preserves the symplectic two-form $\omega = dq \wedge dp$.
+For the Explicit Symplectic Euler method, this preservation can be verified by examining the Jacobian matrix of the transformation:
+\begin{align}
+J = \begin{pmatrix}
+\frac{\partial q_{n+1}}{\partial q_n} & \frac{\partial q_{n+1}}{\partial p_n} \\
+\frac{\partial p_{n+1}}{\partial q_n} & \frac{\partial p_{n+1}}{\partial p_n}
+\end{pmatrix}
+= \begin{pmatrix}
+1 & \frac{\Delta t}{m} \\
+-\Delta t \cdot V''(q_n) & 1
+\end{pmatrix}
+\end{align}
+
+The symplectic condition requires that $J^T \cdot \Omega \cdot J = \Omega$, where $\Omega$ is the standard symplectic matrix:
+\begin{align}
+\Omega = \begin{pmatrix}
+0 & 1 \\
+-1 & 0
+\end{pmatrix}
+\end{align}
+
+Carrying out the matrix multiplication confirms that the Explicit Symplectic Euler method satisfies the symplectic condition, thereby preserving the symplectic structure.
