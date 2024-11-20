@@ -396,7 +396,7 @@ The approach varies depending on whether the ODE is linear or nonlinear.
 
 +++
 
-### Stiff ODEs
+## Stiff ODEs
 
 Let's implement the Backward Euler method for a simple linear ODE and compare it with the Forward Euler method.
 
@@ -630,3 +630,66 @@ plt.ylabel('x(t)')
 plt.legend()
 plt.grid(True)
 ```
+
+## Symplectic Algorithms
+
+In the study of Ordinary Differential Equations (ODEs), particularly those arising from physical systems, preserving the inherent geometric and physical properties of the system during numerical integration is important.
+Symplectic algorithms are a class of numerical integrators specifically designed to preserve the symplectic structure of Hamiltonian systems, ensuring the conservation of key invariants and enhancing the long-term stability of simulations.
+
++++
+
+### Introduction to Hamiltonian Systems
+
+A Hamiltonian system is a type of dynamical system governed by Hamilton's equations, which describe the evolution of a system in terms of its coordinates and conjugate momenta.
+Formally, for a system with generalized coordinates $q$ and conjugate momenta $p$, the Hamiltonian $H(q, p, t)$ represents the total energy of the system (kinetic plus potential energy).
+
+Hamilton's equations are given by:
+\begin{align}
+\frac{dq_i}{dt} = \frac{\partial H}{\partial p_i}, \quad \frac{dp_i}{dt} = -\frac{\partial H}{\partial q_i}, \quad \text{for } i = 1, 2, \ldots, n
+\end{align}
+where $n$ is the number of degrees of freedom in the system.
+
++++
+
+Examples of Hamiltonian system include:
+* Simple Harmonic Oscillator:
+  A mass-spring system without damping is a quintessential Hamiltonian system. Its Hamiltonian is:
+  \begin{align}
+  H(q, p) = \frac{p^2}{2m} + \frac{1}{2} k q^2
+  \end{align}
+  where $m$ is the mass, $k$ is the spring constant, $q$ is the displacement, and $p = m \dot{q}$ is the momentum.
+* Kepler Problem:
+  Describing the motion of a planet around the sun, the Kepler problem is governed by the gravitational potential:
+  \begin{align}
+  H(q, p) = \frac{p^2}{2m} - \frac{G M m}{|q|}
+  \end{align}
+  where $G$ is the gravitational constant, $M$ is the mass of the sun, and $|q|$ is the distance between the planet and the sun.
+* Double Pendulum:
+  As we solved [last time](ode2.md), it is a system with two pendulums attached end-to-end exhibits rich dynamical behavior and is described by a Hamiltonian that accounts for both kinetic and potential energies of the masses.
+
++++
+
+### Conservation Laws in Hamiltonian Mechanics
+
+Hamiltonian systems are characterized by several fundamental conservation laws, which are crucial for understanding the long-term behavior of the system.
+
+* Energy Conservation: For autonomous Hamiltonian systems (where $H$ does not explicitly depend on time), the Hamiltonian $H(q, p)$ itself is conserved over time:
+  \begin{align}
+  \frac{dH}{dt} = 0
+  \end{align}
+  This reflects the conservation of total energy in the system.
+
+* Momentum Conservation:
+  If the Hamiltonian does not depend on a particular coordinate $q_i$, the corresponding momentum $p_i$ is conserved:
+  \begin{align}
+  \frac{dp_i}{dt} = -\frac{\partial H}{\partial q_i} = 0 \quad \Rightarrow \quad p_i = \text{constant}
+  \end{align}
+  This is a manifestation of Noether's theorem, linking symmetries in the Hamiltonian to conserved quantities.
+
+* Phase-Space Volume Preservation:
+  Hamiltonian flows preserve the volume in phase space, a property known as Liouville's theorem. 
+  Mathematically, the divergence of the Hamiltonian vector field is zero:
+  \begin{align}
+  \nabla \cdot \left( \frac{\partial H}{\partial p}, -\frac{\partial H}{\partial q} \right) = 0
+  \end{align}
+  This preservation is fundamental for the statistical interpretation of thermodynamic systems.
