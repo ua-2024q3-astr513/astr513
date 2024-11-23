@@ -421,20 +421,144 @@ PDEs are essential in modeling these systems, providing insights into their stru
 
 +++
 
-## Classification of Partial Differential Equations (PDEs) (10 minutes)
+## Classification of Partial Differential Equations (PDEs)
 
-* Types of PDEs:
-  * Elliptic: Example – Laplace's equation.
-  * Parabolic: Example – Heat equation.
-  * Hyperbolic: Example – Wave equation.
-
-* Physical Intuition
-
-* Understanding the nature and applications of each type.
-
-* Examples of physical phenomena governed by each class of PDEs.
+Partial Differential Equations (PDEs) are integral to modeling a vast array of physical phenomena, from the diffusion of heat to the propagation of waves.
+Understanding the classification of PDEs is essential for selecting appropriate solution methods and interpreting the behavior of the systems they describe.
+PDEs are primarily classified into three categories: **Elliptic**, **Parabolic**, and **Hyperbolic**.
+Each class possesses distinct mathematical properties and governs different types of physical phenomena.
+This section delves into the nature, applications, and astrophysical relevance of each PDE type.
 
 +++
+
+### Elliptic PDEs
+
+**Definition and Characteristics:**
+
+Elliptic PDEs are characterized by the absence of real characteristics, implying that the solution at any given point depends on the values of the solution in an entire surrounding region.
+These equations typically describe steady-state situations where there is no time dependence.
+
+The general second-order linear elliptic PDE in two variables can be written as:
+\begin{align}
+A \frac{\partial^2 u}{\partial x^2} + 2B \frac{\partial^2 u}{\partial x \partial y} + C \frac{\partial^2 u}{\partial y^2} + \text{lower order terms} = 0
+\end{align}
+where the discriminant $B^2 - AC < 0$, ensuring ellipticity.
+
+**Example: Laplace's Equation:**
+
+One of the most fundamental elliptic PDEs is Laplace's equation, given by:
+\begin{align}
+\nabla^2 u = 0
+\end{align}
+where $\nabla^2$ is the Laplacian operator.
+Laplace's equation arises in various contexts, including electrostatics, gravitational potentials, and incompressible fluid flow.
+
+**Physical Intuition and Applications:**
+
+Elliptic PDEs model phenomena where the state of the system is in equilibrium.
+Solutions to elliptic equations are generally smooth and exhibit no abrupt changes, reflecting the steady-state nature of the systems they describe.
+
+**Astrophysical Applications:**
+
+In astrophysics, Laplace's equation is used to model gravitational potentials in regions devoid of mass.
+For instance, the gravitational potential outside a spherically symmetric mass distribution can be described by Laplace's equation, facilitating the study of stellar and planetary structures.
+
++++
+
+#### Parabolic PDEs
+
+**Definition and Characteristics:**
+
+Parabolic PDEs are associated with diffusion-like processes and typically involve one temporal dimension and multiple spatial dimensions.
+They describe how a system evolves over time towards equilibrium.
+
+The general form of a second-order linear parabolic PDE in two variables is:
+\begin{align}
+\frac{\partial u}{\partial t} = A \frac{\partial^2 u}{\partial x^2} + B \frac{\partial u}{\partial x} + C u + \text{source terms}
+\end{align}
+with the discriminant $B^2 - 4AC = 0$.
+
+**Example: Heat Equation:**
+
+The quintessential parabolic PDE is the heat equation:
+\begin{align}
+\frac{\partial u}{\partial t} = \alpha \nabla^2 u
+\end{align}
+where $u$ represents temperature, and $\alpha$ is the thermal diffusivity of the material.
+
+**Physical Intuition and Applications:**
+
+Parabolic PDEs model processes where diffusion plays a central role, leading to the smoothing out of gradients over time.
+Solutions to parabolic equations typically show how an initial distribution evolves, gradually approaching a steady state.
+
+**Astrophysical Applications:**
+
+In astrophysics, parabolic PDEs are employed to model thermal conduction within stars.
+For example, the transport of heat from the core to the outer layers of a star can be described by the heat equation, aiding in the understanding of stellar evolution and energy distribution.
+
++++
+
+#### Hyperbolic PDEs
+
+**Definition and Characteristics:**
+
+Hyperbolic PDEs are associated with wave propagation and are characterized by the existence of real characteristics along which information travels.
+These equations typically involve both temporal and spatial derivatives and can model dynamic, time-dependent phenomena.
+
+The general form of a second-order linear hyperbolic PDE in two variables is:
+\begin{align}
+A \frac{\partial^2 u}{\partial t^2} + B \frac{\partial^2 u}{\partial t \partial x} + C \frac{\partial^2 u}{\partial x^2} + \text{lower order terms} = 0
+\end{align}
+where the discriminant $B^2 - 4AC > 0$, ensuring hyperbolicity.
+
+**Example – Wave Equation:**
+
+A fundamental example of a hyperbolic PDE is the wave equation:
+\begin{align}
+\frac{\partial^2 u}{\partial t^2} = c^2 \nabla^2 u
+\end{align}
+where $u$ represents the wave function, and $c$ is the wave speed.
+
+**Physical Intuition and Applications:**
+
+Hyperbolic PDEs model systems where disturbances propagate as waves, maintaining their shape over time.
+Solutions to hyperbolic equations exhibit finite propagation speeds and can describe phenomena such as sound waves, electromagnetic waves, and shock waves.
+
+**Astrophysical Applications:**
+
+In the astrophysical context, hyperbolic PDEs are essential for modeling wave phenomena in stellar oscillations and the propagation of shock waves in supernova explosions.
+Additionally, the Einstein Field Equations, which describe gravitational waves in general relativity, are a set of highly nonlinear hyperbolic PDEs.
+
++++
+
+### Physical Intuition Behind Each PDE Type
+
+Understanding the physical intuition behind each class of PDEs aids in selecting appropriate models and solution techniques for different phenomena:
+
+* **Elliptic PDEs** describe equilibrium states where the system is balanced, and there is no inherent time evolution. They are often used to determine steady-state distributions of physical quantities.
+
+* **Parabolic PDEs** capture the time-dependent evolution of systems towards equilibrium through diffusive processes. They are ideal for modeling heat conduction, mass diffusion, and similar phenomena.
+
+* **Hyperbolic PDEs** represent dynamic systems where disturbances propagate as waves. They are suited for modeling scenarios involving wave motion, vibrations, and other propagating phenomena.
+
++++
+
+### Examples of Physical Phenomena
+
+* **Elliptic PDEs:**
+  * **Electrostatic Potential:** Determined by Laplace's or Poisson's equation in regions without or with charge distributions, respectively.
+  * **Steady-State Fluid Flow:** Described by the incompressible Navier-Stokes equations under steady conditions.
+  
+* **Parabolic PDEs:**
+  * **Heat Conduction:** Governed by the heat equation, modeling temperature distribution over time.
+  * **Diffusion Processes:** Including the spread of pollutants in the atmosphere or solutes in a solvent.
+  
+* **Hyperbolic PDEs:**
+  * **Sound Waves:** Described by the acoustic wave equation, modeling pressure variations in a medium.
+  * **Electromagnetic Waves:** Governed by Maxwell's equations, which can be expressed as hyperbolic PDEs.
+  * **Gravitational Waves:** Modeled by the Einstein Field Equations in the context of general relativity.
+
++++ {"jp-MarkdownHeadingCollapsed": true}
 
 ## Non-Dimensionalization and Key Dimensionless Numbers (15 minutes)
 
@@ -451,7 +575,7 @@ PDEs are essential in modeling these systems, providing insights into their stru
 
 * How these numbers influence the behavior of physical systems.
 
-+++
++++ {"jp-MarkdownHeadingCollapsed": true}
 
 ## Numerical Techniques for Solving PDEs (25 minutes)
 
