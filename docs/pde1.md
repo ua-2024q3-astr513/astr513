@@ -103,11 +103,129 @@ The ability to solve these equations, either analytically or numerically, provid
 
 +++
 
-## Derivation of Fluid Dynamics Equations (25 minutes)
+## Derivation of Fluid Dynamics Equations
 
-* Finite Volume Perspective
-  * Overview of the finite volume method.
-  * Derivation of fundamental fluid dynamics equations from conservation laws.
+Understanding the fundamental equations that govern fluid motion is essential for both theoretical studies and practical applications in engineering and astrophysics.
+This section delves into the derivation of the primary fluid dynamics equations—namely, the Continuity, Momentum (Navier-Stokes), and Energy equations—using the integral forms of conservation laws and applying Green's and Stokes' theorems.
+Additionally, we explore an alternative derivation from the Boltzmann Equation using the Moment Method, providing a comprehensive foundation for modeling fluid behavior in various contexts, including complex astrophysical systems.
+
++++
+
+### Integral Forms of Conservation Laws
+
+Fluid dynamics is fundamentally rooted in the principles of conservation of mass, momentum, and energy.
+These principles can be expressed in their integral forms, which consider the behavior of fluid quantities within a finite control volume.
+
++++
+
+1. **Conservation of Mass (Continuity Equation):**
+
+   The integral form of the continuity equation states that the rate of change of mass within a control volume $V$ is equal to the net mass flux entering or leaving the volume through its boundary $\partial V$:
+   \begin{align}
+   \frac{d}{dt} \int_V \rho \, dV + \oint_{\partial V} \rho \mathbf{u} \cdot \mathbf{n} \, dS = 0
+   \end{align}
+   where:
+   * $\rho$ is the fluid density,
+   * $\mathbf{u}$ is the velocity field,
+   * $\mathbf{n}$ is the outward-pointing unit normal vector on $\partial V$.
+
++++
+
+2. **Conservation of Momentum (Navier-Stokes Equations):**
+
+   The integral form of the momentum conservation law accounts for the forces acting on the fluid within the control volume.
+   It can be expressed as:
+   \begin{align}
+   \frac{d}{dt} \int_V \rho \mathbf{u} \, dV + \oint_{\partial V} \rho \mathbf{u} (\mathbf{u} \cdot \mathbf{n}) \, dS = \oint_{\partial V} \mathbf{\Pi} \cdot \mathbf{n} \, dS + \int_V \rho \mathbf{f} \, dV
+   \end{align}
+   where:
+   * $\mathbf{\Pi}$ is the stress tensor,
+   * $\mathbf{f}$ represents body forces (e.g., gravity).
+
++++
+
+3. **Conservation of Energy:**
+
+   The integral form of the energy conservation law relates the rate of change of energy within the control volume to the net energy flux and work done by forces:
+   \begin{align}
+   \frac{d}{dt} \int_V \rho e \, dV + \oint_{\partial V} \rho e \mathbf{u} \cdot \mathbf{n} \, dS = \oint_{\partial V} \mathbf{q} \cdot \mathbf{n} \, dS + \oint_{\partial V} \mathbf{\Pi} \cdot \mathbf{u} \, dS + \int_V \rho \mathbf{f} \cdot \mathbf{u} \, dV
+   \end{align}
+   where:
+   - $e$ is the specific internal energy,
+   - $\mathbf{q}$ is the heat flux vector.
+
++++
+
+### From Integral to Differential Forms Using Green's and Stokes' Theorems
+
+To transition from the integral to the differential forms of these conservation laws, we employ Green's and Stokes' theorems, which relate volume integrals to surface integrals.
+
+The Divergence Theorem converts a volume integral of a divergence of a vector field into a surface integral over the boundary of the volume:
+\begin{align}
+\oint_{\partial V} \mathbf{F} \cdot \mathbf{n} \, dS = \int_V \nabla \cdot \mathbf{F} \, dV
+\end{align}
+
++++
+
+#### Application to Conservation of Mass
+
+Applying the Divergence Theorem to the continuity equation:
+\begin{align}
+\frac{d}{dt} \int_V \rho \, dV + \oint_{\partial V} \rho \mathbf{u} \cdot \mathbf{n} \, dS = 0 \quad 
+\Rightarrow \quad \frac{\partial \rho}{\partial t} + \nabla \cdot (\rho \mathbf{u}) = 0
+\end{align}
+
+This yields the **Continuity Equation** in differential form:
+\begin{align}
+\frac{\partial \rho}{\partial t} + \nabla \cdot (\rho \mathbf{u}) = 0
+\end{align}
+
++++
+
+#### Application to Conservation of Momentum
+
+Applying the Divergence Theorem to the momentum equation:
+\begin{align}
+\frac{d}{dt} \int_V \rho \mathbf{u} \, dV + \oint_{\partial V} \rho \mathbf{u} (\mathbf{u} \cdot \mathbf{n}) \, dS
+&= \oint_{\partial V} \mathbf{\Pi} \cdot \mathbf{n} \, dS + \int_V \rho \mathbf{f} \, dV\\
+\frac{\partial (\rho \mathbf{u})}{\partial t} + \nabla \cdot (\rho \mathbf{u} \otimes \mathbf{u})
+&= \nabla \cdot \mathbf{\Pi} + \rho \mathbf{f}
+\end{align}
+
+To obtain the **Navier-Stokes Equations**, we express the stress tensor $\mathbf{\Pi}$ for a Newtonian fluid:
+\begin{align}
+\mathbf{\Pi} = -p \mathbf{I} + \mu \left( \nabla \mathbf{u} + (\nabla \mathbf{u})^T \right) + \lambda (\nabla \cdot \mathbf{u}) \mathbf{I}
+\end{align}
+where:
+* $p$ is the pressure,
+* $\mu$ is the dynamic viscosity,
+* $\lambda$ is the second coefficient of viscosity,
+* $\mathbf{I}$ is the identity tensor.
+
+Substituting $\mathbf{\Pi}$ into the momentum equation and simplifying under the assumption of incompressible flow ($ \nabla \cdot \mathbf{u} = 0$) leads to:
+\begin{align}
+\rho \left( \frac{\partial \mathbf{u}}{\partial t} + (\mathbf{u} \cdot \nabla) \mathbf{u} \right) = -\nabla p + \mu \nabla^2 \mathbf{u} + \rho \mathbf{f}
+\end{align}
+
++++
+
+#### Application to Conservation of Energy
+
+Similarly, applying the Divergence Theorem to the energy equation:
+\begin{align}
+\frac{d}{dt} \int_V \rho e \, dV + \oint_{\partial V} \rho e \mathbf{u} \cdot \mathbf{n} \, dS 
+&= \oint_{\partial V} \mathbf{q} \cdot \mathbf{n} \, dS + \oint_{\partial V} \mathbf{\Pi} \cdot \mathbf{u} \, dS + \int_V \rho \mathbf{f} \cdot \mathbf{u} \, dV \\
+\frac{\partial (\rho e)}{\partial t} + \nabla \cdot (\rho e \mathbf{u}) 
+&= \nabla \cdot \mathbf{q} + \mathbf{\Pi} : \nabla \mathbf{u} + \rho \mathbf{f} \cdot \mathbf{u}
+\end{align}
+
+Assuming Fourier's law for heat conduction ($\mathbf{q} = -k \nabla T$) and substituting the expression for $ \mathbf{\Pi}$, we obtain the **Energy Equation** in differential form:
+\begin{align}
+\frac{\partial (\rho e)}{\partial t} + \nabla \cdot (\rho e \mathbf{u}) = \nabla \cdot (k \nabla T) + \Phi + \rho \mathbf{f} \cdot \mathbf{u}
+\end{align}
+where $\Phi$ represents the viscous dissipation function.
+
++++
 
 * From Boltzmann to Navier-Stokes
   * Boltzmann Equation Overview
