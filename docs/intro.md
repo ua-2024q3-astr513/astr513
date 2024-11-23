@@ -29,7 +29,7 @@ covers the "comoputation" part of the course, including:
 | Nov  4--Nov  8 | [](opt.md)                       | [](integration.md)                  |
 | Nov 11--Nov 15 | *Veterans Day (no class)*        | [](ode1.md)                         |
 | Nov 18--Nov 22 | [](ode2.md)                      | [](ode3.md)                         |
-| Nov 25--Nov 29 | Numerical PDE I: introduction    | Numerical PDE II: finite difference |
+| Nov 25--Nov 29 | [](pde1.md)                      | Numerical PDE II: finite difference |
 | Dec  2--Dec  6 | Numerical PDE III: finite volume | Numerical PDE IV: spectral methods  |
 | Dec  9--Dec 11 | Project presentations            | Project presentations               |
 
