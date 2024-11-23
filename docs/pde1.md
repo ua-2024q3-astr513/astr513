@@ -16,70 +16,98 @@ kernelspec:
 
 +++
 
-## Introduction to PDEs (15 minutes)
-- **What are PDEs?**
-  - Definition and importance in modeling continuous systems.
-  - Comparison with ordinary differential equations (ODEs).
-  - Examples of real-world applications:
-    - Fluid flow (Navier-Stokes).
-    - Heat transfer (diffusion equation).
-    - Wave propagation (wave equation).
-- **Classification of PDEs**:
-  - Elliptic: Laplace’s equation.
-  - Parabolic: Heat equation.
-  - Hyperbolic: Wave equation.
-  - Discuss the physical intuition behind each type.
+## Introduction to Partial Differential Equations (PDEs) (10 minutes)
+
+* What are PDEs?
+  
+* Definition and significance in modeling continuous systems.
+  
+* Contrast with Ordinary Differential Equations (ODEs).
 
 +++
 
-## Derivation of Fluid Dynamics Equations (15 minutes)
-- **From Boltzmann to Navier-Stokes**:
-  - Briefly introduce the Boltzmann equation.
-  - Use the moment method to derive:
-    - Continuity equation.
-    - Momentum equation.
-    - Energy equation.
-  - Emphasize the assumptions and physical meaning of terms (e.g., viscosity, pressure gradient).
-- **Significance of PDEs in Fluid Dynamics**:
-  - How these equations govern flows in real-world systems (e.g., airflow, ocean currents).
+## Derivation of Fluid Dynamics Equations (25 minutes)
+
+* Finite Volume Perspective
+  * Overview of the finite volume method.
+  * Derivation of fundamental fluid dynamics equations from conservation laws.
+
+* From Boltzmann to Navier-Stokes
+  * Boltzmann Equation Overview
+    * Introduction to the particle distribution function.
+  * Moment Method:
+    * Derivation of the Continuity Equation.
+    * Derivation of the Momentum Equation.
+    * Derivation of the Energy Equation.
+  * Assumptions & Physical Meaning
+  * Viscosity, pressure gradients, and other key terms.
+  * Limiting cases and their physical interpretations.
+
+* Significance in Fluid Dynamics
+
+* Role of PDEs in governing real-world flows (e.g., airflow, ocean currents).
+
++++
+
+## Classification of Partial Differential Equations (PDEs) (10 minutes)
+
+* Types of PDEs:
+  * Elliptic: Example – Laplace’s equation.
+  * Parabolic: Example – Heat equation.
+  * Hyperbolic: Example – Wave equation.
+
+* Physical Intuition
+
+* Understanding the nature and applications of each type.
+
+* Examples of physical phenomena governed by each class of PDEs.
 
 +++
 
 ## Non-Dimensionalization and Key Dimensionless Numbers (15 minutes)
-- **Why Non-Dimensionalization?**
-  - Simplifying equations for analysis.
-  - Identifying dominant physical effects in specific regimes.
-- **Key Dimensionless Numbers**:
-  - Reynolds Number $\text{Re}$: Ratio of inertial to viscous forces.
-  - Mach Number     $\text{Ma}$: Compressibility effects.
-  - Prandtl Number  $\text{Pr}$: Momentum vs. thermal diffusivity.
-  - Discuss their roles in determining the behavior of physical systems.
+
+* Purpose of Non-Dimensionalization
+  * Simplifying equations for analysis.
+  * Identifying dominant physical effects in specific regimes.
+
+* Key Dimensionless Numbers
+  * Reynolds Number (Re): Ratio of inertial to viscous forces.
+  * Mach Number (Ma): Compressibility effects.
+  * Prandtl Number (Pr): Ratio of momentum diffusivity to thermal diffusivity.
+
+* Applications
+
+* How these numbers influence the behavior of physical systems.
 
 +++
 
-## Numerical Techniques for Solving PDEs (30 minutes)
-- **Finite Difference Methods**:
-  - Forward Time Centered Space (FTCS):
-    - Formulation and its instability.
-  - von Neumann Stability Analysis:
-    - Define the amplification factor and analyze stability.
-- **Stabilized Methods**:
-  - Lax Method: Adding numerical dissipation.
-  - Courant-Friedrichs-Lewy (CFL) Condition: Ensuring stability.
-- **Comparison of Methods**:
-  - Highlight practical considerations for choosing a method (stability, accuracy, computational cost).
+## Numerical Techniques for Solving PDEs (25 minutes)
+
+* Finite Difference Methods (FDM)
+  * Forward Time Centered Space (FTCS):
+    * Formulation and inherent instability issues.
+  * Von Neumann Stability Analysis
+    * Defining the amplification factor.
+    * Stability criteria.
+  * Stabilized Methods
+    * Lax Method:
+      * Introduction of numerical dissipation for stability.
+    * Courant-Friedrichs-Lewy (CFL) Condition:
+      * Ensuring numerical stability through timestep restrictions.
+
+* Method Comparison
+  * Evaluating methods based on stability, accuracy, and computational cost.
+  * Practical considerations for method selection in various scenarios.
 
 +++
 
-## Practical Example: Heat Equation (15 minutes)
-- **1D Heat Equation**:
-  - Derive the equation $u_t = \alpha u_{xx}$ from conservation principles.
-  - Solve analytically using separation of variables.
-  - Discuss boundary and initial conditions.
-- **Numerical Solution**:
-  - Outline a basic finite difference implementation.
-  - Discuss the impact of the CFL condition.
+## Practical Example: The Heat Equation (5 minutes)
 
-```{code-cell} ipython3
+* 1D Heat Equation Overview
+  * Derivation from conservation principles: $u_t = \alpha u_{xx}$.
+  * Analytical solution using separation of variables.
+  * Discussion on boundary and initial conditions.
 
-```
+* Numerical Solution Approach
+  * Basic finite difference implementation steps.
+  * Impact and importance of adhering to the CFL condition for stability.
