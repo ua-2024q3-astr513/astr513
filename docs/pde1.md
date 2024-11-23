@@ -744,35 +744,162 @@ There is an arXiv paper on [this topic](https://arxiv.org/abs/2103.05784).
 * Applications
 * How these numbers influence the behavior of physical systems.
 
-+++ {"jp-MarkdownHeadingCollapsed": true}
++++
 
-## Numerical Techniques for Solving PDEs (25 minutes)
+## Numerical Techniques for Solving PDEs
 
-* Finite Difference Methods (FDM)
-  * Forward Time Centered Space (FTCS):
-    * Formulation and inherent instability issues.
-  * Von Neumann Stability Analysis
-    * Defining the amplification factor.
-    * Stability criteria.
-  * Stabilized Methods
-    * Lax Method:
-      * Introduction of numerical dissipation for stability.
-    * Courant-Friedrichs-Lewy (CFL) Condition:
-      * Ensuring numerical stability through timestep restrictions.
-
-* Method Comparison
-  * Evaluating methods based on stability, accuracy, and computational cost.
-  * Practical considerations for method selection in various scenarios.
+Solving Partial Differential Equations (PDEs) numerically is essential for modeling complex physical systems that lack closed-form analytical solutions.
+Among the various numerical methods available, Finite Difference Methods (FDM) are particularly popular due to their simplicity and ease of implementation.
+This section delves into the fundamentals of FDM, focusing on the Forward Time Centered Space (FTCS) scheme, and provides a practical Python example for solving the linear advection equation.
+Subsequent sections will explore stability analysis using Von Neumann methods and introduce stabilized methods to enhance numerical stability.
 
 +++
 
-## Practical Example: The Heat Equation (5 minutes)
+### Finite Difference Methods (FDM)
 
-* 1D Heat Equation Overview
-  * Derivation from conservation principles: $u_t = \alpha u_{xx}$.
-  * Analytical solution using separation of variables.
-  * Discussion on boundary and initial conditions.
+Finite Difference Methods approximate the derivatives in PDEs by using difference quotients on a discretized grid.
+This approach transforms continuous PDEs into discrete algebraic equations that can be solved iteratively.
+FDM is widely used in engineering and scientific computations due to its straightforward application to regular grids and its compatibility with existing numerical solvers.
 
-* Numerical Solution Approach
-  * Basic finite difference implementation steps.
-  * Impact and importance of adhering to the CFL condition for stability.
+**Forward Time Centered Space**
+
+The Forward Time Centered Space (FTCS) scheme is one of the simplest explicit finite difference methods used to solve time-dependent PDEs. It approximates the time derivative using a forward difference and the spatial derivatives using centered differences. While FTCS is easy to implement, it is conditionally stable, meaning that it requires adherence to specific stability criteria to prevent numerical oscillations and divergence.
+
+Consider the **linear advection equation**, a fundamental PDE that models the transport of a quantity $u$ with constant speed $c$:
+\begin{align}
+\frac{\partial u}{\partial t} + c \frac{\partial u}{\partial x} = 0
+\end{align}
+
+**Discretization:**
+
+Let $u_i^n$ denote the numerical approximation of $u$ at spatial index $i$ and time level $n$. The FTCS scheme discretizes the advection equation as follows:
+\begin{align}
+\frac{u_i^{n+1} - u_i^n}{\Delta t} + c \frac{u_{i+1}^n - u_{i-1}^n}{2 \Delta x} = 0
+\end{align}
+
+Solving for $u_i^{n+1}$:
+\begin{align}
+u_i^{n+1} = u_i^n - \frac{c \Delta t}{2 \Delta x} \left( u_{i+1}^n - u_{i-1}^n \right)
+\end{align}
+
+This explicit update rule allows the computation of the solution at the next time step based on the current and neighboring spatial points.
+
+```{code-cell} ipython3
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Parameters
+c = 1.0          # Advection speed
+L = 1.0          # Domain length
+T = 0.25         # Total time
+nx = 100         # Number of spatial points
+dx = L / nx      # Spatial step size
+dt = 0.001       # Initial time step size
+nt = int(T / dt) # Number of time steps
+
+# Stability parameter
+sigma = c * dt / dx
+print(sigma)
+
+# Spatial grid
+x = np.linspace(0, L, nx)
+u_initial = np.sin(2 * np.pi * x)  # Initial condition: sinusoidal wave
+
+# Initialize solution array
+u = u_initial.copy()
+
+# Time-stepping loop
+for n in range(nt):
+    # Apply periodic boundary conditions using np.roll
+    u_new = u - (c * dt / (2 * dx)) * (np.roll(u, -1) - np.roll(u, 1))
+    u = u_new
+
+# Analytical solution
+u_exact = np.sin(2 * np.pi * (x - c * T))
+
+# Plotting the results
+plt.figure(figsize=(12, 6))
+plt.plot(x, u_initial,      label='Initial Condition', linestyle='--')
+plt.plot(x, u_exact,        label='Exact Solution', linewidth=2)
+plt.plot(x, u,              label='FTCS Scheme', linestyle=':', linewidth=2)
+plt.xlabel('x')
+plt.ylabel('u')
+plt.legend()
+plt.grid(True)
+```
+
+#### Inherent Instability Issues
+
+While the FTCS scheme is straightforward, it is inherently unstable for the linear advection equation unless the time step $\Delta t$ and spatial step $\Delta x$ satisfy the Courant-Friedrichs-Lewy (CFL) condition.
+Failure to adhere to this condition can result in numerical oscillations that grow uncontrollably, leading to divergence of the solution.
+
+By adjusting the time step dt to satisfy the CFL condition, the FTCS scheme produces a stable solution that closely matches the exact analytical solution.
+If the CFL condition is violated (i.e., $\sigma > 1$), the numerical solution becomes unstable, exhibiting oscillations and diverging from the exact solution.
+This behavior underscores the importance of adhering to stability criteria when applying explicit finite difference schemes like FTCS.
+
++++
+
+## Von Neumann Stability Analysis
+
+Von Neumann Stability Analysis is a mathematical technique used to assess the stability of finite difference schemes applied to linear partial differential equations (PDEs).
+This method involves decomposing the numerical solution into Fourier modes and analyzing the growth or decay of these modes over time.
+If all Fourier modes remain bounded, the numerical scheme is considered stable. Otherwise, the scheme is unstable and may produce erroneous results.
+
+To perform Von Neumann Stability Analysis, we assume a solution of the form:
+\begin{align}
+u_i^n = G^n e^{ikx_i}
+\end{align}
+where:
+* $u_i^n$ is the numerical approximation of $u$ at spatial index $i$ and time level $n$.
+* $G$ is the **amplification factor**.
+* $k$ is the wave number.
+* $x_i = i \Delta x$ is the spatial position of the $i$-th grid point.
+
+The goal is to determine whether the magnitude of the amplification factor $|G|$ remains less than or equal to 1 for all possible wave numbers $k$.
+If $|G| \leq 1$ for all $k$, the numerical scheme is stable.
+
++++
+
+### Applying Von Neumann Analysis to the FTCS Scheme
+
+Consider the **Forward Time Centered Space (FTCS)** scheme applied to the linear advection equation:
+\begin{align}
+\frac{\partial u}{\partial t} + c \frac{\partial u}{\partial x} = 0
+\end{align}
+
+FTCS Update Rule:
+\begin{align}
+u_i^{n+1} = u_i^n - \frac{c \Delta t}{2 \Delta x} \left( u_{i+1}^n - u_{i-1}^n \right)
+\end{align}
+
+Assumed Solution:
+\begin{align}
+u_i^n = G^n e^{ikx_i}
+\end{align}
+
+Substituting into the FTCS Update Rule:
+\begin{align}
+G e^{ikx_i} = e^{ikx_i} - \frac{c \Delta t}{2 \Delta x} \left( e^{ikx_{i+1}} - e^{ikx_{i-1}} \right)
+\end{align}
+
+Simplify using $x_{i \pm 1} = x_i \pm \Delta x$:
+\begin{align}
+G = 1 - \frac{c \Delta t}{2 \Delta x} \left( e^{ik\Delta x} - e^{-ik\Delta x} \right)
+\end{align}
+
+Using Euler's formula $e^{i\theta} - e^{-i\theta} = 2i \sin(\theta)$:
+\begin{align}
+G = 1 - i \frac{c \Delta t}{\Delta x} \sin(k \Delta x) = 1 - i \sigma \sin(k \Delta x)
+\end{align}
+where $\sigma = c \Delta t/\Delta x$ is the **Courant number**.
+
+Calculating the Magnitude of $G$:
+\begin{align}
+|G|^2 = \left(1\right)^2 + \left(-\sigma \sin(k \Delta x)\right)^2 = 1 + \sigma^2 \sin^2(k \Delta x) > 1
+\end{align}
+
+Since $|G| > 1$ for any $\sigma > 0$, the FTCS scheme is inherently unstable for the linear advection equation.
+
++++
+
+In the next lecture, we will provide other (stable) numerical methods to solve the advection equation.
