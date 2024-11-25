@@ -641,7 +641,11 @@ Symplectic algorithms are a class of numerical integrators specifically designed
 ### Introduction to Hamiltonian Systems
 
 A Hamiltonian system is a type of dynamical system governed by Hamilton's equations, which describe the evolution of a system in terms of its coordinates and conjugate momenta.
-Formally, for a system with generalized coordinates $q$ and conjugate momenta $p$, the Hamiltonian $H(q, p, t)$ represents the total energy of the system (kinetic plus potential energy).
+Formally, for a system with generalized coordinates $q$ and conjugate momenta $p$, the Hamiltonian
+\begin{align}
+H(q, p, t) = T(p) + V(q, t)
+\end{align}
+represents the total energy of the system (kinetic $T$ plus potential energy $V$).
 
 Hamilton's equations are given by:
 \begin{align}
@@ -723,7 +727,7 @@ Symplectic integrators possess several properties that make them particularly su
 * Implicit vs. Explicit Symplectic Methods
   * Symplectic Euler (Implicit and Explicit Variants): The Symplectic Euler method comes in both implicit and explicit forms.
     The implicit variant offers better stability properties but requires solving equations at each step, while the explicit variant is simpler but less stable.
-  * Verlet Integration: A widely used symplectic integrator in molecular dynamics and celestial simulations, known for its simplicity, second-order accuracy, and excellent energy conservation properties.
+  * Leapfrog/Verlet Integration: A widely used symplectic integrator in molecular dynamics and celestial simulations, known for its simplicity, second-order accuracy, and excellent energy conservation properties.
 
 +++
 
@@ -898,7 +902,7 @@ It preserves the symplectic structure, ensuring bounded energy errors.
 It is also time-reversible, ensuring stable and accurate long-term simulations.
 
 ```{code-cell} ipython3
-# Velocity Verlet Method
+# Leapfrog/Verlet Method
 def leapfrog(q0, p0, t0, tf, dt, m=1, k=1):
     T = np.arange(t0, tf + dt, dt)
     Q = np.zeros(len(T))
@@ -921,7 +925,7 @@ def leapfrog(q0, p0, t0, tf, dt, m=1, k=1):
 # Initial momentum
 p0 = 0.0
 
-# Solve using Velocity Verlet
+# Solve using Leapfrog/Verlet
 T_lf, Q_lf, P_lf = leapfrog(q0, p0, t0, tf, dt)
 
 # Plotting
@@ -1022,5 +1026,5 @@ When implementing symplectic integrators, several practical considerations ensur
 * Handling Nonlinear Forces: For systems with nonlinear potentials $V(q)$, implicit symplectic integrators may require solving nonlinear equations at each step, increasing computational complexity.
 * Combining with Other Techniques: Symplectic integrators can be combined with adaptive time-stepping or other numerical techniques to enhance their performance in complex systems.
 
-Symplectic integrators, such as the Symplectic Euler and Velocity Verlet methods, play a crucial role in the numerical integration of Hamiltonian systems.
+Symplectic integrators, such as the Symplectic Euler and Leapfrog/Verlet methods, play a crucial role in the numerical integration of Hamiltonian systems.
 Their ability to preserve the symplectic structure ensures that essential conservation laws, like energy conservation and phase-space volume preservation, are maintained over long simulations. This preservation leads to more accurate and stable solutions, particularly in systems where traditional explicit methods falter due to energy drift and instability.

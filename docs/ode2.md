@@ -314,6 +314,7 @@ By doing so, it maintains the balance between computational efficiency and the p
 It is obvious that there are multiple ways to advance an ODE system with $2\Delta t$:
 1. Step the ODE system with a single step $\Delta t' = 2\Delta t$.
 2. Step the ODE system with two steps, each step is $\Delta t$.
+
 The error of these two approaches are different.
 For a 4th-order algorithm, they are:
 \begin{align}
