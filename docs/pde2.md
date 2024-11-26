@@ -217,6 +217,106 @@ This implies that the **Upwind Scheme** is **stable** provided that the Courant 
 
 +++
 
+### Modified Equation Analysis
+
+While Von Neumann Stability Analysis provides insights into the stability of numerical schemes, **Modified Equation Analysis** delves deeper by examining the leading-order truncation errors introduced by discretization.
+This analysis reveals how numerical schemes can inadvertently introduce artificial diffusion or dispersion into the solution.
+
+To determine how the Upwind Scheme modifies the original advection equation by introducing additional terms that represent numerical errors.
+
++++
+
+1. **Express the Upwind Scheme Using Taylor Series Expansions**
+
+   Start with the upwind update equation:
+   \begin{align}
+   u_i^{n+1} = u_i^n - \sigma \left( u_i^n - u_{i-1}^n \right),
+   \end{align}
+   in addition to the grid point that we want to update, $u_i^n$, there are two additional grid points.
+   They are $u_i^{n+1}$ and $u_{i-1}^n$.
+
+   Expand $u_i^{n+1}$ and $u_{i-1}^n$ around the point $(x_i, t^n)$ using Taylor series:
+   \begin{align}
+   u_i^{n+1} &= u(x_i, t^n) + \Delta t \left.\frac{\partial u}{\partial t}\right|_{x=x_i,t=t_n} + \frac{\Delta t^2}{2} \left.\frac{\partial^2 u}{\partial t^2}\right|_{x=x_i,t=t_n} + \mathcal{O}(\Delta t^3) \\
+   u_{i-1}^n &= u(x_i, t^n) - \Delta x \left.\frac{\partial u}{\partial x}\right|_{x=x_i,t=t_n} + \frac{\Delta x^2}{2} \left.\frac{\partial^2 u}{\partial x^2}\right|_{x=x_i,t=t_n} + \mathcal{O}(\Delta x^3)
+   \end{align}
+
+   Using the shorthands $\dot{u} \equiv \partial u/\partial t$ and $u' \equiv \partial u/partial x$, the above series can be written as
+   \begin{align}
+   u_i^{n+1} &= u_i^n + \Delta t\,\dot{u}_i^n + \frac{\Delta t^2}{2}\,\ddot{u}_i^n + \mathcal{O}(\Delta t^3) \\
+   u_{i-1}^n &= u_i^n - \Delta x\,{u'   }_i^n + \frac{\Delta x^2}{2}\,{u''   }_i^n + \mathcal{O}(\Delta x^3)
+   \end{align}
+
++++
+
+2. **Substitute the Taylor Expansions into the Upwind Scheme**
+
+   Substitute the expansions into the upwind update equation:
+   \begin{align}
+   u_i^n + \Delta t\,\dot{u}_i^n + \frac{\Delta t^2}{2}\,\ddot{u}_i^n = u_i^n - \sigma \left[ u_i^n - \left( u_i^n - \Delta x\,{u'}_i^n + \frac{\Delta x^2}{2}\,{u''}_i^n \right) \right]
+   \end{align}
+
+   Because the derivatives are exact (instead of numerical), we can drop the functions' evaluations at the dicrete points $x_i$ and $t_n$. Simplify the equation, we have:
+   \begin{align}
+   \Delta t \frac{\partial u}{\partial t} + \frac{\Delta t^2}{2} \frac{\partial^2 u}{\partial t^2} = -\sigma \left( \Delta x \frac{\partial u}{\partial x} - \frac{\Delta x^2}{2} \frac{\partial^2 u}{\partial x^2} \right)
+   \end{align}
+
++++
+
+3. **Rearrange and Substitute the Original PDE**
+
+   Taking the spatial and temporal derivatives of the original advection equation $\partial u/\partial t = -c \partial u/\partial x$, we have
+   \begin{align}
+   \frac{\partial^2 u}{\partial t^2} = -c \frac{\partial^2 u}{\partial x\partial t}, \quad
+   \frac{\partial^2 u}{\partial t\partial x} = -c \frac{\partial^2 u}{\partial x^2}
+   \end{align}
+   Combine, we obtain the two-way wave equation:
+   \begin{align}
+   \frac{\partial^2 u}{\partial t^2} = c^2 \frac{\partial^2 u}{\partial x^2}.
+   \end{align}
+
+   Substituting the wave equation into the modified equation, we obtain:
+   \begin{align}
+   \Delta t \frac{\partial u}{\partial t} + \frac{c^2\Delta t^2}{2} \frac{\partial^2 u}{\partial x^2}
+   = -\sigma \left( \Delta x \frac{\partial u}{\partial x} - \frac{\Delta x^2}{2} \frac{\partial^2 u}{\partial x^2} \right).
+   \end{align}
+
++++
+
+4. **Combine Like Terms**
+
+   Put back the definition of $\sigma$ and rearrange,
+   \begin{align}
+   \frac{\partial u}{\partial t} + \frac{c^2\Delta t}{2} \frac{\partial^2 u}{\partial x^2}
+   &= -c \left( \frac{\partial u}{\partial x} - \frac{\Delta x}{2} \frac{\partial^2 u}{\partial x^2} \right) \\
+   \frac{\partial u}{\partial t} +c \frac{\partial u}{\partial x}
+   &= \frac{c}{2} (\Delta x - c\Delta t) \frac{\partial^2 u}{\partial x^2}
+   \end{align}
+
+   Define $\nu_\text{upwind} \equiv (\Delta x - c\Delta t) c / 2$ be the **numerical diffusion coefficient**, the above equation reduces to
+   \begin{align}
+   \frac{\partial u}{\partial t} +c \frac{\partial u}{\partial x} = \nu_\text{upwind} \frac{\partial^2 u}{\partial x^2}.
+   \end{align}
+
++++
+
+The **Modified Equation Analysis** reveals that the Upwind Scheme introduces an artificial diffusion term proportional to $\Delta x - c \Delta t$.
+This numerical diffusion acts to smooth out sharp gradients in the solution, which can be beneficial in suppressing non-physical oscillations that may arise from discretization errors.
+By damping these oscillations, the scheme enhances the overall stability of the numerical solution, ensuring that the simulation remains free from erratic and unrealistic fluctuations.
+
+However, this introduction of numerical diffusion comes with a trade-off in accuracy.
+While the diffusion helps stabilize the solution, it also has the unintended effect of smearing out important features such as sharp interfaces or discontinuities within the advected quantity $u$.
+This attenuation can lead to a loss of fidelity in capturing precise wavefronts or shock formations, which are critical in accurately modeling phenomena like shock waves in fluid dynamics.
+Consequently, while the Upwind Scheme mitigates instability, it may compromise the sharpness and detail of the solution where high accuracy is required.
+
+Furthermore, the Modified Equation Analysis reinforces the critical importance of adhering to the Courant-Friedrichs-Lewy (CFL) condition $\sigma \leq 1$.
+Satisfying this condition is not only essential for maintaining the stability of the numerical scheme but also plays a pivotal role in controlling the extent of artificial diffusion introduced by the Upwind Scheme.
+When the CFL condition is violated ($\sigma > 1$), not only does the numerical scheme become unstable, leading to divergent and oscillatory solutions, but the altered modified equation exacerbates the artificial diffusion.
+This excessive diffusion further degrades the solution quality, making it increasingly inaccurate and unreliable.
+Therefore, ensuring that the CFL condition is satisfied is paramount in balancing stability and accuracy, enabling the Upwind Scheme to perform optimally without introducing significant numerical artifacts.
+
++++
+
 ## Non-Dimensionalization and Key Dimensionless Numbers
 
 Non-dimensionalization is a fundamental technique in the analysis of partial differential equations (PDEs) and fluid dynamics.
