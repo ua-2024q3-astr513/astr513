@@ -12,7 +12,7 @@ kernelspec:
   name: python3
 ---
 
-# Numerical Partial Differential Equation I: introduction
+# Numerical Partial Differential Equation I: Introduction
 
 +++
 
@@ -87,7 +87,7 @@ While both PDEs and ODEs involve differential operators, the key difference lies
 ### Application in Astrophysical Fluid Systems
 
 PDEs play a pivotal role in modeling complex astrophysical phenomena, particularly those involving fluid dynamics.
-Astrophysical fluid systems, such as stellar interiors, accretion disks around black holes, and interstellar gas clouds, exhibit intricate behaviors governed by the laws of fluid mechanics and thermodynamics. 
+Astrophysical fluid systems, such as stellar interiors, accretion disks around black holes, and interstellar gas clouds, exhibit intricate behaviors governed by the laws of fluid mechanics and thermodynamics.
 
 For example, the **Euler Equations** for inviscid flow and the **Magnetohydrodynamic (MHD) Equations** for conducting fluids are essential in understanding phenomena like solar flares and the dynamics of the interstellar medium.
 These equations are inherently PDEs due to the multi-dimensional and time-dependent nature of the systems they describe.
@@ -171,7 +171,7 @@ The Divergence Theorem converts a volume integral of a divergence of a vector fi
 
 Applying the Divergence Theorem to the continuity equation:
 \begin{align}
-\frac{d}{dt} \int_V \rho \, dV + \oint_{\partial V} \rho \mathbf{u} \cdot \mathbf{n} \, dS = 0 \quad 
+\frac{d}{dt} \int_V \rho \, dV + \oint_{\partial V} \rho \mathbf{u} \cdot \mathbf{n} \, dS = 0 \quad
 \Rightarrow \quad \frac{\partial \rho}{\partial t} + \nabla \cdot (\rho \mathbf{u}) = 0
 \end{align}
 
@@ -213,9 +213,9 @@ Substituting $\mathbf{\Pi}$ into the momentum equation and simplifying under the
 
 Similarly, applying the Divergence Theorem to the energy equation:
 \begin{align}
-\frac{d}{dt} \int_V \rho e \, dV + \oint_{\partial V} \rho e \mathbf{u} \cdot \mathbf{n} \, dS 
+\frac{d}{dt} \int_V \rho e \, dV + \oint_{\partial V} \rho e \mathbf{u} \cdot \mathbf{n} \, dS
 &= \oint_{\partial V} \mathbf{q} \cdot \mathbf{n} \, dS + \oint_{\partial V} \mathbf{\Pi} \cdot \mathbf{u} \, dS + \int_V \rho \mathbf{f} \cdot \mathbf{u} \, dV \\
-\frac{\partial (\rho e)}{\partial t} + \nabla \cdot (\rho e \mathbf{u}) 
+\frac{\partial (\rho e)}{\partial t} + \nabla \cdot (\rho e \mathbf{u})
 &= \nabla \cdot \mathbf{q} + \mathbf{\Pi} : \nabla \mathbf{u} + \rho \mathbf{f} \cdot \mathbf{u}
 \end{align}
 
@@ -285,27 +285,27 @@ These moments collectively yield the **Navier-Stokes Equations**, providing a co
 Several key assumptions underpin the derivation of the Navier-Stokes equations, simplifying the complex interactions within a fluid to make the equations tractable:
 
 1. **Continuum Hypothesis:**
-   
+
    Assumes that fluid properties such as density and velocity are continuously distributed in space.
    This is valid when the mean free path of particles is much smaller than the characteristic length scales of interest.
 
 2. **Newtonian Fluid:**
-   
+
    Assumes that the stress tensor $\mathbf{\Pi}$ is linearly related to the strain rate tensor.
    This implies that the fluid's viscosity is constant and that the relationship between shear stress and strain rate is proportional.
 
 4. **Local Thermodynamic Equilibrium:**
-   
+
    Assumes that the distribution function $f$ is close to the Maxwell-Boltzmann distribution, allowing for the expansion of $f$ in terms of small deviations.
    This ensures that macroscopic quantities like temperature and pressure are well-defined locally.
 
 5. **Negligible External Forces:**
-   
+
    Often, body forces $\mathbf{f}$ such as gravity are considered constant or negligible compared to other forces.
    In cases where external forces are significant, they are incorporated explicitly into the momentum and energy equations.
 
 6. **Incompressible Flow:**
-   
+
    For many practical applications, especially at low Mach numbers, the fluid is assumed to be incompressible ($\nabla \cdot \mathbf{u} = 0$).
    This simplifies the continuity equation and decouples the pressure from the density.
 
@@ -314,17 +314,17 @@ Several key assumptions underpin the derivation of the Navier-Stokes equations, 
 #### Viscosity, Pressure Gradients, and Other Key Terms
 
 - **Pressure Gradient ($-\nabla p$):**
-  
+
   Represents the force per unit volume exerted by pressure differences within the fluid.
   It drives the fluid from regions of high pressure to low pressure, influencing the acceleration and direction of flow.
 
 - **Viscous Terms ($\mu \nabla^2 \mathbf{u}$):**
-  
+
   Account for internal friction due to the fluid's viscosity, which resists deformation and dissipates kinetic energy into thermal energy.
   Viscosity is a measure of a fluid's resistance to shear or flow.
 
 - **Body Forces ($\rho \mathbf{f}$):**
-  
+
   Represent external forces acting on the fluid, such as gravity or electromagnetic forces.
   These forces can influence the overall motion and stability of the fluid flow.
 
@@ -337,20 +337,20 @@ These terms collectively describe the balance between inertial forces, pressure 
 Analyzing the Navier-Stokes equations under different assumptions and limiting cases provides deeper insights into fluid behavior:
 
 1. **Inviscid Flow (Euler Equations):**
-   
-   By setting viscosity $\mu = 0$, the Navier-Stokes equations reduce to the Euler equations:   
+
+   By setting viscosity $\mu = 0$, the Navier-Stokes equations reduce to the Euler equations:
    \begin{align}
    \rho \left( \frac{\partial \mathbf{u}}{\partial t} + (\mathbf{u} \cdot \nabla) \mathbf{u} \right) = -\nabla p + \rho \mathbf{f}
    \end{align}
    These equations describe ideal, non-viscous fluid flow and are applicable in scenarios where viscous effects are negligible, such as high Reynolds number flows.
 
 2. **Steady-State Flow:**
-   
+
    Assuming no temporal changes ($\frac{\partial}{\partial t} = 0$), the equations describe steady-state conditions where fluid properties remain constant over time.
    This simplification is useful in analyzing flows that have reached equilibrium.
 
 4. **Laminar vs. Turbulent Flow:**
-   
+
    * **Laminar Flow:** Occurs at low Reynolds numbers where viscous forces dominate, resulting in smooth, orderly fluid motion.
    * **Turbulent Flow:** Arises at high Reynolds numbers where inertial forces prevail, leading to chaotic and eddying fluid motion.
 
@@ -371,20 +371,20 @@ Partial Differential Equations (PDEs) like the Navier-Stokes equations encapsula
 These equations enable the simulation and analysis of fluid flows in various contexts:
 
 * **Atmospheric Sciences:**
-  
+
   PDEs model weather patterns, climate dynamics, and the movement of air masses, aiding in weather forecasting and climate modeling.
 
 * **Oceanography:**
-  
+
   They describe ocean currents, wave dynamics, and the mixing of different water masses, contributing to the understanding of marine ecosystems and global climate.
 
 * **Engineering Applications:**
-  
+
   In aerospace engineering, PDEs are used to design and optimize aircraft and spacecraft by simulating airflow around structures.
   In civil engineering, they aid in modeling the flow of water in pipes and channels.
 
 * **Astrophysics:**
-  
+
   PDEs are indispensable for modeling the behavior of astrophysical fluids under extreme conditions, such as those found in stellar interiors, accretion disks, and interstellar gas clouds.
 
 +++
@@ -395,27 +395,27 @@ Astrophysical systems often involve complex fluid dynamics under extreme conditi
 PDEs are essential in modeling these systems, providing insights into their structure, evolution, and behavior.
 
 1. **Stellar Interiors:**
-   
+
    The interiors of stars involve convective and radiative energy transport, described by the Navier-Stokes equations coupled with the heat equation.
    These models help in understanding stellar structure, energy generation, and evolution.
 
 2. **Accretion Disks:**
-   
+
    Around compact objects like black holes and neutron stars, accretion disks form as matter spirals inward.
    PDEs model the fluid dynamics, angular momentum transport, and radiation processes within these disks, crucial for explaining phenomena like quasars and X-ray binaries.
 
 3. **Interstellar Medium (ISM):**
-   
+
    The ISM consists of gas and dust influenced by gravitational, magnetic, and thermal forces.
    Magnetohydrodynamic (MHD) equations, a set of PDEs, describe the behavior of conducting fluids in the ISM, aiding in the study of star formation, supernova remnants, and galactic dynamics.
 
 4. **Gravitational Waves:**
-   
+
    The propagation of gravitational waves, ripples in spacetime caused by massive astrophysical events, is described by the Einstein Field Equations, which are highly complex nonlinear PDEs.
    Numerical solutions to these equations are essential for predicting gravitational wave signatures detected by observatories like LIGO and Virgo.
 
 5. **Supernova Explosions:**
-   
+
    The explosive death of massive stars involves shock waves, turbulence, and nuclear reactions, all governed by fluid dynamics PDEs.
    Modeling these processes is crucial for understanding the distribution of heavy elements and the dynamics of supernova remnants.
 
@@ -548,11 +548,11 @@ Understanding the physical intuition behind each class of PDEs aids in selecting
 * **Elliptic PDEs:**
   * **Electrostatic Potential:** Determined by Laplace's or Poisson's equation in regions without or with charge distributions, respectively.
   * **Steady-State Fluid Flow:** Described by the incompressible Navier-Stokes equations under steady conditions.
-  
+
 * **Parabolic PDEs:**
   * **Heat Conduction:** Governed by the heat equation, modeling temperature distribution over time.
   * **Diffusion Processes:** Including the spread of pollutants in the atmosphere or solutes in a solvent.
-  
+
 * **Hyperbolic PDEs:**
   * **Sound Waves:** Described by the acoustic wave equation, modeling pressure variations in a medium.
   * **Electromagnetic Waves:** Governed by Maxwell's equations, which can be expressed as hyperbolic PDEs.
@@ -791,10 +791,10 @@ import matplotlib.pyplot as plt
 # Parameters
 c = 1.0          # Advection speed
 L = 1.0          # Domain length
-T = 0.25         # Total time
+T = 5.0          # Total time
 nx = 100         # Number of spatial points
 dx = L / nx      # Spatial step size
-dt = 0.001       # Initial time step size
+dt = 0.0001       # Initial time step size
 nt = int(T / dt) # Number of time steps
 
 # Stability parameter
