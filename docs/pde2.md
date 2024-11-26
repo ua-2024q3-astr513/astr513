@@ -64,9 +64,9 @@ u_exact = np.sin(2 * np.pi * (x - c * T))
 
 # Plotting the results
 plt.figure(figsize=(12, 6))
-plt.plot(x, u_initial,      label='Initial Condition', linestyle='--')
-plt.plot(x, u_exact,        label='Exact Solution', linewidth=2)
-plt.plot(x, u,              label='FTCS Scheme', linestyle=':', linewidth=2)
+plt.plot(x, u_initial, label='Initial Condition', linestyle='--')
+plt.plot(x, u_exact,   label='Exact Solution', linewidth=2)
+plt.plot(x, u,         label='FTCS Scheme', linestyle=':', linewidth=2)
 plt.xlabel('x')
 plt.ylabel('u')
 plt.legend()
@@ -112,6 +112,8 @@ where:
 The following Python code implements the upwind scheme to solve the linear advection equation for a sinusoidal initial condition.
 
 ```{code-cell} ipython3
+import warnings
+
 # Parameters
 c = 1.0          # Advection speed
 L = 1.0          # Domain length
@@ -127,7 +129,7 @@ print(f"Courant number (sigma): {sigma}")
 
 # Check CFL condition
 if sigma > 1:
-    raise ValueError(f"CFL condition violated: sigma = {sigma} > 1. Please reduce dt or increase dx.")
+    warnings.warn(f"CFL condition violated: sigma = {sigma} > 1. Please reduce dt or increase dx.")
 
 # Spatial grid
 x = np.linspace(0, L, nx, endpoint=False)
@@ -147,12 +149,11 @@ u_exact = np.sin(2 * np.pi * (x - c * T))
 
 # Plotting the results
 plt.figure(figsize=(12, 6))
-plt.plot(x, u_initial,      label='Initial Condition', linestyle='--')
-plt.plot(x, u_exact,        label='Exact Solution', linewidth=2)
-plt.plot(x, u,              label='Upwind Scheme', linestyle=':', linewidth=2)
+plt.plot(x, u_initial, label='Initial Condition', linestyle='--')
+plt.plot(x, u_exact,   label='Exact Solution', linewidth=2)
+plt.plot(x, u,         label='Upwind Scheme', linestyle=':', linewidth=2)
 plt.xlabel('x')
 plt.ylabel('u')
-plt.title('Linear Advection Equation: Upwind Scheme vs Exact Solution')
 plt.legend()
 plt.grid(True)
 ```
