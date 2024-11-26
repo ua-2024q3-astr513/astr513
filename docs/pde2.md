@@ -46,7 +46,7 @@ nt = int(T / dt) # Number of time steps
 
 # Stability parameter
 sigma = c * dt / dx
-print(sigma)
+print(f"Courant number (sigma): {sigma}")
 
 # Spatial grid
 x = np.linspace(0, L, nx)
@@ -458,7 +458,53 @@ Simplify the equation to isolate $u_i^{n+1}$, we obtain the **Lax-Wendroff Schem
 u_i^{n+1} = u_i^n - \frac{c \Delta t}{2 \Delta x} (u_{i+1}^n - u_{i-1}^n) + \frac{c^2 \Delta t^2}{2 \Delta x^2} (u_{i+1}^n - 2u_i^n + u_{i-1}^n)
 \end{align}
 
-+++
+```{code-cell} ipython3
+# Parameters
+c = 1.0          # Advection speed
+L = 1.0          # Domain length
+T = 1.25         # Total time
+nx = 100         # Number of spatial points
+dx = L / nx      # Spatial step size
+dt = 0.005       # Time step size
+nt = int(T / dt) # Number of time steps
+
+# Courant number
+sigma = c * dt / dx
+print(f"Courant number (sigma): {sigma}")
+
+# Stability condition (for Lax-Wendroff, no strict CFL condition, but accuracy improves with sigma <=1)
+if sigma > 1:
+    warnings.warn(f"Courant number sigma = {sigma} > 1. Accuracy may decrease.")
+
+# Spatial grid
+x = np.linspace(0, L, nx, endpoint=False)
+u_initial = np.sin(2 * np.pi * x)  # Initial condition: sinusoidal wave
+
+# Initialize solution array
+u = u_initial.copy()
+
+# Time-stepping loop using Lax-Wendroff scheme
+for n in range(nt):
+    u_new = np.zeros_like(u)
+    for i in range(nx):
+        u_new[i] = (u[i] 
+                    - 0.5 * sigma    * (u[(i+1)%nx] -          u[(i-1)%nx])
+                    + 0.5 * sigma**2 * (u[(i+1)%nx] - 2*u[i] + u[(i-1)%nx]))
+    u = u_new
+
+# Analytical solution
+u_exact = np.sin(2 * np.pi * (x - c * T))
+
+# Plotting the results
+plt.figure(figsize=(12, 6))
+plt.plot(x, u_initial, label='Initial Condition', linestyle='--')
+plt.plot(x, u_exact,   label='Exact Solution', linewidth=2)
+plt.plot(x, u,         label='Lax-Wendroff Scheme', linestyle=':', linewidth=2)
+plt.xlabel('x')
+plt.ylabel('u')
+plt.legend()
+plt.grid(True)
+```
 
 ## Non-Dimensionalization and Key Dimensionless Numbers
 
