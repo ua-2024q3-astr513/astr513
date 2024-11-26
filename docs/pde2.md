@@ -16,6 +16,76 @@ kernelspec:
 
 +++
 
+In the previous section, we explored the **Forward Time Centered Space (FTCS)** scheme, a fundamental explicit finite difference method for solving the linear advection equation:
+\begin{align}
+\frac{\partial u}{\partial t} + c \frac{\partial u}{\partial x} = 0
+\end{align}
+
+The FTCS scheme approximates the time derivative using a forward difference and the spatial derivatives using centered differences.
+\begin{align}
+u_i^{n+1} = u_i^n - \frac{c \Delta t}{2 \Delta x} \left( u_{i+1}^n - u_{i-1}^n \right)
+\end{align}
+
+While straightforward to implement, the FTCS method is unconditionally unstable.
+We also provided some Python code to demonstrate the application of the FTCS scheme to a sinusoidal initial condition:
+
+```{code-cell} ipython3
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Parameters
+c = 1.0          # Advection speed
+L = 1.0          # Domain length
+T = 0.25         # Total time
+nx = 100         # Number of spatial points
+dx = L / nx      # Spatial step size
+dt = 0.0025      # Initial time step size
+nt = int(T / dt) # Number of time steps
+
+# Stability parameter
+sigma = c * dt / dx
+print(sigma)
+
+# Spatial grid
+x = np.linspace(0, L, nx)
+u_initial = np.sin(2 * np.pi * x)  # Initial condition: sinusoidal wave
+
+# Initialize solution array
+u = u_initial.copy()
+
+# Time-stepping loop
+for n in range(nt):
+    # Apply periodic boundary conditions using np.roll
+    u_new = u - (c * dt / (2 * dx)) * (np.roll(u, -1) - np.roll(u, 1))
+    u = u_new
+
+# Analytical solution
+u_exact = np.sin(2 * np.pi * (x - c * T))
+
+# Plotting the results
+plt.figure(figsize=(12, 6))
+plt.plot(x, u_initial,      label='Initial Condition', linestyle='--')
+plt.plot(x, u_exact,        label='Exact Solution', linewidth=2)
+plt.plot(x, u,              label='FTCS Scheme', linestyle=':', linewidth=2)
+plt.xlabel('x')
+plt.ylabel('u')
+plt.legend()
+plt.grid(True)
+```
+
+The simulation results illustrate how the FTCS scheme evolves the initial sinusoidal wave over time.
+However, due to its unconditional stability, numerical instability always occur.
+
+To overcome the limitations of the FTCS scheme, we introduce two more robust finite difference methods:
+the Upwind Scheme and the Lax-Wendroff Scheme.
+These methods enhance stability and accuracy, making them more suitable for solving advection-dominated problems.
+
+```{code-cell} ipython3
+
+```
+
++++ {"jp-MarkdownHeadingCollapsed": true}
+
 ## Non-Dimensionalization and Key Dimensionless Numbers
 
 Non-dimensionalization is a fundamental technique in the analysis of partial differential equations (PDEs) and fluid dynamics.
