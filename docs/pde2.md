@@ -514,23 +514,6 @@ This section explores the purpose of non-dimensionalization, introduces key dime
 
 +++
 
-## Non-Dimensionalization and Key Dimensionless Numbers (15 minutes)
-
-* Purpose of Non-Dimensionalization
-  * Simplifying equations for analysis.
-  * Identifying dominant physical effects in specific regimes.
-
-* Key Dimensionless Numbers
-
-  * Reynolds Number (Re): Ratio of inertial to viscous forces.
-  * Mach Number (Ma): Compressibility effects.
-  * Prandtl Number (Pr): Ratio of momentum diffusivity to thermal diffusivity.
-
-* Applications
-* How these numbers influence the behavior of physical systems.
-
-+++
-
 ### Purpose of Non-Dimensionalization
 
 Non-dimensionalization serves several critical purposes in the analysis and solution of PDEs:
