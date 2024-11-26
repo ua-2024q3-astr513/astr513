@@ -530,7 +530,7 @@ where $\sigma = c \Delta t/\Delta x$ is again the **Courant number**.
 
 +++
 
-Using trigonometry identities, we can write:
+Using double-angle identities $\sin(2A) = 2 \sin A \cos A$ and $\cos(2A) = 1 - 2\sin^2 A$, the above equation can be rewritten as:
 \begin{align}
 G = 1 - i \sigma \left[2\sin\left(\frac{k\Delta x}{2}\right)\cos\left(\frac{k\Delta x}{2}\right)\right]
 - \sigma^2 \left[2 \sin^2\left(\frac{k\Delta x}{2}\right)\right]
@@ -540,7 +540,10 @@ Galculate the magnitude squared of $G$:
 \begin{align}
 |G|^2 
 &= \left[1 - 2\sigma^2\sin^2\left(\frac{k\Delta x}{2}\right)\right]^2
-+ 4\sigma^2\sin^2\left(\frac{k\Delta x}{2}\right) \cos^2\left(\frac{k\Delta x}{2}\right) = 1
++ 4\sigma^2\sin^2\left(\frac{k\Delta x}{2}\right) \cos^2\left(\frac{k\Delta x}{2}\right) \\
+&= 1 + 4 \sigma^4 \sin^4\left(\frac{k\Delta x}{2}\right)  + 4 \sigma^2 \sin^2\left(\frac{k\Delta x}{2}\right)
+\left[\cos^2\left(\frac{k\Delta x}{2}\right) - 1\right] \\
+&= 1 + 4\sigma^2(\sigma^2 + 1)\sin^4\left(\frac{k\Delta x}{2}\right) 
 \end{align}
 
 +++
