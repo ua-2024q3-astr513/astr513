@@ -317,6 +317,102 @@ Therefore, ensuring that the CFL condition is satisfied is paramount in balancin
 
 +++
 
+## Modified Equation Analysis for the FTCS Scheme
+
+We performed the **Von Neumann Stability Analysis** last lecture, highlighting the instability of the FTCS scheme for the linear advection equation.
+**Modified Equation Analysis** provides further insights into the nature of the errors introduced by the numerical discretization, revealing how these errors affect the accuracy and stability of the numerical solution.
+
+To determine how the **Forward Time Centered Space (FTCS)** scheme modifies the original linear advection equation by introducing additional terms that represent numerical errors, specifically focusing on artificial diffusion or dispersion.
+
+1. **Start with the FTCS Update Equation**
+
+   Recalling the FTCS scheme for the linear advection equation is given by:
+   \begin{align}
+   u_i^{n+1} = u_i^n - \frac{c \Delta t}{2 \Delta x} \left( u_{i+1}^n - u_{i-1}^n \right)
+   \end{align}
+   where:
+   * $u_i^n$ is the numerical approximation of $u$ at spatial index $i$ and time level $n$,
+   * $c$ is the constant advection speed,
+   * $\Delta t$ and $\Delta x$ are the time and spatial step sizes, respectively,
+   * $\sigma = c \Delta t/\Delta x$ is the **Courant number**.
+
+2. **Expand the Temporal and Spatial Terms Using Taylor Series**
+
+   Expand $u_i^{n+1}$ around $(x_i, t^n)$:
+   \begin{align}
+   u_i^{n+1} = u_i^n + \Delta t \dot{u}_i^n + \frac{\Delta t^2}{2} \ddot{u}_i^n + \frac{\Delta t^3}{6} {\dddot{u}\,}_i^n + \mathcal{O}(\Delta t^3)
+   \end{align}
+   
+   Expand $u_{i+1}^n$ and $u_{i-1}^n$ around $(x_i, t^n)$:
+   \begin{align}
+   u_{i\pm1}^n &= u_i^n \pm \Delta x {u'}_i^n + \frac{\Delta x^2}{2} {u''}_i^n \pm \frac{\Delta x^3}{6} {u'''}_i^n + \mathcal{O}(\Delta x^4)
+   \end{align}
+
++++
+
+3. **Substitute the Taylor Expansions into the FTCS Scheme**
+
+   Substitute the expansions into the FTCS update equation:
+   \begin{align}
+   u_i^n &+ \Delta t \dot{u}_i^n + \frac{\Delta t^2}{2} \ddot{u}_i^n + \frac{\Delta t^3}{6} {\dddot{u}\,}_i^n \\
+   &= u_i^n - \frac{c \Delta t}{2 \Delta x} \left[
+     \left( u_i^n + \Delta x {u'}_i^n + \frac{\Delta x^2}{2} {u''}_i^n + \frac{\Delta x^3}{6} {u'''}_i^n \right) -
+     \left( u_i^n - \Delta x {u'}_i^n + \frac{\Delta x^2}{2} {u''}_i^n - \frac{\Delta x^3}{6} {u'''}_i^n \right)
+   \right]
+   \end{align}
+   Simplify,
+   \begin{align}
+   \dot{u}_i^n + \frac{\Delta t}{2}\ddot{u}_i^n + \frac{\Delta t^2}{6} {\dddot{u}\,}_i^n
+   &= - c\left[ {u'}_i^n + \frac{\Delta x^2}{6} {u'''}_i^n \right]
+   \end{align}
+
++++
+
+4. **Substitute and Rearrange**
+
+   Similar to the upwind screen, we recall that the advection equation implies the wave equation $\partial^2 u/\partial t^2 = c^2 \partial^2 u/\partial x^2$.
+   Taking an additional time derivative, we obtain:
+   \begin{align}
+   \frac{\partial^3 u}{\partial t^3} = c^2 \frac{\partial^3 u}{\partial x^2 \partial t} = - c^3\frac{\partial^3 u}{\partial x^3}.
+   \end{align}
+   Substitute this into the modified equation, we obtain
+   \begin{align}
+   \dot{u}_i^n + c^2 \frac{\Delta t}{2} {u''}_i^n - c^3 \frac{\Delta t^2}{6} {u'''}_i^n
+   &= - c\left[ {u'}_i^n + \frac{\Delta x^2}{6} {u'''}_i^n \right].
+   \end{align}
+   Rearrange and drop the indices $i$ and $n$, the **Final Modified Equation** is:
+   \begin{align}
+   \frac{\partial u}{\partial t} + c \frac{\partial u}{\partial x}
+   &= -\frac{c}{2} (c\Delta t) {u''} + \frac{c}{6} (c^2 \Delta t^2 - \Delta x^2) {u'''}
+   \end{align}
+
++++
+
+The **Modified Equation Analysis** for the FTCS scheme has a **second-order anti-diffusion term** and a **third-order dispersive term**.
+These terms affect the numerical solution in several ways:
+
+1. **Numerical Instability:**
+   Unlike the Upwind Scheme, which introduces artificial diffusion to enhance stability, the FTCS scheme has an anti-diffusion term that is unstable.
+
+1. **Introduction of Dispersive Errors:**
+   The term $\partial^3 u/\partial x^3$ represents a dispersive error that causes different wave components to travel at slightly different speeds.
+   This leads to phase errors where waveforms become distorted over time, deviating from the exact solution.
+
+3. **Impact on Solution Accuracy:**
+   The introduced dispersive term does not counteract the amplification of numerical errors. Instead, it modifies the original equation in a way that can exacerbate inaccuracies, especially for higher-frequency components of the solution.
+   Over time, these errors accumulate, leading to significant deviations from the true solution, as evidenced by the Von Neumann Stability Analysis.
+
+4. **Reinforcement of Von Neumann Stability Findings:**
+   The Modified Equation Analysis complements the Von Neumann Stability Analysis by providing a physical interpretation of why the FTCS scheme is unstable.
+   The introduced dispersive errors contribute to the amplification of numerical oscillations, aligning with the conclusion that $|G| > 1$ for any $\sigma > 0$.
+
+5. **Practical Considerations:**
+   Practitioners must recognize that the FTCS scheme not only fails to maintain stability but also introduces errors that distort the solution without providing any compensatory benefits.
+
+Consequently, the FTCS scheme is unsuitable for solving advection-dominated PDEs where both stability and accuracy in capturing wave propagation are essential.
+
++++
+
 ## Non-Dimensionalization and Key Dimensionless Numbers
 
 Non-dimensionalization is a fundamental technique in the analysis of partial differential equations (PDEs) and fluid dynamics.
