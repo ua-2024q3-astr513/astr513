@@ -36,10 +36,10 @@ import matplotlib.pyplot as plt
 # Parameters
 c = 1.0          # Advection speed
 L = 1.0          # Domain length
-T = 0.25         # Total time
+T = 1.25         # Total time
 nx = 100         # Number of spatial points
 dx = L / nx      # Spatial step size
-dt = 0.0025      # Initial time step size
+dt = 0.001       # Initial time step size
 nt = int(T / dt) # Number of time steps
 
 # Stability parameter
@@ -80,11 +80,82 @@ To overcome the limitations of the FTCS scheme, we introduce two more robust fin
 the Upwind Scheme and the Lax-Wendroff Scheme.
 These methods enhance stability and accuracy, making them more suitable for solving advection-dominated problems.
 
++++
+
+### 2.1 Upwind Scheme
+
+The **Upwind Scheme** is a finite difference method specifically designed to handle advection-dominated problems more effectively than symmetric schemes like FTCS.
+By incorporating the direction of wave propagation into the discretization of spatial derivatives, the upwind method enhances numerical stability and reduces non-physical oscillations.
+
+In advection processes, information propagates in a specific direction determined by the flow velocity $c$.
+The upwind scheme leverages this directional information to bias the spatial derivative approximation, ensuring that the numerical flux aligns with the physical transport direction.
+This directional bias significantly improves the stability of the numerical solution, especially when dealing with sharp gradients or discontinuities.
+
+The upwind scheme discretizes the spatial derivative based on the sign of the advection speed $c$:
+*  **For $c > 0$** (flow to the right):
+   \begin{align}
+   \frac{\partial u}{\partial x} \approx \frac{u_i^n - u_{i-1}^n}{\Delta x}
+   \end{align}
+*  **For $c < 0$** (flow to the left):
+   \begin{align}
+   \frac{\partial u}{\partial x} \approx \frac{u_{i+1}^n - u_i^n}{\Delta x}
+   \end{align}
+
+Assuming $c > 0$ for this implementation, the **Upwind Scheme** update rule becomes:
+\begin{align}
+u_i^{n+1} = u_i^n - \frac{c \Delta t}{\Delta x} \left( u_i^n - u_{i-1}^n \right)
+\end{align}
+where:
+* $u_i^n$ is the numerical approximation of $u$ at spatial index $i$ and time level $n$,
+* $\Delta t$ and $\Delta x$ are the time and spatial step sizes, respectively.
+
+The following Python code implements the upwind scheme to solve the linear advection equation for a sinusoidal initial condition.
+
 ```{code-cell} ipython3
+# Parameters
+c = 1.0          # Advection speed
+L = 1.0          # Domain length
+T = 1.25         # Total time
+nx = 100         # Number of spatial points
+dx = L / nx      # Spatial step size
+dt = 0.001       # Initial time step size
+nt = int(T / dt) # Number of time steps
 
+# Stability parameter
+sigma = c * dt / dx
+print(f"Courant number (sigma): {sigma}")
+
+# Check CFL condition
+if sigma > 1:
+    raise ValueError(f"CFL condition violated: sigma = {sigma} > 1. Please reduce dt or increase dx.")
+
+# Spatial grid
+x = np.linspace(0, L, nx, endpoint=False)
+u_initial = np.sin(2 * np.pi * x)  # Initial condition: sinusoidal wave
+
+# Initialize solution array
+u = u_initial.copy()
+
+# Time-stepping loop using Upwind scheme
+for n in range(nt):
+    # Apply periodic boundary conditions using np.roll
+    u_new = u - sigma * (u - np.roll(u, 1))
+    u = u_new
+
+# Analytical solution
+u_exact = np.sin(2 * np.pi * (x - c * T))
+
+# Plotting the results
+plt.figure(figsize=(12, 6))
+plt.plot(x, u_initial,      label='Initial Condition', linestyle='--')
+plt.plot(x, u_exact,        label='Exact Solution', linewidth=2)
+plt.plot(x, u,              label='Upwind Scheme', linestyle=':', linewidth=2)
+plt.xlabel('x')
+plt.ylabel('u')
+plt.title('Linear Advection Equation: Upwind Scheme vs Exact Solution')
+plt.legend()
+plt.grid(True)
 ```
-
-+++ {"jp-MarkdownHeadingCollapsed": true}
 
 ## Non-Dimensionalization and Key Dimensionless Numbers
 
