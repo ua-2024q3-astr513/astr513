@@ -16,6 +16,8 @@ kernelspec:
 
 +++
 
+## Numerical Methods for the Advection Equation
+
 In the previous section, we explored the **Forward Time Centered Space (FTCS)** scheme, a fundamental explicit finite difference method for solving the linear advection equation:
 \begin{align}
 \frac{\partial u}{\partial t} + c \frac{\partial u}{\partial x} = 0
@@ -82,7 +84,7 @@ These methods enhance stability and accuracy, making them more suitable for solv
 
 +++
 
-### 2.1 Upwind Scheme
+### Upwind Scheme
 
 The **Upwind Scheme** is a finite difference method specifically designed to handle advection-dominated problems more effectively than symmetric schemes like FTCS.
 By incorporating the direction of wave propagation into the discretization of spatial derivatives, the upwind method enhances numerical stability and reduces non-physical oscillations.
@@ -157,6 +159,63 @@ plt.ylabel('u')
 plt.legend()
 plt.grid(True)
 ```
+
+### Von Neumann Stability Analysis
+
+Von Neumann Stability Analysis assesses the stability of numerical schemes by examining how Fourier modes are amplified or damped during the simulation.
+
+Assume the numerical solution can be expressed as:
+\begin{align}
+u_i^n = G^n e^{ikx_i}
+\end{align}
+where:
+* $G$ is the **amplification factor**,
+* $k$ is the wave number,
+* $x_i = i \Delta x$.
+
+Substitute $u_i^n = G^n e^{ikx_i}$ into the upwind update equation:
+\begin{align}
+G^{n+1} e^{ikx_i} = G^n e^{ikx_i} - \sigma \left( G^n e^{ikx_i} - G^n e^{ikx_{i-1}} \right)
+\end{align}
+
+Divide both sides by $G^n e^{ikx_i}$:
+\begin{align}
+G = 1 - \sigma \left( 1 - e^{-ik\Delta x} \right)
+\end{align}
+
+Using Euler's formula and separate the real and imaginary parts:
+\begin{align}
+G = (1 - \sigma + \sigma \cos(k\Delta x)) - i \sigma \sin(k\Delta x)
+\end{align}
+
++++
+
+For stability, the magnitude of the amplification factor must satisfy $|G| \leq 1$.
+
+Calculate $|G|^2$:
+\begin{align}
+|G|^2
+&= (1 - \sigma + \sigma \cos(k\Delta x))^2 + (\sigma \sin(k\Delta x))^2 \\
+&= (1 - \sigma)^2 + 2\sigma(1 - \sigma)\cos(k\Delta x) + \sigma^2 \cos^2(k\Delta x) + \sigma^2 \sin^2(k\Delta x)
+\end{align}
+Using $\cos^2(\theta) + \sin^2(\theta) = 1$:
+\begin{align}
+|G|^2 = 1 - 2\sigma + 2\sigma^2 + 2\sigma(1 - \sigma)\cos(k\Delta x)
+\end{align}
+
+To find the maximum $|G|$, consider $\cos(k\Delta x) = -1$ so that
+\begin{align}
+|G|^2_{\text{max}} = (1 - 2\sigma)^2
+\end{align}
+
+For stability, we require $|G| \leq 1$.
+This yields two inequalities $0 \leq \sigma \leq 1$.
+This implies that the **Upwind Scheme** is **stable** provided that the Courant number satisfies:
+\begin{align}
+\sigma = \frac{c \Delta t}{\Delta x} \leq 1.
+\end{align}
+
++++
 
 ## Non-Dimensionalization and Key Dimensionless Numbers
 
