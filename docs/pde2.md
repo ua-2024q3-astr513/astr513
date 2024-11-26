@@ -506,6 +506,45 @@ plt.legend()
 plt.grid(True)
 ```
 
+### Von Neumann Stability Analysis
+
+To assess the stability of the **Lax-Wendroff Scheme**, we perform again a **Von Neumann Stability Analysis**.
+
+Substitute the assumed Fourier mode $u_i^n = G^n e^{ikx_i}$ into the Lax-Wendroff update equation:
+\begin{align}
+G^{n+1} e^{ikx_i} = G^n e^{ikx_i} - \frac{c \Delta t}{2 \Delta x} \left( G^n e^{ikx_{i+1}} - G^n e^{ikx_{i-1}} \right) + \frac{c^2 (\Delta t)^2}{2 (\Delta x)^2} \left( G^n e^{ikx_{i+1}} - 2G^n e^{ikx_i} + G^n e^{ikx_{i-1}} \right)
+\end{align}
+
+Divide both sides by $G^n e^{ikx_i}$:
+\begin{align}
+G = 1 - \frac{c \Delta t}{2 \Delta x} \left( e^{ik\Delta x} - e^{-ik\Delta x} \right) + \frac{c^2 (\Delta t)^2}{2 (\Delta x)^2} \left( e^{ik\Delta x} - 2 + e^{-ik\Delta x} \right)
+\end{align}
+
+Substitute Euler's formula into the expression for $G$:
+\begin{align}
+G
+&= 1 - \frac{c \Delta t}{2 \Delta x} \left( 2i \sin(k\Delta x) \right) + \frac{c^2 (\Delta t)^2}{2 (\Delta x)^2} \left( 2\cos(k\Delta x) - 2 \right) \\
+&= 1 - i \sigma \sin(k\Delta x) + \sigma^2 (\cos(k\Delta x) - 1)
+\end{align}
+where $\sigma = c \Delta t/\Delta x$ is again the **Courant number**.
+
++++
+
+Using trigonometry identities, we can write:
+\begin{align}
+G = 1 - i \sigma \left[2\sin\left(\frac{k\Delta x}{2}\right)\cos\left(\frac{k\Delta x}{2}\right)\right]
+- \sigma^2 \left[2 \sin^2\left(\frac{k\Delta x}{2}\right)\right]
+\end{align}
+
+Galculate the magnitude squared of $G$:
+\begin{align}
+|G|^2 
+&= \left[1 - 2\sigma^2\sin^2\left(\frac{k\Delta x}{2}\right)\right]^2
++ 4\sigma^2\sin^2\left(\frac{k\Delta x}{2}\right) \cos^2\left(\frac{k\Delta x}{2}\right) = 1
+\end{align}
+
++++
+
 ## Non-Dimensionalization and Key Dimensionless Numbers
 
 Non-dimensionalization is a fundamental technique in the analysis of partial differential equations (PDEs) and fluid dynamics.
