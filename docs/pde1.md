@@ -156,9 +156,9 @@ These principles can be expressed in their integral forms, which consider the be
 
 +++
 
-### From Integral to Differential Forms Using Green's and Stokes' Theorems
+### From Integral to Differential Forms Using Green's Theorems
 
-To transition from the integral to the differential forms of these conservation laws, we employ Green's and Stokes' theorems, which relate volume integrals to surface integrals.
+To transition from the integral to the differential forms of these conservation laws, we employ Green's theorems, which relate volume integrals to surface integrals.
 
 The Divergence Theorem converts a volume integral of a divergence of a vector field into a surface integral over the boundary of the volume:
 \begin{align}
@@ -249,34 +249,136 @@ where:
 
 +++
 
-#### Moment Method
+### Moments of the Boltzmann Equation
 
-To derive macroscopic equations from the Boltzmann Equation, we take moments by multiplying the equation by powers of velocity $\mathbf{v}$ and integrating over all velocities.
+To transition from the kinetic description to a fluid description, we take velocity moments of the Boltzmann equation.
+Key moments correspond to macroscopic quantities:
 
-1. **Zeroth Moment (Continuity Equation):**
-   \begin{align}
-   \int \left( \frac{\partial f}{\partial t} + \mathbf{v} \cdot \nabla f \right) d\mathbf{v} = 0 \quad \Rightarrow \quad \frac{\partial \rho}{\partial t} + \nabla \cdot (\rho \mathbf{u}) = 0
-   \end{align}
+1.  **Zeroth Moment (Density):**
+    The zeroth moment gives the mass density:
+    \begin{align}
+    \rho = \int f m \, d^3\mathbf{v},
+    \end{align}
+    where $m$ is the particle mass.
 
-2. **First Moment (Momentum Equation):**
-   \begin{align}
-   \int \mathbf{v} \left( \frac{\partial f}{\partial t} + \mathbf{v} \cdot \nabla f \right) d\mathbf{v} = \int \mathbf{F} f \, d\mathbf{v} - \int \mathbf{v} \left( \frac{\partial f}{\partial t} \right)_{\text{coll}} d\mathbf{v}
-   \end{align}
-   Simplifying leads to:
-   \begin{align}
-   \frac{\partial (\rho \mathbf{u})}{\partial t} + \nabla \cdot (\rho \mathbf{u} \otimes \mathbf{u}) = -\nabla p + \nabla \cdot \mathbf{\Pi} + \rho \mathbf{f}
-   \end{align}
+2.  **First Moment (Momentum Density):**
+    The first moment gives the momentum density:
+    \begin{align}
+    \rho \mathbf{u} = \int f m \mathbf{v} \, d^3\mathbf{v},
+    \end{align}
+    where $\mathbf{u}$ is the bulk fluid velocity.
 
-3. **Second Moment (Energy Equation):**
-   \begin{align}
-   \int \frac{1}{2} m v^2 \left( \frac{\partial f}{\partial t} + \mathbf{v} \cdot \nabla f \right) d\mathbf{v} = \int \frac{1}{2} m v^2 \mathbf{F} \cdot \nabla_{\mathbf{v}} f \, d\mathbf{v} - \int \frac{1}{2} m v^2 \left( \frac{\partial f}{\partial t} \right)_{\text{coll}} d\mathbf{v}
-   \end{align}
-   This results in:
-   \begin{align}
-   \frac{\partial (\rho e)}{\partial t} + \nabla \cdot (\rho e \mathbf{u}) = \nabla \cdot \mathbf{q} + \Phi + \rho \mathbf{f} \cdot \mathbf{u}
-   \end{align}
+4.  **Second Moment (Energy Density and Stress):**
+    The second moment gives the energy density and stress tensor:
+    \begin{align}
+    E = \frac{1}{2} \int f m |\mathbf{v}|^2 \, d^3\mathbf{v},
+    \end{align}
+    and
+    \begin{align}
+    \mathbf{P} = \int f m (\mathbf{v} - \mathbf{u})(\mathbf{v} - \mathbf{u}) \, d^3\mathbf{v},
+    \end{align}
+    where $\mathbf{P}$ is the pressure tensor.
 
-These moments collectively yield the **Navier-Stokes Equations**, providing a comprehensive description of fluid motion from a kinetic theory perspective.
+These moments form the foundation for deriving the fluid equations.
+
++++
+
+### Deriving the Continuity Equation
+
+The zeroth moment of the Boltzmann equation yields the **continuity equation**, which expresses the conservation of mass.
+Integrating the Boltzmann equation over all velocities and assuming no particle creation or destruction:
+\begin{align}
+\int \left( \frac{\partial f}{\partial t} + \mathbf{v} \cdot \nabla f \right) d\mathbf{v} = 0
+\quad \Rightarrow \quad 
+\frac{\partial \rho}{\partial t} + \nabla \cdot (\rho \mathbf{u}) = 0
+\end{align}
+
++++
+
+### Deriving the Momentum Equation
+
+The first moment of the Boltzmann equation provides the **momentum equation**, which describes the conservation of momentum. Multiplying the Boltzmann equation by $\mathbf{v}$ and integrating over all velocities:
+\begin{align}
+\int \mathbf{v} \left( \frac{\partial f}{\partial t} + \mathbf{v} \cdot \nabla f \right) d\mathbf{v}
+&= \int \mathbf{F} f \, d\mathbf{v} - \int \mathbf{v} \left( \frac{\partial f}{\partial t} \right)_{\text{coll}} d\mathbf{v} \\
+\frac{\partial (\rho \mathbf{u})}{\partial t} + \nabla \cdot (\rho \mathbf{u} \mathbf{u}) 
+&= -\nabla \cdot \mathbf{P} + \mathbf{F},
+\end{align}
+where:
+* $\mathbf{P}$ is the pressure tensor,
+* $\mathbf{F}$ represents external forces (e.g., gravity).
+
+The pressure tensor $\mathbf{P}$ captures both isotropic and anisotropic contributions to stress.
+It can be decomposed into:
+\begin{align}
+\mathbf{P} = p \mathbf{I} + \boldsymbol{\tau},
+\end{align}
+where:
+* $p = \frac{1}{3} \text{Tr}(\mathbf{P})$ is the scalar pressure,
+* $\mathbf{I}$ is the identity matrix,
+* $\boldsymbol{\tau}$ is the deviatoric stress tensor, representing viscous effects.
+
+The momentum equation becomes:
+\begin{align}
+\frac{\partial (\rho \mathbf{u})}{\partial t} + \nabla \cdot (\rho \mathbf{u} \mathbf{u}) = -\nabla p + \nabla \cdot \boldsymbol{\tau} + \mathbf{F}.
+\end{align}
+
+This equation captures the effects of pressure, viscosity, and external forces on fluid motion.
+
++++
+
+### Deriving the Energy Equation
+
+The second moment of the Boltzmann equation yields the **energy equation**, which expresses the conservation of energy.
+Multiplying the Boltzmann equation by $m|\mathbf{v}|^2/2$ and integrating over all velocities:
+\begin{align}
+\int \frac{1}{2} m v^2 \left( \frac{\partial f}{\partial t} + \mathbf{v} \cdot \nabla f \right) d\mathbf{v} 
+&= \int \frac{1}{2} m v^2 \mathbf{F} \cdot \nabla_{\mathbf{v}} f \, d\mathbf{v} - \int \frac{1}{2} m v^2 \left( \frac{\partial f}{\partial t} \right)_{\text{coll}} d\mathbf{v} \\
+\frac{\partial E}{\partial t} + \nabla \cdot (E \mathbf{u}) 
+&= -\nabla \cdot (\mathbf{P} \cdot \mathbf{u}) + \mathbf{F} \cdot \mathbf{u} + \nabla \cdot \mathbf{q},
+\end{align}
+where:
+* $E = \rho e + \rho |\mathbf{u}|^2/2$ is the total energy density (internal + kinetic),
+* $\mathbf{q} = \int f m (\mathbf{v} - \mathbf{u}) (1/2)|\mathbf{v} - \mathbf{u}|^2 \, d^3\mathbf{v}$ is the heat flux.
+
+The internal energy density $\rho e$ relates to the scalar pressure $p$ via the equation of state, typically written as:
+\begin{align}
+p = (\gamma - 1) \rho e,
+\end{align}
+
+where $\gamma$ is the adiabatic index.
+
+The energy equation can be rewritten to highlight internal energy evolution:
+\begin{align}
+\frac{\partial (\rho e)}{\partial t} + \nabla \cdot (\rho e \mathbf{u}) = -p \nabla \cdot \mathbf{u} + \nabla \cdot (\boldsymbol{\tau} \cdot \mathbf{u}) + \mathbf{F} \cdot \mathbf{u} + \nabla \cdot \mathbf{q}.
+\end{align}
+
+This formulation shows how compression, viscous dissipation, and heat conduction influence internal energy.
+
++++
+
+### Closing the System of Equations
+
+The derived equations—continuity, momentum, and energy—form a coupled system. However, these equations alone are insufficient because they depend on quantities like pressure, stress, and heat flux, which require additional modeling.
+
+1.  **Equation of State (EOS):**
+    An equation of state, such as $p = \rho RT$ for an ideal gas, relates pressure, density, and temperature, providing closure for the scalar pressure $p$.
+
+2.  **Viscous Stress (Constitutive Relations):**
+    The deviatoric stress tensor $\boldsymbol{\tau}$ is often modeled using Newtonian fluid assumptions:
+    \begin{align}
+    \boldsymbol{\tau} = \mu \left( \nabla \mathbf{u} + (\nabla \mathbf{u})^T - \frac{2}{3}(\nabla \cdot \mathbf{u}) \mathbf{I} \right),
+    \end{align}
+    where $\mu$ is the dynamic viscosity.
+
+3.  **Heat Flux:**
+    Heat flux $\mathbf{q}$ can be modeled using Fourier's law:
+    \begin{align}
+    \mathbf{q} = -k \nabla T,
+    \end{align}
+    where $k$ is the thermal conductivity.
+
+These closure relations reduce the system to a solvable set of equations.
 
 +++
 
@@ -560,39 +662,11 @@ Understanding the physical intuition behind each class of PDEs aids in selecting
 
 +++
 
-
-
-+++
-
 ### Key Dimensionless Numbers
 
 Several dimensionless numbers play pivotal roles in fluid dynamics and the study of PDEs.
 Among the most important are the Reynolds Number (Re), Mach Number (Ma), and Prandtl Number (Pr).
 Each of these numbers encapsulates the ratio of different physical effects, providing insight into the system's behavior.
-
-+++
-
-
-
-+++
-
-
-
-+++
-
-
-
-+++
-
-
-
-+++
-
-
-
-+++
-
-
 
 +++
 
