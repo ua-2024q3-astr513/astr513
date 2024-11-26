@@ -413,6 +413,53 @@ Consequently, the FTCS scheme is unsuitable for solving advection-dominated PDEs
 
 +++
 
+## Lax-Wendroff Scheme
+
+In numerical simulations of Partial Differential Equations (PDEs), achieving both accuracy and stability is essential.
+First-order schemes like the Upwind method are simple to implement but often introduce significant numerical diffusion, which can blur important features of the solution.
+To address these limitations, higher-order schemes have been developed to provide more accurate and reliable results.
+
+The **Lax-Wendroff Scheme** is a second-order accurate finite difference method designed to solve hyperbolic PDEs, such as the linear advection equation.
+Unlike first-order methods, the Lax-Wendroff scheme incorporates both temporal and spatial derivatives up to the second order.
+This allows it to capture wave propagation more accurately while minimizing numerical diffusion and dispersion.
+
+The main advantage of the Lax-Wendroff Scheme is its ability to maintain higher accuracy without compromising stability.
+By extending the Taylor series expansion to include second-order terms, the scheme reduces the smearing effect seen in first-order methods. Additionally, it better preserves the shape and speed of waves, making it suitable for problems where precise wave behavior is crucial.
+
+However, the increased accuracy of the Lax-Wendroff Scheme comes with added complexity.
+The scheme requires careful implementation to ensure that the higher-order terms are correctly accounted for, and it may still exhibit oscillations near sharp gradients or discontinuities.
+Despite these challenges, the Lax-Wendroff Scheme remains a valuable tool in computational fluid dynamics and other fields requiring accurate wave propagation.
+
++++
+
+### Derivation
+
+We begin by expanding $u(x, t + \Delta t)$ in time around $t$ using a Taylor series up to second order:
+\begin{align}
+u(x, t + \Delta t) = u(x, t) + \Delta t \frac{\partial u}{\partial t} + \frac{(\Delta t)^2}{2} \frac{\partial^2 u}{\partial t^2} + \mathcal{O}(\Delta t^3)
+\end{align}
+
+Substitute the advection equation and the wave equation into the Taylor series expansion:
+\begin{align}
+u(x, t + \Delta t) = u(x, t) - c \Delta t \frac{\partial u}{\partial x} + \frac{c^2 (\Delta t)^2}{2} \frac{\partial^2 u}{\partial x^2} + \mathcal{O}((\Delta t)^3)
+\end{align}
+and approximate the spatial derivatives using centered finite differences:
+\begin{align}
+\frac{\partial u}{\partial x} &\approx \frac{u_{i+1}^n - u_{i-1}^n}{2 \Delta x} \\
+\frac{\partial^2 u}{\partial x^2} &\approx \frac{u_{i+1}^n - 2u_i^n + u_{i-1}^n}{(\Delta x)^2},
+\end{align}
+we obtain:
+\begin{align}
+u_i^{n+1} = u_i^n - c \Delta t \left( \frac{u_{i+1}^n - u_{i-1}^n}{2 \Delta x} \right)  + \frac{c^2 \Delta t^2}{2} \left( \frac{u_{i+1}^n - 2u_i^n + u_{i-1}^n}{\Delta x^2} \right) + \mathcal{O}(\Delta t^3)
+\end{align}
+
+Simplify the equation to isolate $u_i^{n+1}$, we obtain the **Lax-Wendroff Scheme** for the linear advection equation
+\begin{align}
+u_i^{n+1} = u_i^n - \frac{c \Delta t}{2 \Delta x} (u_{i+1}^n - u_{i-1}^n) + \frac{c^2 \Delta t^2}{2 \Delta x^2} (u_{i+1}^n - 2u_i^n + u_{i-1}^n)
+\end{align}
+
++++
+
 ## Non-Dimensionalization and Key Dimensionless Numbers
 
 Non-dimensionalization is a fundamental technique in the analysis of partial differential equations (PDEs) and fluid dynamics.
