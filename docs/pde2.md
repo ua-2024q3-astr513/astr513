@@ -13,3 +13,189 @@ kernelspec:
 ---
 
 # Numerical Partial Differential Equation II: Stability Analysis
+
++++
+
+## Non-Dimensionalization and Key Dimensionless Numbers
+
+Non-dimensionalization is a fundamental technique in the analysis of partial differential equations (PDEs) and fluid dynamics.
+By converting variables and equations into dimensionless forms, researchers and engineers can simplify complex systems, identify dominant physical effects, and generalize solutions across different scales.
+This section explores the purpose of non-dimensionalization, introduces key dimensionless numbers—Reynolds Number (Re), Mach Number (Ma), and Prandtl Number (Pr)—and discusses their applications and significance in various physical systems.
+
++++
+
+## Non-Dimensionalization and Key Dimensionless Numbers (15 minutes)
+
+* Purpose of Non-Dimensionalization
+  * Simplifying equations for analysis.
+  * Identifying dominant physical effects in specific regimes.
+
+* Key Dimensionless Numbers
+
+  * Reynolds Number (Re): Ratio of inertial to viscous forces.
+  * Mach Number (Ma): Compressibility effects.
+  * Prandtl Number (Pr): Ratio of momentum diffusivity to thermal diffusivity.
+
+* Applications
+* How these numbers influence the behavior of physical systems.
+
++++
+
+### Purpose of Non-Dimensionalization
+
+Non-dimensionalization serves several critical purposes in the analysis and solution of PDEs:
+
+1.  **Simplifying Equations for Analysis**
+
+    By scaling variables and parameters, non-dimensionalization reduces the number of independent variables and parameters in the governing equations.
+    This simplification often transforms complex, dimensional equations into a more manageable, dimensionless form.
+    For instance, consider the non-dimensionalization of the Navier-Stokes equations:
+    \begin{align}
+    \frac{\partial \bar{\mathbf{u}}}{\partial \bar t} + (\bar{\mathbf{u}} \cdot \bar\nabla) \bar{\mathbf{u}} = -\bar\nabla \bar p + \frac{1}{\text{Re}} \bar\nabla^2 \bar{\mathbf{u}} + \bar{\mathbf{f}}
+    \end{align}
+    Here, the introduction of dimensionless variables $\bar{\mathbf{u}}$, $\bar t$, and $\bar p$ has reduced the complexity of the original equations by consolidating physical parameters into dimensionless groups like the Reynolds Number (Re).
+
+2.  **Identifying Dominant Physical Effects in Specific Regimes**
+
+    Non-dimensionalization reveals the relative importance of various physical phenomena within a system.
+    By examining the dimensionless numbers that emerge from the process, one can determine which terms in the equations are significant and which can be neglected under certain conditions.
+    This identification is crucial for developing approximate solutions and understanding the behavior of the system in different regimes.
+
+    For example, in high Reynolds number flows (Re $\gg 1$), inertial forces dominate over viscous forces, simplifying the Navier-Stokes equations by reducing the influence of the viscous term.
+    Conversely, in low Reynolds number flows (Re $\ll 1$), viscous forces are predominant, and inertial terms can often be neglected.
+
++++
+
+### Key Dimensionless Numbers
+
+Several dimensionless numbers play pivotal roles in fluid dynamics and the study of PDEs.
+Among the most important are the Reynolds Number (Re), Mach Number (Ma), and Prandtl Number (Pr).
+Each of these numbers encapsulates the ratio of different physical effects, providing insight into the system's behavior.
+
++++
+
+#### Reynolds Number (Re): Ratio of Inertial to Viscous Forces
+
+The Reynolds Number is defined as:
+\begin{align}
+\text{Re} = \frac{\rho U L}{\mu} = \frac{U L}{\nu}
+\end{align}
+where:
+* $\rho$ is the fluid density,
+* $U$ is a characteristic velocity,
+* $L$ is a characteristic length scale,
+* $\mu$ is the dynamic viscosity,
+* $\nu = \mu / \rho$ is the kinematic viscosity.
+
+**Physical Interpretation:**
+
+Reynolds Number quantifies the relative significance of inertial forces (associated with the fluid's motion) to viscous forces (associated with the fluid's internal friction). A high Re indicates that inertial forces dominate, leading to turbulent flow, while a low Re suggests that viscous forces are more influential, resulting in laminar flow.
+
+**Applications:**
+
+* **Flow Regimes:** Determining whether a flow will be laminar or turbulent based on Re.
+* **Scale Modeling:** Ensuring dynamic similarity in wind tunnel experiments by matching Re between models and real-world scenarios.
+* **Astrophysical Flows:** In stellar interiors, high Re can lead to turbulent convection, influencing energy transport and stellar evolution.
+
++++
+
+#### Mach Number (Ma): Ratio of Flow Velocity to Speed of Sound
+
+The Mach Number is defined as:
+\begin{align}
+\text{Ma} = \frac{U}{c}
+\end{align}
+where:
+* $U$ is the characteristic flow velocity,
+* $c$ is the speed of sound in the fluid.
+
+**Physical Interpretation:**
+
+Mach Number measures the compressibility effects in a flow. When Ma $< 1$, the flow is subsonic, and compressibility effects are negligible. When Ma $\approx 1$, the flow is transonic, and compressibility becomes significant. For Ma $> 1$, the flow is supersonic, and shock waves may form.
+
+**Applications:**
+
+* **Aerodynamics:** Designing aircraft and rockets by analyzing flow behavior at different Mach regimes.
+* **Astrophysics:** Studying phenomena like shock waves in supernova explosions and supersonic jets from active galactic nuclei.
+* **Explosive Events:** Understanding the propagation of shock waves generated by explosions.
+
++++
+
+#### Prandtl Number (Pr): Ratio of Momentum Diffusivity to Thermal Diffusivity
+
+The Prandtl Number is defined as:
+\begin{align}
+\text{Pr} = \frac{\nu}{\alpha} = \frac{\mu / \rho}{k / (\rho c_p)} = \frac{c_p \mu}{k}
+\end{align}
+where:
+* $\nu$ is the kinematic viscosity,
+* $\alpha = \frac{k}{\rho c_p}$ is the thermal diffusivity,
+* $k$ is the thermal conductivity,
+* $c_p$ is the specific heat at constant pressure.
+
+**Physical Interpretation:**
+
+Prandtl Number compares the rate at which momentum diffuses through a fluid to the rate at which heat diffuses.
+A low Pr indicates that heat diffuses rapidly compared to momentum, while a high Pr suggests that momentum diffuses more quickly than heat.
+
+**Applications:**
+
+* **Heat Transfer:** Designing heat exchangers and cooling systems by understanding the relative rates of heat and momentum transfer.
+* **Boundary Layer Analysis:** Determining the thickness of thermal and velocity boundary layers in fluid flows.
+* **Astrophysical Processes:** Modeling heat conduction in stellar atmospheres where Pr influences energy transport mechanisms.
+
++++
+
+### Applications of Dimensionless Numbers
+
+Dimensionless numbers like Re, Ma, and Pr are instrumental in analyzing and predicting the behavior of physical systems across various domains:
+
+1.  **Flow Control and Design**
+
+    In engineering, these numbers guide the design of systems involving fluid flow.
+    For example, ensuring that aircraft operate efficiently at desired Reynolds and Mach numbers is crucial for performance and safety.
+
+2.  **Scale Modeling and Similitude**
+
+  In experimental studies, ensuring that the dimensionless numbers of a model match those of the real system (dynamic similarity) allows for accurate predictions and validations of theoretical models through physical experiments.
+
+3.  **Astrophysical Fluid Systems**
+
+    In astrophysics, dimensionless numbers help in scaling and understanding fluid behaviors in vastly different environments:
+    * **Stellar Convection:** High Reynolds numbers indicate turbulent convection currents within stars, affecting energy transport and mixing of stellar material.
+    * **Accretion Disks:** Mach numbers determine the compressibility of gas in accretion disks around black holes, influencing the formation of shock waves and jet structures.
+    * **Interstellar Medium:** Prandtl numbers aid in modeling the thermal and momentum diffusion in the diffuse interstellar gas, impacting star formation rates and the dynamics of molecular clouds.
+
++++
+
+### Historical Anecdote: Fermi's Estimation of Atomic Bomb Energy Release
+
+One of the most illustrative examples of the power of non-dimensionalization and dimensional analysis in physics is Enrico Fermi's remarkable estimation of the energy released during the first atomic bomb test, known as the Trinity test, conducted on July 16, 1945.
+This anecdote not only highlights Fermi's ingenuity but also demostrate the practical utility of dimensionless numbers and scaling laws in tackling complex, real-world problems with limited empirical data.
+
+During World War II, the Manhattan Project was a top-secret initiative aimed at developing nuclear weapons.
+As the project progressed, scientists faced the daunting challenge of predicting the yield of the atomic bombs they were designing.
+Precise calculations were hindered by the lack of comprehensive empirical data, necessitating innovative approaches to estimate explosive power accurately.
+
+Enrico Fermi, a renowned physicist known for his ability to make quick, accurate estimates with minimal data, was tasked with predicting the energy release of the impending Trinity test.
+His method exemplified dimensional analysis—a technique that uses the fundamental dimensions (such as mass, length, and time) to derive relationships between physical quantities.
+
+Fermi's estimation process involved the following steps:
+1.  **Observing the Shock Wave:**
+   After the detonation, Fermi and his colleagues observed the speed at which the shock wave propagated through the air. Let's denote this speed as $U$.
+
+2.  **Estimating the Shock Wave Radius:**
+    By timing how long it took for the shock wave to reach a certain distance from the explosion site, Fermi estimated the radius $L$ of the blast wave after a specific duration $t$.
+
+3.  **Applying the Sedov-Taylor Scaling:**
+    The Sedov-Taylor solution describes the propagation of a strong shock wave from a point explosion in a homogeneous medium.
+    According to this theory, the energy $E$ of the explosion is related to the shock wave's speed $U$, radius $L$, and the density $\rho$ of the surrounding air by the following relationship:
+     \begin{align}
+     E \sim \rho U^2 L^3
+     \end{align}
+     This equation is derived by balancing the kinetic energy imparted to the air by the shock wave with the energy of the explosion.
+
+4.  **Calculating the Energy:**
+    By substituting the estimated values of $\rho$, $U$, and $L$ into the above equation, Fermi arrived at an approximate value for the energy $E$ released during the explosion.
+
+There is an arXiv paper on [this topic](https://arxiv.org/abs/2103.05784).
