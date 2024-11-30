@@ -155,26 +155,6 @@ The discretization process involves several steps:
 
 +++
 
-**Example for One-Dimensional Advection:**
-Consider the linear advection equation in one dimension:
-\begin{align}
-\frac{\partial u}{\partial t} + c \frac{\partial u}{\partial x} = 0
-\end{align}
-For a control volume $[x_{i-\frac{1}{2}}, x_{i+\frac{1}{2}}]$, the integral form becomes:
-\begin{align}
-\frac{d}{dt} \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} u \, dx + \left[ c u \right]_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} = 0
-\end{align}
-Discretizing the fluxes at the boundaries:
-\begin{align}
-\frac{d u_i}{dt} \Delta x + c (u_{i+\frac{1}{2}} - u_{i-\frac{1}{2}}) = 0
-\end{align}
-Solving for $\frac{d u_i}{dt}$:
-\begin{align}
-\frac{d u_i}{dt} = -\frac{c}{\Delta x} (u_{i+\frac{1}{2}} - u_{i-\frac{1}{2}})
-\end{align}
-
-+++
-
 ### Numerical Flux Functions
 
 The accuracy and stability of the Finite Volume Method heavily depend on the choice of **numerical flux functions**.
@@ -242,6 +222,136 @@ The selection of a numerical flux function depends on the specific requirements 
 +++
 
 ## Shock Tube Problem
+
+The **Shock Tube Problem** is a quintessential test case in computational fluid dynamics (CFD) used to evaluate and validate numerical schemes for solving hyperbolic conservation laws, particularly the Euler equations governing compressible flow.
+This problem encapsulates fundamental phenomena such as shock waves, contact discontinuities, and rarefaction waves, making it an ideal benchmark for assessing the accuracy and robustness of numerical methods.
+
++++
+
+### Background and Significance
+
+The Shock Tube Problem, also known as the Riemann problem in one dimension, was originally formulated to understand the behavior of gas dynamics when subjected to sudden changes in pressure and density.
+It involves a closed tube divided into two regions by an impermeable diaphragm.
+Each region contains gas at different states of pressure, density, and temperature.
+Upon the removal of the diaphragm, the gases begin to interact, leading to the formation of shock waves and other discontinuities.
+
+**Historical Context:**
+* **Origins:** The study of shock waves dates back to the early 20th century with contributions from scientists like Ernst Mach and Theodore von Kármán.
+  The Shock Tube Problem emerged as a simplified model to study complex shock interactions in a controlled environment.
+* **Applications:** Understanding shock waves is crucial in various engineering applications, including aerospace engineering (e.g., supersonic flight), astrophysics (e.g., supernova explosions), and mechanical engineering (e.g., internal combustion engines).
+
+**Importance in CFD:**
+* **Benchmarking:** The Shock Tube Problem serves as a standard benchmark for validating numerical schemes.
+  An accurate numerical method should reproduce the key features of the analytical solution, including the correct propagation speeds and amplitudes of shock waves and rarefaction fans.
+* **Understanding Numerical Behavior:** By comparing numerical results with the analytical solution, researchers can assess the performance of numerical methods in handling discontinuities, ensuring stability, and maintaining conservation properties.
+
++++
+
+### Governing Equations
+
+The Shock Tube Problem is governed by the **Euler equations** for inviscid, compressible flow.
+In one dimension, these equations can be expressed in their conservative form as:
+\begin{align}
+\frac{\partial \mathbf{U}}{\partial t} + \frac{\partial \mathbf{F}}{\partial x} = 0
+\end{align}
+where:
+\begin{align}
+\mathbf{U} = \begin{pmatrix}
+\rho \\
+\rho u \\
+E
+\end{pmatrix}, \quad
+\mathbf{F} = \begin{pmatrix}
+\rho u \\
+\rho u^2 + p \\
+u(E + p)
+\end{pmatrix}
+\end{align}
+and the variables have their standard meaning: 
+* $\rho$: Density
+* $u$: Velocity
+* $p$: Pressure
+* $E$: Total energy per unit volume
+
+To close the system of equations, an **ideal gas law** is assumed:
+\begin{align}
+p = (\gamma - 1)\left(E - \frac{1}{2} \rho u^2\right)
+\end{align}
+where $\gamma$ is the **specific heat ratio** (Cp/Cv), typically taken as 1.4 for air.
+
++++
+
+### Analytical Theory and Exact Solution
+
+The analytical solution to the Shock Tube Problem, often referred to as the **Riemann problem**, involves determining the evolution of the flow variables ($\rho, u, p$) over time given the initial discontinuity.
+The solution comprises three distinct regions separated by different types of waves:
+
+1. **Shock Wave:** A propagating discontinuity where pressure, density, and velocity increase abruptly.
+2. **Contact Discontinuity:** A stationary interface separating regions of different densities but constant pressure and velocity.
+3. **Rarefaction Wave:** An expanding region where pressure, density, and velocity decrease smoothly.
+
+**Solution Structure:**
+
+The solution typically evolves as follows:
+* **Initial State (t = 0):** The diaphragm is removed, initiating the interaction between the two gas regions.
+* **Shock Propagation:** A shock wave moves into the low-pressure region, compressing the gas and increasing its density and pressure.
+* **Rarefaction Fan Formation:** Simultaneously, a rarefaction wave propagates into the high-pressure region, causing expansion and decreasing density and pressure.
+* **Contact Discontinuity:** A contact discontinuity forms between the regions affected by the shock and rarefaction waves, marking a boundary of differing densities.
+
+**Method of Characteristics:**
+
+The analytical solution leverages the **Method of Characteristics**, which transforms the partial differential equations into ordinary differential equations along characteristic lines. This approach simplifies the problem by tracking the propagation of information (waves) through the domain.
+
+**Steps to Derive the Exact Solution:**
+
+1. **Identify Wave Types:** Determine where shocks and rarefactions will form based on initial conditions.
+2. **Estimate Wave Speeds:** Calculate the speeds at which the shock wave and rarefaction fan propagate.
+3. **Solve for Post-Wave Conditions:** Use conservation laws across the shock and expansion relations within the rarefaction fan to find the states behind each wave.
+4. **Construct the Solution:** Piece together the states separated by the shock, contact discontinuity, and rarefaction wave.
+
+**Key Equations:**
+
+* **Shock Relations (Rankine-Hugoniot Conditions):** 
+  \begin{align}
+  \frac{\rho_2}{\rho_1} = \frac{(\gamma + 1)M_1^2}{(\gamma - 1)M_1^2 + 2}, \quad
+  p_2 = p_1 \left(1 + \frac{2\gamma}{\gamma + 1}(M_1^2 - 1)\right), \quad
+  u_2 = \frac{2 + (\gamma - 1)M_1^2}{(\gamma + 1)M_1^2} u_1
+  \end{align}
+  where $M_1$ is the Mach number before the shock.
+
+* **Rarefaction Wave Relations:**
+  \begin{align}
+  \rho_3 &= \rho_1 \left(\frac{2}{\gamma + 1} + \frac{\gamma - 1}{\gamma + 1} \frac{u_1}{c_1}\right)^{\frac{2}{\gamma - 1}} \\
+  p_3    &= p_1 \left(\frac{2}{\gamma + 1} + \frac{\gamma - 1}{\gamma + 1} \frac{u_1}{c_1}\right)^{\frac{2\gamma}{\gamma - 1}}
+  \end{align}
+  where $c_1 = \sqrt{\gamma p_1 / \rho_1}$ is the speed of sound before the rarefaction.
+
+**Numerical Computation:**
+
+The exact solution involves iterative methods and solving nonlinear equations, making it computationally intensive. However, it provides a precise benchmark against which numerical methods can be compared.
+
++++
+
+### Solution Structure and Regions
+
+The Shock Tube Problem solution is divided into four distinct regions:
+
+1. **Region 1 (Pre-Shock):** Original left state ($\rho_L, u_L, p_L$).
+2. **Region 2 (Post-Shock):** State behind the shock wave ($\rho_2, u_2, p_2$).
+3. **Region 3 (Post-Rarefaction):** State behind the rarefaction wave ($\rho_3, u_3, p_3$).
+4. **Region 4 (Pre-Rarefaction):** Original right state ($\rho_R, u_R, p_R$).
+
+**Wave Connections:**
+
+- **Shock Wave (Region 1 to Region 2):** Compresses the gas, increasing density and pressure.
+- **Contact Discontinuity (Region 2 to Region 3):** Maintains constant pressure and velocity but separates regions of different densities.
+- **Rarefaction Wave (Region 3 to Region 4):** Expands the gas, decreasing density and pressure.
+
+**Propagation Directions:**
+
+- **Shock Wave:** Moves to the right.
+- **Rarefaction Wave:** Moves to the left.
+- **Contact Discontinuity:** Remains stationary if there are no external influences.
 
 +++
 
@@ -345,10 +455,6 @@ def HLL_flux(UL, UR):
         return (SR * FL - SL * FR + SL * SR * (UR - UL)) / (SR - SL)
     else:
         return FR
-```
-
-```{code-cell} ipython3
-
 ```
 
 We are finally at the main integration loop.
