@@ -76,3 +76,58 @@ The motivation behind adopting FVM over traditional Finite Difference Methods (F
      This modularity enables the extension of FVMs to a wide range of applications beyond simple advection or diffusion processes.
 
    These advantages make FVMs a powerful tool for accurately and efficiently solving a broad spectrum of physical problems that are challenging for traditional Finite Difference Methods and Finite Element Methods.
+
++++
+
+## Basics of Finite Volume Methods
+
+Finite Volume Methods (FVM) are widely used for solving Partial Differential Equations (PDEs) that express conservation laws.
+Unlike Finite Difference Methods (FDM), which approximate derivatives at discrete points, FVM focuses on conserving quantities within discrete control volumes.
+This section introduces the foundational concepts of FVM, including control volumes, integral formulation of conservation laws, discretization of fluxes, and numerical flux functions.
+
++++
+
+### Control Volumes and Integral Formulation
+
+At the core of Finite Volume Methods is the concept of dividing the computational domain into small, non-overlapping regions called **control volumes**.
+Each control volume encompasses a portion of the physical domain and is bounded by its interfaces with neighboring control volumes.
+
+**Definition of Control Volumes:**
+* A **control volume** is a finite region in space over which conservation laws are applied.
+* The entire domain is partitioned into these control volumes, ensuring that they cover the domain without gaps or overlaps.
+
++++
+
+**Integral Form of Conservation Laws:**
+Finite Volume Methods are based on the integral form of conservation laws. Consider a general conservation equation:
+\begin{align}
+\frac{\partial \phi}{\partial t} + \nabla \cdot \mathbf{F} = S
+\end{align}
+where:
+- $\phi$ is the conserved quantity (e.g., mass, momentum, energy),
+- $\mathbf{F}$ is the flux vector representing the flow of $\phi$,
+- $S$ is a source term.
+
++++
+
+**Integral Formulation:**
+Integrate the conservation equation over a control volume $V$:
+\begin{align}
+\int_V \frac{\partial \phi}{\partial t} \, dV + \int_{V} \nabla\cdot\mathbf{F} \, dV = \int_V S \, dV
+\end{align}
+
++++
+
+**Applying the Divergence Theorem:**
+The integral of the divergence of $\mathbf{F}$ over the control volume is converted to a surface integral:
+\begin{align}
+\frac{d}{dt} \int_V \phi \, dV + \int_{\partial V} \mathbf{F} \cdot \mathbf{n} \, dS = \int_V S \, dV
+\end{align}
+where $\mathbf{n}$ is the outward-pointing unit normal vector on the boundary $\partial V$ of volume $V$.
+This equation states that the rate of change of $\phi$ within the control volume plus the net flux of $\phi$ across its boundaries equals the total source of $\phi$ within the volume.
+
+Note that this is the same formulation that we derived the fluid dynamic equations using conservation laws.
+
+```{code-cell} ipython3
+
+```
