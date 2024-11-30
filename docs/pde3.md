@@ -239,16 +239,20 @@ The selection of a numerical flux function depends on the specific requirements 
 - **For Simple Problems:** Central or upwind fluxes may suffice.
 - **For Problems with Shocks and Complex Wave Interactions:** Riemann solver-based fluxes or HLL/HLLC fluxes are more appropriate.
 
-**Example: Upwind Flux in One-Dimensional Advection**
-For the linear advection equation with $c > 0$, the upwind flux at interface $i+\frac{1}{2}$ is:
-\begin{align}
-F_{i+\frac{1}{2}} = c u_i
-\end{align}
-Substituting into the finite volume discretization:
-\begin{align}
-\frac{d u_i}{dt} = -\frac{c}{\Delta x} (u_i - u_{i-1})
-\end{align}
-This corresponds to the Upwind finite difference scheme when formulated within the finite volume framework.
++++
+
+## Shock Tube Problem
+
++++
+
+First, we define the physical and computational parameters, where:
+* `L`: Length of the computational domain.
+* `N`: Number of control volumes (cells) into which the domain is divided.
+* `dx`: Width of each cell.
+* `x`: Array representing the positions of cell centers.
+* `CFL`: Courant number determines the time step based on the CFL condition for numerical stability.
+* `t_final`: The simulation runs until this final time.
+* `t`: Variable to keep track of the current simulation time.
 
 ```{code-cell} ipython3
 import numpy as np
@@ -269,6 +273,12 @@ t_final = 0.25  # Final time (seconds)
 t       = 0.0   # Initial time
 ```
 
+Here, we initialize the conserved variables:
+* `rho` (Density): Mass per unit volume.
+* `rho*u` (Momentum): Momentum in the $x$-direction.
+* `E` (Energy): Total energy per unit volume.
+and store them in the state vector `U`.
+
 ```{code-cell} ipython3
 # Initialize Conserved Variables [rho, rho*u, E]
 U = np.zeros((N, 3))
@@ -284,6 +294,8 @@ U[:, 1] = rho0 * u0  # Momentum
 U[:, 2] = E0         # Energy
 ```
 
+Finite volume methods typically require convertion between conserved and primitive variables:
+
 ```{code-cell} ipython3
 # Function to convert conserved to primitive variables
 def conserved_to_primitive(U):
@@ -292,7 +304,13 @@ def conserved_to_primitive(U):
     E   = U[...,2]
     p   = (gamma - 1) * (E - 0.5 * rho * u**2)
     return rho, u, p
+```
 
+Next, we implement the HLL approximate Riemann solver.
+The input are the conserved variables in the left and right states.
+The outupts are the numerical fluxes.
+
+```{code-cell} ipython3
 # HLL Riemann Solver
 def HLL_flux(UL, UR):
 
@@ -333,6 +351,8 @@ def HLL_flux(UL, UR):
 
 ```
 
+We are finally at the main integration loop.
+
 ```{code-cell} ipython3
 # Time-Stepping Loop
 time_steps = [t]
@@ -363,6 +383,8 @@ while t < t_final:
     time_steps.append(t)
     U_history.append(U.copy())
 ```
+
+Plotting the results.
 
 ```{code-cell} ipython3
 # Visualization of Results
