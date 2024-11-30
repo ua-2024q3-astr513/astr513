@@ -355,6 +355,111 @@ The Shock Tube Problem solution is divided into four distinct regions:
 
 +++
 
+## Harten-Lax-van Leer (HLL) Approximate Rieman
+
+The HLL solver, introduced by Harten, Lax, and van Leer in 1983, is an **approximate Riemann solver** designed to simplify the complex wave structure inherent in exact solutions.
+Instead of resolving all characteristic waves (shocks, rarefactions, and contact discontinuities), the HLL solver approximates the solution by considering only the fastest left-moving and right-moving waves.
+
+**Key Motivations:**
+
+- **Computational Efficiency:** Exact Riemann solvers can be computationally intensive, especially for systems with multiple waves. HLL offers a balance between accuracy and computational cost.
+- **Robustness:** By focusing on the dominant wave speeds, HLL maintains numerical stability and handles strong shocks effectively.
+- **Simplicity:** The reduced wave structure simplifies the implementation, making it suitable for multi-dimensional problems.
+
++++
+
+### Wave Structure Assumptions in HLL
+
+The HLL solver assumes that the solution to the Riemann problem consists of two **strong discontinuities** propagating in opposite directions:
+
+1. **Left Wave ($S_L$):** Represents the fastest left-moving wave.
+2. **Right Wave ($S_R$):** Represents the fastest right-moving wave.
+
+Between these two waves lies a **star region** where the solution is approximated as a constant state. This simplification neglects intermediate waves such as contact discontinuities and slower-moving waves, thereby streamlining the flux computation.
+
+The HLL solver constructs an approximate solution by estimating the wave speeds and computing the numerical flux based on the states and fluxes in the left and right regions.
+
++++
+
+### Estimating Wave Speeds ($S_L$ and $S_R$)
+
+Accurate estimation of the wave speeds is crucial for the HLL solver's performance. The wave speeds encapsulate the fastest signal propagation in the left and right directions.
+
+**Common Estimates:**
+
+1. **Using Eigenvalues:**
+
+   The wave speeds can be approximated using the eigenvalues of the Jacobian matrix $\mathbf{A} = \frac{\partial \mathbf{F}}{\partial \mathbf{U}}$:
+   \begin{align}
+   \mathbf{A} = \begin{pmatrix}
+   u & \rho & 0 \\
+   0 & u & 0 \\
+   \frac{\gamma - 1}{2} u^2 & (\gamma - 1) u & u
+   \end{pmatrix}
+   \end{align}
+
+   The eigenvalues (wave speeds) are:
+   \begin{align}
+   \lambda_1 = u - c, \quad \lambda_2 = u, \quad \lambda_3 = u + c
+   \end{align}
+   where $c = \sqrt{\gamma \frac{p}{\rho}}$ is the speed of sound.
+
+   The HLL wave speeds are then estimated as:
+   \begin{align}
+   S_L = \min(\lambda_1^L, \lambda_1^R), \quad S_R = \max(\lambda_3^L, \lambda_3^R)
+   \end{align}
+
+2. **Using Two-Speed Estimate:**
+
+   A simpler, yet effective estimate is:
+   \begin{align}
+   S_L &= \min(u_L - c_L, u_R - c_R) \\
+   S_R &= \max(u_L + c_L, u_R + c_R)
+   \end{align}
+   where the subscripts $L$ and $R$ denote left and right states, respectively.
+
++++
+
+### Computing Numerical Fluxes
+
+Once the wave speeds are estimated, the numerical flux $\mathbf{F}_{\text{HLL}}$ can be computed based on the relative positions of $S_L$ and $S_R$:
+\begin{align}
+\mathbf{F}_{\text{HLL}} = \begin{cases}
+\mathbf{F}_L & \text{if } S_L > 0 \\
+\frac{S_R \mathbf{F}_L - S_L \mathbf{F}_R + S_L S_R (\mathbf{U}_R - \mathbf{U}_L)}{S_R - S_L} & \text{if } S_L \leq 0 \leq S_R \\
+\mathbf{F}_R & \text{if } S_R < 0
+\end{cases}
+\end{align}
+
+**Interpretation:**
+
+- **Case 1 ($S_L > 0$):** All characteristics move to the right; the flux is determined solely by the left state.
+- **Case 2 ($S_L \leq 0 \leq S_R$):** Characteristics influence both states; the flux is a weighted average accounting for both left and right states.
+- **Case 3 ($S_R < 0$):** All characteristics move to the left; the flux is determined solely by the right state.
+
+**Advantages of HLL Flux:**
+
+- **Simplicity:** Requires only the estimation of two wave speeds.
+- **Stability:** Robust against strong shocks and prevents non-physical oscillations.
+- **Conservation:** Ensures the conservation of mass, momentum, and energy across control volumes.
+
+**Limitations:**
+
+- **Contact Discontinuity Smearing:** The HLL solver does not explicitly resolve contact discontinuities, leading to some numerical diffusion.
+- **Wave Resolution:** Cannot capture all wave interactions present in the exact solution.
+
++++
+
+### Detailed Explanation of the HLL Scheme Implementation
+
+The Python implementation provided above integrates the HLL Riemann solver within the Finite Volume Method framework to solve the 1D Shock Tube Problem.
+Below is a comprehensive breakdown of each component and its role in the simulation.
+
+```{code-cell} ipython3
+import numpy as np
+import matplotlib.pyplot as plt
+```
+
 First, we define the physical and computational parameters, where:
 * `L`: Length of the computational domain.
 * `N`: Number of control volumes (cells) into which the domain is divided.
@@ -365,9 +470,6 @@ First, we define the physical and computational parameters, where:
 * `t`: Variable to keep track of the current simulation time.
 
 ```{code-cell} ipython3
-import numpy as np
-import matplotlib.pyplot as plt
-
 # Physical Parameters
 gamma = 1.4  # Specific heat ratio for air
 
@@ -385,9 +487,11 @@ t       = 0.0   # Initial time
 
 Here, we initialize the conserved variables:
 * `rho` (Density): Mass per unit volume.
-* `rho*u` (Momentum): Momentum in the $x$-direction.
+* `rho * u` (Momentum): Momentum in the $x$-direction.
 * `E` (Energy): Total energy per unit volume.
 and store them in the state vector `U`.
+
+The domain is initialized with higher density and pressure on the left side ($x < 0.5$) and lower values on the right side ($x \geq 0.5$), representing the classic setup of the Shock Tube Problem.
 
 ```{code-cell} ipython3
 # Initialize Conserved Variables [rho, rho*u, E]
@@ -404,11 +508,11 @@ U[:, 1] = rho0 * u0  # Momentum
 U[:, 2] = E0         # Energy
 ```
 
-Finite volume methods typically require convertion between conserved and primitive variables:
+Finite volume methods typically require convertion between conserved variables $(\rho, \rho u, E)$ to primitive variables $(\rho, u, p)$ for flux calculations and wave speed estimations.
 
 ```{code-cell} ipython3
 # Function to convert conserved to primitive variables
-def conserved_to_primitive(U):
+def cons_to_prim(U):
     rho = U[...,0]
     u   = U[...,1] / rho
     E   = U[...,2]
@@ -416,26 +520,30 @@ def conserved_to_primitive(U):
     return rho, u, p
 ```
 
-Next, we implement the HLL approximate Riemann solver.
+Here is the core of the HLL scheme: we implement the HLL approximate Riemann solver.
 The input are the conserved variables in the left and right states.
 The outupts are the numerical fluxes.
 
 ```{code-cell} ipython3
 # HLL Riemann Solver
 def HLL_flux(UL, UR):
+    # Convert to primitive variables
+    rhoL, uL, pL = cons_to_prim(UL)
+    rhoR, uR, pR = cons_to_prim(UR)
 
-    rhoL, uL, pL = conserved_to_primitive(UL)
-    rhoR, uR, pR = conserved_to_primitive(UR)
+    # Shorthands for energy
     EL = UL[2]
     ER = UR[2]
+
+    # Compute speed of sound
     cL = np.sqrt(gamma * pL / rhoL)
     cR = np.sqrt(gamma * pR / rhoR)
     
-    # Wave Speeds
+    # Estimate wave speeds
     SL = min(uL - cL, uR - cR)
     SR = max(uL + cL, uR + cR)
     
-    # Fluxes for left and right states
+    # Compute fluxes for left and right states
     FL = np.array([
         rhoL * uL,
         rhoL * uL**2 + pL,
@@ -448,7 +556,7 @@ def HLL_flux(UL, UR):
         uR   * (ER + pR)
     ])
     
-    # HLL Flux Calculation
+    # Compute HLL flux
     if SL > 0:
         return FL
     elif SL <= 0 and SR >= 0:
@@ -457,22 +565,26 @@ def HLL_flux(UL, UR):
         return FR
 ```
 
-We are finally at the main integration loop.
+We are finally at the main integration loop, where we peform time-stepping and flux computation
 
 ```{code-cell} ipython3
-# Time-Stepping Loop
-time_steps = [t]
-U_history  = [U.copy()]
+# Keep the history of the run
+Ts = [t]
+Us = [U.copy()]
 
+# Time-stepping loop
 while t < t_final:
-    rho, u, p = conserved_to_primitive(U)
-    c     = np.sqrt(gamma * p / rho)
-    s_max = np.max(np.abs(u) + c)
-    dt    = CFL * dx / s_max
+    # Convert to primitive variables
+    rho, u, p = cons_to_prim(U)
+
+    # Compute time step
+    cs   = np.sqrt(gamma * p / rho)
+    cmax = np.max(np.abs(u) + cs)
+    dt   = CFL * dx / cmax
     if t + dt > t_final:
         dt = t_final - t
     
-    # Compute Fluxes at Interfaces
+    # Compute fluxes at interfaces
     flux = np.zeros((N+1, 3))
     for i in range(1,N):
         flux[i] = HLL_flux(U[i-1], U[i])
@@ -481,20 +593,20 @@ while t < t_final:
     flux[ 0] = flux[ 1]
     flux[-1] = flux[-2]
     
-    # Update Conserved Variables
+    # Update conserved variables
     U -= (dt / dx) * (flux[1:] - flux[:-1])
 
-    # Update Time and Variables
+    # Update time and add to history
     t += dt
-    time_steps.append(t)
-    U_history.append(U.copy())
+    Ts.append(t)
+    Us.append(U.copy())
 ```
 
-Plotting the results.
+Plotting the results:
 
 ```{code-cell} ipython3
 # Visualization of Results
-rho, u, p = conserved_to_primitive(U)
+rho, u, p = cons_to_prim(U)
 
 plt.figure(figsize=(14, 4))
 
