@@ -128,6 +128,47 @@ This equation states that the rate of change of $\phi$ within the control volume
 
 Note that this is the same formulation that we derived the fluid dynamic equations using conservation laws.
 
-```{code-cell} ipython3
++++
 
-```
+### Discretization of Fluxes
+
+To solve the integral conservation laws numerically, the flux integrals across the control volume boundaries must be approximated.
+The discretization process involves several steps:
+
+1. **Mesh Generation:**
+   * Divide the computational domain into a finite number of control volumes.
+   * Common mesh types include structured (e.g., rectangular, triangular) and unstructured meshes.
+     
+2. **Control Volume Centroid:**
+   * Identify the centroid or a representative point within each control volume, typically denoted as $(x_i, y_i)$ in 2D or $(x_i, y_i, z_i)$ in 3D.
+
+3. **Flux Approximation:**
+   * Approximate the flux $\mathbf{F}$ at each face of the control volume.
+   * The flux at a face is determined by evaluating the flux function based on the values of $\phi$ from adjacent control volumes.
+
+4. **Surface Integral Discretization:**
+   * Replace the continuous surface integral with a discrete sum over all faces of the control volume:
+     \begin{align}
+     \int_{\partial V} \mathbf{F} \cdot \mathbf{n} \, dS \approx \sum_{\text{faces}} \mathbf{F}_{\text{face}} \cdot A_{\text{face}}
+     \end{align}
+     where $A_{\text{face}}$ is the length (for 2D problem) or area (for 3D problem) of the "face".
+
++++
+
+**Example for One-Dimensional Advection:**
+Consider the linear advection equation in one dimension:
+\begin{align}
+\frac{\partial u}{\partial t} + c \frac{\partial u}{\partial x} = 0
+\end{align}
+For a control volume $[x_{i-\frac{1}{2}}, x_{i+\frac{1}{2}}]$, the integral form becomes:
+\begin{align}
+\frac{d}{dt} \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} u \, dx + \left[ c u \right]_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} = 0
+\end{align}
+Discretizing the fluxes at the boundaries:
+\begin{align}
+\frac{d u_i}{dt} \Delta x + c (u_{i+\frac{1}{2}} - u_{i-\frac{1}{2}}) = 0
+\end{align}
+Solving for $\frac{d u_i}{dt}$:
+\begin{align}
+\frac{d u_i}{dt} = -\frac{c}{\Delta x} (u_{i+\frac{1}{2}} - u_{i-\frac{1}{2}})
+\end{align}
