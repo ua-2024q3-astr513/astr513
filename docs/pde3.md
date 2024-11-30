@@ -172,3 +172,80 @@ Solving for $\frac{d u_i}{dt}$:
 \begin{align}
 \frac{d u_i}{dt} = -\frac{c}{\Delta x} (u_{i+\frac{1}{2}} - u_{i-\frac{1}{2}})
 \end{align}
+
++++
+
+### Numerical Flux Functions
+
+The accuracy and stability of the Finite Volume Method heavily depend on the choice of **numerical flux functions**.
+Numerical flux functions approximate the physical fluxes at the interfaces between control volumes based on the values of $\phi$ from adjacent cells.
+Several types of numerical flux functions exist, each with its own advantages and applicability:
+
+1. **Central Flux:**
+   * A simple average of the fluxes from adjacent control volumes.
+   * **Formula:**
+     \begin{align}
+     \mathbf{F}_{i+\frac{1}{2}} = \frac{1}{2} \left( \mathbf{F}(u_i) + \mathbf{F}(u_{i+1}) \right)
+     \end{align}
+   * **Advantages:**
+     * Easy to implement.
+     * Second-order accurate for smooth solutions.
+   * **Disadvantages:**
+     * Can be unstable for hyperbolic equations like advection.
+     * Does not account for wave direction, leading to numerical oscillations.
+
+2. **Upwind Flux:**
+   * Takes the flux from the upstream direction based on the wave speed $c$.
+   * **Formula for One-Dimensional Advection:**
+     \begin{align}
+     \mathbf{F}_{i+\frac{1}{2}} = 
+     \begin{cases}
+       \mathbf{F}(u_i) & \text{if } c > 0 \\
+       \mathbf{F}(u_{i+1}) & \text{if } c < 0
+     \end{cases}
+     \end{align}
+   * **Advantages:**
+     * Enhances stability by considering wave direction.
+     * Reduces numerical oscillations near discontinuities.
+   * **Disadvantages:**
+     * Introduces numerical diffusion, which can smear sharp gradients.
+
+3. **Riemann Solver-Based Fluxes:**
+   * Solve the Riemann problem at each interface to determine the flux.
+   * **Examples:**
+     * Exact Riemann Solver.
+     * Roe's Approximate Riemann Solver.
+   * **Advantages:**
+     * Accurately captures wave interactions.
+     * Suitable for complex systems of conservation laws.
+   * **Disadvantages:**
+     * More computationally intensive.
+     * Requires solving characteristic equations.
+
+4. **HLL and HLLC Fluxes:**
+   * Variants of Riemann solvers that simplify the wave structure.
+   * **HLL (Harten, Lax, and van Leer):**
+     * Considers only the fastest left and right waves.
+   * **HLLC (HLL with Contact):**
+     * Includes contact discontinuities in addition to shock waves.
+   * **Advantages:**
+     * Balances accuracy and computational efficiency.
+     * Handles a wide range of flow conditions.
+   * **Disadvantages:**
+     * Still more complex than central or upwind fluxes.
+
+**Choosing the Appropriate Numerical Flux Function:**
+The selection of a numerical flux function depends on the specific requirements of the problem:
+- **For Simple Problems:** Central or upwind fluxes may suffice.
+- **For Problems with Shocks and Complex Wave Interactions:** Riemann solver-based fluxes or HLL/HLLC fluxes are more appropriate.
+
+**Example: Upwind Flux in One-Dimensional Advection**
+For the linear advection equation with $c > 0$, the upwind flux at interface $i+\frac{1}{2}$ is:
+\begin{align}
+F_{i+\frac{1}{2}} = c u_i
+\end{align}
+Substituting into the finite volume discretization:
+\begin{align}
+\frac{d u_i}{dt} = -\frac{c}{\Delta x} (u_i - u_{i-1})
+\end{align}
+This corresponds to the Upwind finite difference scheme when formulated within the finite volume framework.
