@@ -249,3 +249,153 @@ Substituting into the finite volume discretization:
 \frac{d u_i}{dt} = -\frac{c}{\Delta x} (u_i - u_{i-1})
 \end{align}
 This corresponds to the Upwind finite difference scheme when formulated within the finite volume framework.
+
+```{code-cell} ipython3
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Physical Parameters
+gamma = 1.4  # Specific heat ratio for air
+
+# Computational Domain
+L  = 1.0    # Length of the domain (meters)
+N  = 100    # Number of cells
+dx = L / N  # Cell width
+x  = np.linspace(0.5*dx, L - 0.5*dx, N)  # Cell centers
+
+# Time-Stepping Parameters
+CFL     = 0.5   # Courant number
+t_final = 0.25  # Final time (seconds)
+t       = 0.0   # Initial time
+```
+
+```{code-cell} ipython3
+# Initialize Conserved Variables [rho, rho*u, E]
+U = np.zeros((N, 3))
+
+# Initial Conditions
+rho0 = np.where(x < 0.5, 1.0, 0.125)          # Density
+u0   = np.zeros(N)                            # Velocity
+p0   = np.where(x < 0.5, 1.0, 0.1)            # Pressure
+E0   = p0 / (gamma - 1) + 0.5 * rho0 * u0**2  # Total Energy
+
+U[:, 0] = rho0       # Density
+U[:, 1] = rho0 * u0  # Momentum
+U[:, 2] = E0         # Energy
+```
+
+```{code-cell} ipython3
+# Function to convert conserved to primitive variables
+def conserved_to_primitive(U):
+    rho = U[...,0]
+    u   = U[...,1] / rho
+    E   = U[...,2]
+    p   = (gamma - 1) * (E - 0.5 * rho * u**2)
+    return rho, u, p
+
+# HLL Riemann Solver
+def HLL_flux(UL, UR):
+
+    rhoL, uL, pL = conserved_to_primitive(UL)
+    rhoR, uR, pR = conserved_to_primitive(UR)
+    EL = UL[2]
+    ER = UR[2]
+    cL = np.sqrt(gamma * pL / rhoL)
+    cR = np.sqrt(gamma * pR / rhoR)
+    
+    # Wave Speeds
+    SL = min(uL - cL, uR - cR)
+    SR = max(uL + cL, uR + cR)
+    
+    # Fluxes for left and right states
+    FL = np.array([
+        rhoL * uL,
+        rhoL * uL**2 + pL,
+        uL   * (EL + pL)
+    ])
+    
+    FR = np.array([
+        rhoR * uR,
+        rhoR * uR**2 + pR,
+        uR   * (ER + pR)
+    ])
+    
+    # HLL Flux Calculation
+    if SL > 0:
+        return FL
+    elif SL <= 0 and SR >= 0:
+        return (SR * FL - SL * FR + SL * SR * (UR - UL)) / (SR - SL)
+    else:
+        return FR
+```
+
+```{code-cell} ipython3
+
+```
+
+```{code-cell} ipython3
+# Time-Stepping Loop
+time_steps = [t]
+U_history  = [U.copy()]
+
+while t < t_final:
+    rho, u, p = conserved_to_primitive(U)
+    c     = np.sqrt(gamma * p / rho)
+    s_max = np.max(np.abs(u) + c)
+    dt    = CFL * dx / s_max
+    if t + dt > t_final:
+        dt = t_final - t
+    
+    # Compute Fluxes at Interfaces
+    flux = np.zeros((N+1, 3))
+    for i in range(1,N):
+        flux[i] = HLL_flux(U[i-1], U[i])
+
+    # Boundary conditions on flux
+    flux[ 0] = flux[ 1]
+    flux[-1] = flux[-2]
+    
+    # Update Conserved Variables
+    U -= (dt / dx) * (flux[1:] - flux[:-1])
+
+    # Update Time and Variables
+    t += dt
+    time_steps.append(t)
+    U_history.append(U.copy())
+```
+
+```{code-cell} ipython3
+# Visualization of Results
+rho, u, p = conserved_to_primitive(U)
+
+plt.figure(figsize=(14, 4))
+
+plt.subplot(1, 3, 1)
+plt.plot(x, rho0, ':', label='Density', color='C0')
+plt.plot(x, rho,       label='Density', color='C0')
+plt.xlabel('Position')
+plt.ylabel('Density')
+plt.title('Density at t = {:.3f} s'.format(t_final))
+plt.legend()
+plt.grid()
+
+plt.subplot(1, 3, 2)
+plt.plot(x, u0, ':', label='Velocity', color='C1')
+plt.plot(x, u,       label='Velocity', color='C1')
+plt.xlabel('Position')
+plt.ylabel('Velocity')
+plt.title('Velocity at t = {:.3f} s'.format(t_final))
+plt.legend()
+plt.grid()
+
+plt.subplot(1, 3, 3)
+plt.plot(x, p0, ':', label='Pressure', color='C2')
+plt.plot(x, p,       label='Pressure', color='C2')
+plt.xlabel('Position')
+plt.ylabel('Pressure')
+plt.title('Pressure at t = {:.3f} s'.format(t_final))
+plt.legend()
+plt.grid()
+
+plt.tight_layout()
+```
