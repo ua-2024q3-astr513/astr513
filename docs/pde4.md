@@ -379,5 +379,56 @@ While computationally efficient, it often requires de-aliasing or explicit visco
 This method balances speed and accuracy, making it popular for practical simulations.
 
 ```{code-cell} ipython3
+import numpy as np
+from numpy.fft import fft2, ifft2
+
+# Define the grid and wavenumbers
+Lx, Ly = 2 * np.pi, 2 * np.pi  # Domain size
+nx, ny = 128, 128              # Number of grid points
+
+x = np.linspace(0, Lx, nx, endpoint=False)
+y = np.linspace(0, Ly, ny, endpoint=False)
+x, y = np.meshgrid(x, y)
+
+kx = np.fft.fftfreq(nx, d=Lx/nx) * 2 * np.pi
+ky = np.fft.fftfreq(ny, d=Ly/ny) * 2 * np.pi
+kx, ky = np.meshgrid(kx, ky)
+
+kk = kx*kx + ky*ky
+ikk = 1.0 / kk
+ikk[0,0] = 0  # Avoid multiplied by infinity for mean mode
+
+# Initialize vorticity and streamfunction in spectral space
+W = fft2(np.sin(x) * np.cos(y))  # Example initial vorticity
+Psi = ikk * W
+
+# Apply the 2/3 rule
+def dealiasing(F):
+    Kx = nx // 3
+    Ky = ny // 3
+    F[Kx:-Kx, :] = 0
+    F[:, Ky:-Ky] = 0
+    return F
+
+# Transform back to real space
+w   = ifft2(W).real
+psi = ifft2(Psi).real
+
+# Compute Jacobian determinant in real space
+def jdet(psi, w):
+    psi_x = ifft2(1j * kx * fft2(psi)).real
+    psi_y = ifft2(1j * ky * fft2(psi)).real
+    w_x   = ifft2(1j * kx * fft2(w)).real
+    w_y   = ifft2(1j * ky * fft2(w)).real
+    return psi_x * w_y - psi_y * w_x
+
+j = jdet(psi, w)
+J = fft2(j)
+
+# Apply de-aliasing to the Jacobian
+J = dealiasing(J)
+```
+
+```{code-cell} ipython3
 
 ```
