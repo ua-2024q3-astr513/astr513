@@ -156,6 +156,23 @@ In 3D turbulence, energy flows from large scales (low wavenumbers) to small scal
 In 2D, however, energy flows in the opposite direction, from small scales to large scales, leading to the formation of large, coherent structures like cyclones and anticyclones.
 This behavior is directly tied to the dual conservation of energy and enstrophy.
 
-```{code-cell} ipython3
++++
 
-```
+## Simplified Governing Equations for 2D Flows
+
+To simplify the analysis of incompressible flows, we introduce the **streamfunction** $\psi$, which ensures the incompressibility condition is automatically satisfied:
+\begin{align}
+\mathbf{u} = \nabla \times (\psi \mathbf{\hat{z}}), \quad u_x = \frac{\partial \psi}{\partial y}, \quad u_y = -\frac{\partial \psi}{\partial x}.
+\end{align}
+
+The vorticity $w$, defined as $w = \nabla \times \mathbf{u}$, relates to $\psi$ via the **Poisson equation**:
+\begin{align}
+w = -\nabla^2 \psi.
+\end{align}
+
+The vorticity transport equation describes the evolution of $w$:
+\begin{align}
+\frac{\partial w}{\partial t} + \mathbf{u} \cdot \nabla w = \nu \nabla^2 w + \mathbf{f}_w,
+\end{align}
+
+where $\mathbf{f}_w$ is a forcing term that may drive the flow. This formulation eliminates the pressure term and reduces the computational complexity, making it ideal for numerical simulations using spectral methods.
