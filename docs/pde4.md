@@ -95,3 +95,67 @@ In this lecture, we will focus on applying spectral methods to solve the **2D in
 3. Implement a spectral solver to simulate the evolution of vorticity in a 2D periodic domain.
 
 This introduction sets the stage for understanding how spectral methods leverage mathematical elegance and computational efficiency to solve complex PDEs with remarkable accuracy.
+
++++
+
+## Introduction to 2D Incompressible Hydrodynamics
+
+The hydrodynamic equations govern the conservation of mass and momentum in a fluid.
+In their compressible form (that we derived in previous lectures), they are written as:
+\begin{align}
+\frac{\partial \rho}{\partial t} + \nabla \cdot (\rho \mathbf{u}) &= 0, \quad \text{(Continuity Equation)} \\
+\frac{\partial (\rho \mathbf{u})}{\partial t} + \nabla \cdot (\rho \mathbf{u} \mathbf{u}) &= -\nabla p + \mu \nabla^2 \mathbf{u} + \mathbf{f}, \quad \text{(Momentum Equation)}
+\end{align}
+where:
+* $\rho$ is the density,
+* $\mathbf{u}$ is the velocity field,
+* $p$ is the pressure,
+* $\mu$ is the dynamic viscosity,
+* $\mathbf{f}$ is an external force.
+
++++
+
+In the **incompressible limit**, the sound speed approaches infinite $c \rightarrow \infty$.
+For simplicity, the density $\rho$ can be assumed constant, and the continuity equation reduces to the **incompressibility condition**:
+\begin{align}
+\nabla \cdot \mathbf{u} = 0.
+\end{align}
+Substituting this condition into the momentum equation simplifies the Navier-Stokes equations to:
+\begin{align}
+\frac{\partial \mathbf{u}}{\partial t} + (\mathbf{u} \cdot \nabla) \mathbf{u} = -\nabla p + \nu \nabla^2 \mathbf{u} + \mathbf{f},
+\end{align}
+where $\nu = \mu / \rho$ is the kinematic viscosity.
+These equations describe the flow of incompressible fluids and are widely used in modeling small-scale laboratory experiments and large-scale geophysical flows.
+
++++
+
+While the incompressible Navier-Stokes equations also apply to three-dimensional flows, many physical systems can be effectively approximated as two-dimensional.
+For example:
+* Atmospheric flows and ocean currents are largely horizontal due to their vast spatial extent compared to their depth.
+* Thin liquid films and confined flows are geometrically restricted to two dimensions.
+
+In 2D, the dynamics exhibit unique features that distinguish them from 3D flows:
+
+**Conservation of Enstrophy**
+
+In 2D, the vorticity $w = \nabla \times \mathbf{u}$ is a scalar field.
+Its evolution is governed by the **vorticity transport equation**, which conserves both **energy** and **enstrophy** in the absence of dissipation:
+\begin{align}
+E &= \frac{1}{2} \int |\mathbf{u}|^2 \, dx \, dy\\
+Z &= \frac{1}{2} \int w^2 \, dx \, dy.
+\end{align}
+
+Energy conservation governs the total kinetic energy of the system, while enstrophy conservation introduces a second constraint that strongly influences the flow dynamics.
+
++++
+
+**Inverse Energy Cascade**
+
+A striking feature of 2D turbulence is the **inverse energy cascade**.
+In 3D turbulence, energy flows from large scales (low wavenumbers) to small scales (high wavenumbers) and is dissipated by viscosity.
+In 2D, however, energy flows in the opposite direction, from small scales to large scales, leading to the formation of large, coherent structures like cyclones and anticyclones.
+This behavior is directly tied to the dual conservation of energy and enstrophy.
+
+```{code-cell} ipython3
+
+```
