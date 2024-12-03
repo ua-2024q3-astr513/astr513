@@ -158,21 +158,118 @@ This behavior is directly tied to the dual conservation of energy and enstrophy.
 
 +++
 
-## Simplified Governing Equations for 2D Flows
+## Vorticity-Streamfunction Formulation
 
-To simplify the analysis of incompressible flows, we introduce the **streamfunction** $\psi$, which ensures the incompressibility condition is automatically satisfied:
+To simplify the mathematical and computational treatment of 2D incompressible hydrodynamics, the governing equations are often reformulated in terms of the **vorticity** $w$ and the **streamfunction** $\psi$.
+This formulation has several advantages: it eliminates the pressure term from the equations, reduces the number of variables, and ensures incompressibility is automatically satisfied.
+In this section, we derive the vorticity-streamfunction formulation, define the Jacobian determinant to handle the nonlinear advection term, and introduce additional physical effects such as Ekman damping and the beta-plane approximation.
+
++++
+
+### Definitions and Key Relationships
+
+For 2D incompressible flows, the velocity field $\mathbf{u} = (u_x, u_y)$ can be expressed in terms of a scalar function, the **streamfunction** $\psi(x, y, t)$, as:
 \begin{align}
-\mathbf{u} = \nabla \times (\psi \mathbf{\hat{z}}), \quad u_x = \frac{\partial \psi}{\partial y}, \quad u_y = -\frac{\partial \psi}{\partial x}.
+\mathbf{u} = \nabla \times (\psi \mathbf{\hat{z}}),
+\end{align}
+where $\mathbf{\hat{z}}$ is the unit vector perpendicular to the 2D plane.
+In component form:
+\begin{align}
+u_x = \frac{\partial \psi}{\partial y}, \quad u_y = -\frac{\partial \psi}{\partial x}.
 \end{align}
 
-The vorticity $w$, defined as $w = \nabla \times \mathbf{u}$, relates to $\psi$ via the **Poisson equation**:
+This representation automatically satisfies the incompressibility condition:
+\begin{align}
+\nabla \cdot \mathbf{u} = \frac{\partial u_x}{\partial x} + \frac{\partial u_y}{\partial y} = 0.
+\end{align}
+
++++
+
+The vorticity $w$ is a scalar quantity in 2D, defined as the curl of the velocity field:
+\begin{align}
+w = \nabla \times \mathbf{u}.
+\end{align}
+
+Using the velocity components in terms of the streamfunction, the vorticity can be written as:
+\begin{align}
+w = \frac{\partial u_y}{\partial x} - \frac{\partial u_x}{\partial y} = -\nabla^2 \psi.
+\end{align}
+
+Thus, the vorticity and streamfunction are related by the **Poisson equation**:
 \begin{align}
 w = -\nabla^2 \psi.
 \end{align}
 
-The vorticity transport equation describes the evolution of $w$:
+This relationship allows the velocity field to be computed from the vorticity by solving the Poisson equation for $\psi$, and then taking derivatives of $\psi$ to find $u_x$ and $u_y$.
+
++++
+
+### Governing Equation for Vorticity
+
+The vorticity transport equation is derived from the incompressible Navier-Stokes equations.
+Taking the curl of the momentum equation eliminates the pressure gradient term, yielding:
 \begin{align}
 \frac{\partial w}{\partial t} + \mathbf{u} \cdot \nabla w = \nu \nabla^2 w + \mathbf{f}_w,
 \end{align}
+where:
+* $\mathbf{u} \cdot \nabla w$ represents the nonlinear advection of vorticity,
+* $\nu \nabla^2 w$ accounts for viscous diffusion,
+* $\mathbf{f}_w$ is the vorticity-specific forcing term.
 
-where $\mathbf{f}_w$ is a forcing term that may drive the flow. This formulation eliminates the pressure term and reduces the computational complexity, making it ideal for numerical simulations using spectral methods.
+The term $\mathbf{u} \cdot \nabla w$ can be expanded using the velocity components as:
+\begin{align}
+\mathbf{u} \cdot \nabla w = u_x \frac{\partial w}{\partial x} + u_y \frac{\partial w}{\partial y}.
+\end{align}
+
+By substituting $u_x$ and $u_y$ in terms of $\psi$, the nonlinear advection term is rewritten as the **Jacobian determinant**:
+\begin{align}
+J(\psi, w) = \frac{\partial \psi}{\partial x} \frac{\partial w}{\partial y} - \frac{\partial \psi}{\partial y} \frac{\partial w}{\partial x}.
+\end{align}
+Thus, the vorticity transport equation becomes:
+\begin{align}
+\frac{\partial w}{\partial t} - J(\psi, w) = \nu \nabla^2 w + \mathbf{f}_w.
+\end{align}
+
++++
+
+### Incorporating Additional Physical Effects
+
+**Ekman damping** models frictional effects caused by the interaction of the fluid with a boundary layer.
+It acts as a large-scale energy sink and is proportional to the vorticity:
+\begin{align}
+-\mu w,
+\end{align}
+where $\mu$ is the Ekman coefficient.
+Including this term in the vorticity transport equation gives:
+\begin{align}
+\frac{\partial w}{\partial t} - J(\psi, w) = \nu \nabla^2 w - \mu w + \mathbf{f}_w.
+\end{align}
+
+Ekman damping is particularly relevant in geophysical systems, where it represents energy dissipation due to the Earth's surface or ocean floors.
+
+The **$\beta$-plane approximation** models the variation of the Coriolis parameter $f$ with latitude.
+In the vorticity equation, this introduces a term proportional to the northward velocity component $u_y$:
+\begin{align}
+\beta u_y,
+\end{align}
+where $\beta$ is the linear expansion coefficient of the Coriolis parameter.
+Including this term in the vorticity transport equation gives:
+\begin{align}
+\frac{\partial w}{\partial t} - J(\psi, w) + \beta u_y = \nu \nabla^2 w - \mu w + \mathbf{f}_w.
+\end{align}
+
+The beta-plane term is crucial for studying large-scale atmospheric and oceanic dynamics, as it leads to phenomena such as Rossby waves and geostrophic turbulence.
+
+### Advantages of the Vorticity-Streamfunction Formulation
+
+1. **Elimination of Pressure:**
+   The pressure term, which requires solving an additional Poisson equation in the velocity-pressure formulation, is completely removed in the vorticity-streamfunction approach.
+
+2. **Reduced Number of Variables:**
+   By working with $w$ and $\psi$, the system is reduced to a single scalar equation for $w$ coupled with the Poisson equation for $\psi$.
+
+3. **Natural Compatibility with Spectral Methods:**
+   The vorticity-streamfunction formulation lends itself well to spectral methods. Derivatives of $w$ and $\psi$ are straightforward to compute in spectral space, and the Poisson equation becomes an algebraic equation.
+
+4. **Incorporation of Geophysical Effects:**
+   Ekman damping and the beta-plane approximation extend the applicability of the formulation to real-world problems in atmospheric and oceanic sciences.
