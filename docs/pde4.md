@@ -353,7 +353,68 @@ The equation in spectral space becomes:
 \frac{\partial}{\partial t}\hat{w}_{k_x, k_y} = \widehat{J(\psi, w)} - \nu k^2 \hat{w}_{k_x, k_y} - \mu \hat{w}_{k_x, k_y} + \beta \frac{ik_x \hat{w}_{k_x, k_y}}{k^2} + \hat{f}_{w k_x, k_y}.
 \end{align}
 
-+++
+```{code-cell} ipython3
+import numpy as np
+from numpy.fft  import fft2, ifft2
+from matplotlib import pyplot as plt
+from tqdm import tqdm
+```
+
+```{code-cell} ipython3
+# Define the grid and wavenumbers
+Lx, Ly = 2 * np.pi, 2 * np.pi  # Domain size
+Nx, Ny = 128, 128              # Number of grid points
+
+x = np.linspace(-Lx/2, Lx/2, Nx, endpoint=False)
+y = np.linspace(-Lx/2, Ly/2, Ny, endpoint=False)
+x, y = np.meshgrid(x, y)
+
+kx = np.fft.fftfreq(Nx, d=Lx/Nx) * 2 * np.pi
+ky = np.fft.fftfreq(Ny, d=Ly/Ny) * 2 * np.pi
+kx, ky = np.meshgrid(kx, ky)
+
+kk  = kx*kx + ky*ky
+ikk = 1.0 / (kk + 1.2e-38)
+ikk[0,0] = 0  # Avoid multiplied by infinity for mean mode
+```
+
+```{code-cell} ipython3
+# Initialize vorticity and streamfunction in spectral space
+w = np.exp(-0.5*(x*x+y*y)*16) # Example initial vorticity
+
+# Transform to Fourier (spectral) space
+W   = fft2(w)
+Psi = ikk * W
+```
+
+```{code-cell} ipython3
+# Obtain velocity field
+def vel(psi):
+    psi_x = ifft2(1j * kx * fft2(psi)).real
+    psi_y = ifft2(1j * ky * fft2(psi)).real
+    return psi_y, -psi_x
+
+def plot(W, skip=4):
+    psi    = ifft2(ikk * W).real
+    ux, uy = vel(psi)
+    plt.imshow(psi, origin='lower', extent=[-Lx/2,Lx/2,-Ly/2,Ly/2])
+    plt.quiver(x[::skip,::skip], y[::skip,::skip], ux[::skip,::skip], uy[::skip,::skip])
+
+plot(W)
+```
+
+```{code-cell} ipython3
+# Compute Jacobian determinant in real space
+def Jdet(Psi, W):
+    psi_x = ifft2(1j * kx * Psi).real
+    psi_y = ifft2(1j * ky * Psi).real
+    w_x   = ifft2(1j * kx * W  ).real
+    w_y   = ifft2(1j * ky * W  ).real
+    return fft2(psi_x * w_y - psi_y * w_x)
+
+J = Jdet(Psi, W)
+print(np.max(ifft2(J).imag))
+```
 
 ### Handling Aliasing Errors
 
@@ -367,7 +428,19 @@ For a grid with $N$ points in each dimension:
 
 The 2/3 rule ensures that spurious contributions from nonlinear interactions fall outside the resolved spectral range.
 
-+++
+```{code-cell} ipython3
+# Apply the 2/3 rule
+def dealiasing(F):
+    Hx = Nx // 3
+    Hy = Ny // 3
+    F[Hx:-Hx, :] = 0
+    F[:, Hy:-Hy] = 0
+    return F
+
+# Apply de-aliasing to the Jacobian
+J = dealiasing(J)
+print(np.max(ifft2(J).imag))
+```
 
 ### Spectral-Galerkin vs. Pseudo-Spectral Methods
 
@@ -378,56 +451,7 @@ The **pseudo-spectral method** evaluates nonlinear terms in real space and trans
 While computationally efficient, it often requires de-aliasing or explicit viscosity to control aliasing errors.
 This method balances speed and accuracy, making it popular for practical simulations.
 
-```{code-cell} ipython3
-import numpy as np
-from numpy.fft import fft2, ifft2
-
-# Define the grid and wavenumbers
-Lx, Ly = 2 * np.pi, 2 * np.pi  # Domain size
-nx, ny = 128, 128              # Number of grid points
-
-x = np.linspace(0, Lx, nx, endpoint=False)
-y = np.linspace(0, Ly, ny, endpoint=False)
-x, y = np.meshgrid(x, y)
-
-kx = np.fft.fftfreq(nx, d=Lx/nx) * 2 * np.pi
-ky = np.fft.fftfreq(ny, d=Ly/ny) * 2 * np.pi
-kx, ky = np.meshgrid(kx, ky)
-
-kk = kx*kx + ky*ky
-ikk = 1.0 / kk
-ikk[0,0] = 0  # Avoid multiplied by infinity for mean mode
-
-# Initialize vorticity and streamfunction in spectral space
-W = fft2(np.sin(x) * np.cos(y))  # Example initial vorticity
-Psi = ikk * W
-
-# Apply the 2/3 rule
-def dealiasing(F):
-    Kx = nx // 3
-    Ky = ny // 3
-    F[Kx:-Kx, :] = 0
-    F[:, Ky:-Ky] = 0
-    return F
-
-# Transform back to real space
-w   = ifft2(W).real
-psi = ifft2(Psi).real
-
-# Compute Jacobian determinant in real space
-def jdet(psi, w):
-    psi_x = ifft2(1j * kx * fft2(psi)).real
-    psi_y = ifft2(1j * ky * fft2(psi)).real
-    w_x   = ifft2(1j * kx * fft2(w)).real
-    w_y   = ifft2(1j * ky * fft2(w)).real
-    return psi_x * w_y - psi_y * w_x
-
-j = jdet(psi, w)
-J = fft2(j)
-
-# Apply de-aliasing to the Jacobian
-J = dealiasing(J)
-```
++++
 
 ## Time Integration of the Spectral Equations
 
@@ -491,5 +515,42 @@ Using a semi-implicit scheme:
    \end{align}
 
 ```{code-cell} ipython3
+# Initialize vorticity and streamfunction in spectral space
+ux = np.random.normal(scale=0.5, size=x.shape)
+uy = np.where(x >= 0, 1, -1) # Example initial vorticity
+```
 
+```{code-cell} ipython3
+W = 1j * kx * fft2(uy) - 1j * ky * fft2(ux)
+plot(W)
+```
+
+```{code-cell} ipython3
+# Define simulation parameters
+dt   = 0.001  # Time step
+nu   = 0.001  # Viscosity
+mu   = 0.0    # Ekman damping
+beta = 0.0    # Coriolis parameter
+N    = 30000  # Number of time steps
+S    = 30
+
+# Time-stepping loop
+for n in tqdm(range(N//S)):
+    plot(W)
+    plt.savefig(f'{n:04d}.png')
+    plt.close()
+
+    for j in range(S):
+        # Obtain stream function
+        Psi = ikk * W        
+    
+        # Compute nonlinear term (Jacobian determinant)
+        J = Jdet(Psi, W)
+        J = dealiasing(J)  # Apply 2/3 rule
+
+        # Update vorticity in spectral space
+        W = (W + dt * J) / (1 + dt * (nu * kk + mu - (1j * beta) * (kx * ikk)))
+
+plot(W)
+plt.savefig(f'{n+1:04d}.png')
 ```
