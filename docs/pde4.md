@@ -350,7 +350,7 @@ In spectral space:
 
 The equation in spectral space becomes:
 \begin{align}
-\frac{\partial}{\partial t}\hat{w}_{k_x, k_y} = \widehat{J(\psi, w)} + \beta \frac{ik_x \hat{w}_{k_x, k_y}}{k^2} - \nu k^2 \hat{w}_{k_x, k_y} - \mu \hat{w}_{k_x, k_y} + \hat{f}_{w k_x, k_y}.
+\frac{\partial}{\partial t}\hat{w}_{k_x, k_y} = \widehat{J(\psi, w)} - \nu k^2 \hat{w}_{k_x, k_y} - \mu \hat{w}_{k_x, k_y} + \beta \frac{ik_x \hat{w}_{k_x, k_y}}{k^2} + \hat{f}_{w k_x, k_y}.
 \end{align}
 
 +++
@@ -428,6 +428,67 @@ J = fft2(j)
 # Apply de-aliasing to the Jacobian
 J = dealiasing(J)
 ```
+
+## Time Integration of the Spectral Equations
+
+After reformulating the vorticity-streamfunction equations in spectral space, the next step is to integrate the vorticity transport equation in time.
+Time integration involves advancing the Fourier coefficients of vorticity $\hat{w}_{k_x, k_y}$ while accurately handling the nonlinear and linear terms.
+This section discusses suitable time-stepping schemes, their implementation, and how they are applied to the spectral representation of the equations.
+
++++
+
+### Time-Stepping Schemes
+
+Time integration methods for the spectral vorticity transport equation must balance stability, accuracy, and computational efficiency. Two commonly used schemes in spectral methods are:
+
+#### Explicit Schemes
+
+Explicit schemes, such as the **Runge-Kutta (RK) family**, compute the solution at the next time step based on known quantities at the current time step.
+They are easy to implement and efficient for problems dominated by advection or nonlinear dynamics.
+
+#### Implicit Schemes
+
+Implicit schemes, such as **Crank-Nicolson**, are unconditionally stable for linear terms but require solving a system of equations at each time step.
+
+#### Semi-Implicit Methods
+
+In spectral methods, implicit schemes are often used for the linear terms (e.g., viscous diffusion) to allow larger time steps, while explicit schemes handle nonlinear terms.
+
+A common approach splits the equation into linear and nonlinear parts:
+\begin{align}
+\frac{\partial \hat{w}}{\partial t} = L(\hat{w}) + N(\hat{w}),
+\end{align}
+where:
+* $L(\hat{w})$ represents linear terms (e.g., viscous diffusion, Ekman damping, Coriolis effects),
+* $N(\hat{w})$ represents nonlinear terms (e.g., Jacobian).
+
+The linear terms are treated implicitly, while the nonlinear terms are advanced explicitly.
+For example, the time-discretized form is:
+\begin{align}
+\hat{w}^{n+1} = \frac{\hat{w}^n + \Delta t N(\hat{w}^n)}{1 - \Delta t L}.
+\end{align}
+
+This approach combines the stability of implicit methods with the simplicity of explicit methods.
+
++++
+
+### Time Integration of the Vorticity Transport Equation
+
+The spectral vorticity transport equation is:
+\begin{align}
+\frac{\partial}{\partial t}\hat{w}_{k_x, k_y} = \widehat{J(\psi, w)} - \nu k^2 \hat{w}_{k_x, k_y} - \mu \hat{w}_{k_x, k_y} + \beta \frac{ik_x \hat{w}_{k_x, k_y}}{k^2} + \hat{f}_{w k_x, k_y}.
+\end{align}
+
+Breaking this into linear and nonlinear parts:
+* **Linear Terms:** Viscous diffusion $-\nu k^2 \hat{w}$, Ekman damping $-\mu \hat{w}$, and Coriolis effect $\beta ik_x \hat{w}/k^2$.
+* **Nonlinear Terms:** Jacobian determinant $\widehat{J(\psi, w)}$.
+
+Using a semi-implicit scheme:
+1. Advance the nonlinear terms explicitly using an RK4 method.
+2. Solve the linear terms implicitly using the formula:
+   \begin{align}
+   \hat{w}_{k_x, k_y}^{n+1} = \frac{\hat{w}_{k_x, k_y}^n + \Delta t N(\hat{w}_{k_x, k_y}^n)}{1 + \Delta t (\nu k^2 + \mu - \beta ik_x/k^2)}.
+   \end{align}
 
 ```{code-cell} ipython3
 
