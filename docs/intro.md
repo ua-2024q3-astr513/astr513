@@ -24,14 +24,14 @@ covers the "comoputation" part of the course, including:
 
 | Week | Monday | Wednesday |
 | --- | --- | --- |
-| Oct 21--Oct 25 | [](data.md)               | [](FT.md)                          |
-| Oct 28--Nov  1 | [](derive.md)             | [](interpolate.md)                 |
-| Nov  4--Nov  8 | [](opt.md)                | [](integration.md)                 |
-| Nov 11--Nov 15 | *Veterans Day (no class)* | [](ode1.md)                        |
-| Nov 18--Nov 22 | [](ode2.md)               | [](ode3.md)                        |
-| Nov 25--Nov 29 | [](pde1.md)               | [](pde2.md)                        |
-| Dec  2--Dec  6 | [](pde3.md)               | Numerical PDE IV: spectral methods |
-| Dec  9--Dec 11 | Project presentations     | Project presentations              |
+| Oct 21--Oct 25 | [](data.md)               | [](FT.md)             |
+| Oct 28--Nov  1 | [](derive.md)             | [](interpolate.md)    |
+| Nov  4--Nov  8 | [](opt.md)                | [](integration.md)    |
+| Nov 11--Nov 15 | *Veterans Day (no class)* | [](ode1.md)           |
+| Nov 18--Nov 22 | [](ode2.md)               | [](ode3.md)           |
+| Nov 25--Nov 29 | [](pde1.md)               | [](pde2.md)           |
+| Dec  2--Dec  6 | [](pde3.md)               | [](pde4.md)           |
+| Dec  9--Dec 11 | Project presentations     | Project presentations |
 
 
 ## Table of Contents
