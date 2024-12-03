@@ -273,3 +273,82 @@ The beta-plane term is crucial for studying large-scale atmospheric and oceanic 
 
 4. **Incorporation of Geophysical Effects:**
    Ekman damping and the beta-plane approximation extend the applicability of the formulation to real-world problems in atmospheric and oceanic sciences.
+
++++
+
+## Spectral Representation of the Equations
+
+The vorticity-streamfunction formulation simplifies the governing equations of 2D incompressible hydrodynamics, making them naturally suited to spectral methods.
+By representing the vorticity and streamfunction in terms of Fourier series, we can efficiently compute derivatives and nonlinear terms in spectral space.
+This section details the spectral representation of the vorticity transport equation and the Poisson equation, highlighting the mathematical transformations, strategies to handle aliasing errors, and implementation in Python.
+
++++
+
+### Fourier Representation of Vorticity and Streamfunction
+
+For a periodic domain of size $L_x \times L_y$, the vorticity $w(x, y, t)$ and streamfunction $\psi(x, y, t)$ can be expanded as Fourier series:
+\begin{align}
+w(x, y, t)    &= \sum_{k_x, k_y} \hat{w   }_{k_x, k_y}(t) e^{i (k_x x + k_y y)}, \\
+\psi(x, y, t) &= \sum_{k_x, k_y} \hat{\psi}_{k_x, k_y}(t) e^{i (k_x x + k_y y)},
+\end{align}
+where:
+* $\hat{w}_{k_x, k_y}$ and $\hat{\psi}_{k_x, k_y}$ are the Fourier coefficients of vorticity and streamfunction, respectively.
+* $k_x$ and $k_y$ are the wavenumbers in the $x$- and $y$-directions, given by:
+  \begin{align}
+  k_x = \frac{2\pi n_x}{L_x}, \quad k_y = \frac{2\pi n_y}{L_y}, \quad n_x, n_y \in \mathbb{Z}.
+  \end{align}
+
++++
+
+#### Fourier Differentiation
+
+In spectral space, derivatives with respect to $x$ and $y$ transform into simple multiplications by $ik_x$ and $ik_y$, respectively.
+For example:
+\begin{align}
+\frac{\partial w}{\partial x} \rightarrow ik_x \hat{w}_{k_x, k_y}, \quad \frac{\partial^2 w}{\partial x^2} \rightarrow -k_x^2 \hat{w}_{k_x, k_y}.
+\end{align}
+
+This property makes spectral methods computationally efficient, as derivatives reduce to element-wise multiplications.
+
++++
+
+### Poisson Equation in Spectral Space
+
+The Poisson equation relates the vorticity $w$ and the streamfunction $\psi$:
+\begin{align}
+w = -\nabla^2 \psi.
+\end{align}
+
+In Fourier space, the Laplacian $\nabla^2$ becomes multiplication by $-k^2$, where $k^2 = k_x^2 + k_y^2$.
+Thus, the Poisson equation transforms into:
+\begin{align}
+\hat{\psi}_{k_x, k_y} = \frac{\hat{w}_{k_x, k_y}}{k^2}, \quad k^2 \neq 0.
+\end{align}
+
+The $k^2 = 0$ mode corresponds to the mean value of $\psi$, which can be set to zero for flows with no net circulation.
+
++++
+
+\begin{align}
+u_y = -\frac{\partial \psi}{\partial x}.
+\end{align}
+
++++
+
+### Vorticity Transport Equation in Spectral Space
+
+Recalling the vorticity transport equation in real space is:
+\begin{align}
+\frac{\partial w}{\partial t} - J(\psi, w) + \beta u_y = \nu \nabla^2 w - \mu w + \mathbf{f}_w.
+\end{align}
+
+In spectral space:
+* The Laplacian term $\nabla^2 w$ transforms into $-k^2 \hat{w}_{k_x, k_y}$.
+* The Ekman damping term $\mu w$ becomes $-\mu \hat{w}_{k_x, k_y}$.
+* The Coriolis term $\beta u_y$ becomes $-\beta ik_x \hat{w}_{k_x, k_y}/k^2$.
+* The nonlinear term $J(\psi, w)$ is evaluated in real space and transformed back to spectral space using the Fast Fourier Transform (FFT).
+
+The equation in spectral space becomes:
+\begin{align}
+\frac{\partial}{\partial t}\hat{w}_{k_x, k_y} = \widehat{J(\psi, w)} + \beta \frac{ik_x \hat{w}_{k_x, k_y}}{k^2} - \nu k^2 \hat{w}_{k_x, k_y} - \mu \hat{w}_{k_x, k_y} + \hat{f}_{w k_x, k_y}.
+\end{align}
