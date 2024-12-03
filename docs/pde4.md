@@ -352,3 +352,32 @@ The equation in spectral space becomes:
 \begin{align}
 \frac{\partial}{\partial t}\hat{w}_{k_x, k_y} = \widehat{J(\psi, w)} + \beta \frac{ik_x \hat{w}_{k_x, k_y}}{k^2} - \nu k^2 \hat{w}_{k_x, k_y} - \mu \hat{w}_{k_x, k_y} + \hat{f}_{w k_x, k_y}.
 \end{align}
+
++++
+
+### Handling Aliasing Errors
+
+Nonlinear terms, such as $J(\psi, w)$, involve products in real space that translate into convolutions in spectral space.
+These convolutions can introduce spurious interactions between modes, known as **aliasing errors**, due to the finite resolution of the grid.
+
+The **2/3 rule** is a widely used de-aliasing technique that truncates Fourier modes beyond $2/3$ of the maximum wavenumber.
+For a grid with $N$ points in each dimension:
+* Retain modes for $|k_x|, |k_y| \leq N/3$.
+* Set all other modes to zero.
+
+The 2/3 rule ensures that spurious contributions from nonlinear interactions fall outside the resolved spectral range.
+
++++
+
+### Spectral-Galerkin vs. Pseudo-Spectral Methods
+
+The **spectral-Galerkin method** projects the governing equations onto the basis functions of the spectral expansion.
+This ensures the residual is orthogonal to the retained modes.
+
+The **pseudo-spectral method** evaluates nonlinear terms in real space and transforms them back to spectral space using FFT.
+While computationally efficient, it often requires de-aliasing or explicit viscosity to control aliasing errors.
+This method balances speed and accuracy, making it popular for practical simulations.
+
+```{code-cell} ipython3
+
+```
