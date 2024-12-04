@@ -61,7 +61,41 @@ For example:
 \end{align}
 This property drastically simplifies the computation of derivatives, making spectral methods particularly attractive for solving PDEs.
 
-+++
+```{code-cell} ipython3
+import numpy as np
+from numpy.fft  import fft2, ifft2
+from matplotlib import pyplot as plt
+from tqdm import tqdm
+```
+
+```{code-cell} ipython3
+Lx = 2 * np.pi # Domain size
+Nx = 128       # Number of grid points
+
+x  = np.linspace(-Lx/2, Lx/2, Nx, endpoint=False)
+kx = np.fft.fftfreq(Nx, d=Lx/Nx) * 2 * np.pi
+```
+
+```{code-cell} ipython3
+f = np.exp(-0.5 * (x*x) / 0.1)
+plt.plot(f)
+```
+
+```{code-cell} ipython3
+g_exact = -x * np.exp(-0.5 * (x*x) / 0.1) / 0.1
+plt.plot(g_exact)
+```
+
+```{code-cell} ipython3
+F = np.fft.fft(f)
+G = 1j * kx * F
+g = np.fft.ifft(G).real
+
+plt.plot(g_exact)
+plt.plot(g, ':')
+
+np.max(abs(g - g_exact))
+```
 
 **Periodic vs. Non-Periodic Domains**
 
@@ -352,13 +386,6 @@ The equation in spectral space becomes:
 \begin{align}
 \frac{\partial}{\partial t}\hat{w}_{k_x, k_y} = \widehat{J(\psi, w)} - \nu k^2 \hat{w}_{k_x, k_y} - \mu \hat{w}_{k_x, k_y} + \beta \frac{ik_x \hat{w}_{k_x, k_y}}{k^2} + \hat{f}_{w k_x, k_y}.
 \end{align}
-
-```{code-cell} ipython3
-import numpy as np
-from numpy.fft  import fft2, ifft2
-from matplotlib import pyplot as plt
-from tqdm import tqdm
-```
 
 ```{code-cell} ipython3
 # Define the grid and wavenumbers
