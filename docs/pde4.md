@@ -16,6 +16,64 @@ kernelspec:
 
 +++
 
+## Weak Formulation|
+
+In mathematical modeling of physical systems, **weak formulations** provide a powerful framework to analyze and solve partial differential equations (PDEs).
+Unlike the traditional strong (or classical) formulations, which require the solution to be differentiable and satisfy the PDE everywhere in the domain, the weak formulation relaxes these requirements.
+Instead, it ensures that the PDE holds in an **integral sense**, allowing solutions that may be less regular.
+
++++
+
+### Why Weak Formulations?
+
+1. **Broader Solution Space:**
+   Weak formulations permit solutions that are not differentiable everywhere, such as those with discontinuities or sharp gradients.
+   This is particularly useful in real-world problems, such as fluid dynamics, where solutions often exhibit such features.
+
+2. **Natural Fit for Numerical Methods:**
+   Many numerical methods, including **finite element** and **spectral methods**, are based on weak formulations.
+   These methods approximate the solution by projecting it onto a finite-dimensional space of basis functions, ensuring that the integral form of the equation is satisfied.
+
+3. **Conservation Laws:**
+   Weak formulations often align naturally with conservation laws, as they integrate the governing equations over a control volume or domain.
+   This ensures that key physical quantities, such as mass, momentum, and energy, are preserved in the numerical approximation.
+
++++
+
+### Key Idea of Weak Formulation
+
+Given a PDE:
+\begin{align}
+\mathcal{L}(u) = f,
+\end{align}
+where $\mathcal{L}$ is a differential operator, $u$ is the solution, and $f$ is a source term, the weak formulation is derived by multiplying the equation by a **test function** $v$ and integrating over the domain $\Omega$:
+\begin{align}
+\int_\Omega v \, \mathcal{L}(u) \, d\Omega = \int_\Omega v \, f \, d\Omega.
+\end{align}
+
+Through integration by parts, derivatives on $u$ are shifted onto $v$, reducing the regularity requirements on $u$.
+For example, the weak form of the Poisson equation:
+\begin{align}
+-\nabla^2 u = f,
+\end{align}
+becomes:
+\begin{align}
+\int_\Omega \nabla v \cdot \nabla u \, d\Omega = \int_\Omega v f \, d\Omega.
+\end{align}
+
+Here, $u$ needs only to be square-integrable, rather than twice differentiable, making the formulation more flexible.
+
++++
+
+### Connection to Spectral Methods
+
+Spectral methods build directly on the weak formulation by representing the solution $u$ and test functions $v$ as expansions in terms of orthogonal basis functions (e.g., Fourier modes or polynomials).
+The PDE is then projected onto these basis functions, leading to a system of algebraic equations for the coefficients of the expansion.
+
+The transition from weak formulations to spectral methods highlights the elegance and power of this approach: by working in function spaces tailored to the problem, spectral methods achieve high accuracy and efficiency in solving PDEs, particularly for smooth solutions in periodic domains.
+
++++
+
 ## **Introduction to Spectral Methods**
 
 Spectral methods are a powerful class of numerical techniques used to solve partial differential equations (PDEs) by representing the solution as a global expansion of orthogonal basis functions.
